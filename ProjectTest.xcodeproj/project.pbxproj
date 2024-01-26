@@ -1,0 +1,512 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0C0885E32AF4C58F00F54B29 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C0885E22AF4C58F00F54B29 /* main.cpp */; };
+		0C0885F02AF4D5FA00F54B29 /* RailwayAPI.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 0C0885EF2AF4D5FA00F54B29 /* RailwayAPI.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
+		0C0885F42AF4D5FA00F54B29 /* RailwayAPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C0885F32AF4D5FA00F54B29 /* RailwayAPI.cpp */; };
+		0C0885F92AF4DEA800F54B29 /* libRailwayAPI.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C0885ED2AF4D5FA00F54B29 /* libRailwayAPI.dylib */; };
+		0C0886022AF4ED0000F54B29 /* BaseCalFun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C0885FE2AF4ED0000F54B29 /* BaseCalFun.cpp */; };
+		0C0886032AF4ED0000F54B29 /* BasePoint.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 0C0885FF2AF4ED0000F54B29 /* BasePoint.hpp */; };
+		0C0886042AF4ED0100F54B29 /* BaseCalFun.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 0C0886002AF4ED0000F54B29 /* BaseCalFun.hpp */; };
+		0C0886052AF4ED0100F54B29 /* BaseStruct.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 0C0886012AF4ED0000F54B29 /* BaseStruct.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
+		0C08860F2AF4EF6500F54B29 /* StraightLineElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C0886062AF4EF6500F54B29 /* StraightLineElement.cpp */; };
+		0C0886102AF4EF6500F54B29 /* StraightLineElement.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 0C0886072AF4EF6500F54B29 /* StraightLineElement.hpp */; };
+		0C0886122AF4EF6500F54B29 /* CurveElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C0886092AF4EF6500F54B29 /* CurveElement.cpp */; };
+		0C0886132AF4EF6500F54B29 /* LineElementManager.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 0C08860A2AF4EF6500F54B29 /* LineElementManager.hpp */; };
+		0C0886142AF4EF6600F54B29 /* ArcElement.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 0C08860B2AF4EF6500F54B29 /* ArcElement.hpp */; };
+		0C0886152AF4EF6600F54B29 /* BaseLineElement.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 0C08860C2AF4EF6500F54B29 /* BaseLineElement.hpp */; };
+		0C0886162AF4EF6600F54B29 /* LineElementManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C08860D2AF4EF6500F54B29 /* LineElementManager.cpp */; };
+		0C0886172AF4EF6600F54B29 /* CurveElement.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 0C08860E2AF4EF6500F54B29 /* CurveElement.hpp */; };
+		0C0886192AF4F0EA00F54B29 /* ArcElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C0886182AF4F0EA00F54B29 /* ArcElement.cpp */; };
+		0C11B0872AF8DB5E000BA76F /* HorizontalCurve.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C11B0852AF8DB5E000BA76F /* HorizontalCurve.cpp */; };
+		0C11B0882AF8DB5E000BA76F /* HorizontalCurve.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 0C11B0862AF8DB5E000BA76F /* HorizontalCurve.hpp */; };
+		0C11B08B2AF8DC3B000BA76F /* VerticalCurve.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C11B0892AF8DC3B000BA76F /* VerticalCurve.cpp */; };
+		0C11B08C2AF8DC3B000BA76F /* VerticalCurve.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 0C11B08A2AF8DC3B000BA76F /* VerticalCurve.hpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		0C0885DD2AF4C58F00F54B29 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0C0885DF2AF4C58F00F54B29 /* ProjectTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ProjectTest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0C0885E22AF4C58F00F54B29 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		0C0885ED2AF4D5FA00F54B29 /* libRailwayAPI.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libRailwayAPI.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0C0885EF2AF4D5FA00F54B29 /* RailwayAPI.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = RailwayAPI.hpp; sourceTree = "<group>"; };
+		0C0885F32AF4D5FA00F54B29 /* RailwayAPI.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RailwayAPI.cpp; sourceTree = "<group>"; };
+		0C0885FE2AF4ED0000F54B29 /* BaseCalFun.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BaseCalFun.cpp; sourceTree = "<group>"; };
+		0C0885FF2AF4ED0000F54B29 /* BasePoint.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = BasePoint.hpp; sourceTree = "<group>"; };
+		0C0886002AF4ED0000F54B29 /* BaseCalFun.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = BaseCalFun.hpp; sourceTree = "<group>"; };
+		0C0886012AF4ED0000F54B29 /* BaseStruct.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = BaseStruct.hpp; sourceTree = "<group>"; };
+		0C0886062AF4EF6500F54B29 /* StraightLineElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StraightLineElement.cpp; sourceTree = "<group>"; };
+		0C0886072AF4EF6500F54B29 /* StraightLineElement.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = StraightLineElement.hpp; sourceTree = "<group>"; };
+		0C0886092AF4EF6500F54B29 /* CurveElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CurveElement.cpp; sourceTree = "<group>"; };
+		0C08860A2AF4EF6500F54B29 /* LineElementManager.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = LineElementManager.hpp; sourceTree = "<group>"; };
+		0C08860B2AF4EF6500F54B29 /* ArcElement.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ArcElement.hpp; sourceTree = "<group>"; };
+		0C08860C2AF4EF6500F54B29 /* BaseLineElement.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = BaseLineElement.hpp; sourceTree = "<group>"; };
+		0C08860D2AF4EF6500F54B29 /* LineElementManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LineElementManager.cpp; sourceTree = "<group>"; };
+		0C08860E2AF4EF6500F54B29 /* CurveElement.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CurveElement.hpp; sourceTree = "<group>"; };
+		0C0886182AF4F0EA00F54B29 /* ArcElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArcElement.cpp; sourceTree = "<group>"; };
+		0C11B0852AF8DB5E000BA76F /* HorizontalCurve.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = HorizontalCurve.cpp; path = RailwayAPI/Curve/HorizontalCurve.cpp; sourceTree = SOURCE_ROOT; };
+		0C11B0862AF8DB5E000BA76F /* HorizontalCurve.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = HorizontalCurve.hpp; path = RailwayAPI/Curve/HorizontalCurve.hpp; sourceTree = SOURCE_ROOT; };
+		0C11B0892AF8DC3B000BA76F /* VerticalCurve.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VerticalCurve.cpp; sourceTree = "<group>"; };
+		0C11B08A2AF8DC3B000BA76F /* VerticalCurve.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = VerticalCurve.hpp; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		0C0885DC2AF4C58F00F54B29 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0C0885F92AF4DEA800F54B29 /* libRailwayAPI.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0C0885EB2AF4D5FA00F54B29 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0C0885D62AF4C58F00F54B29 = {
+			isa = PBXGroup;
+			children = (
+				0C0885E12AF4C58F00F54B29 /* ProjectTest */,
+				0C0885EE2AF4D5FA00F54B29 /* RailwayAPI */,
+				0C0885E02AF4C58F00F54B29 /* Products */,
+				0C0885F82AF4DEA800F54B29 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		0C0885E02AF4C58F00F54B29 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0C0885DF2AF4C58F00F54B29 /* ProjectTest */,
+				0C0885ED2AF4D5FA00F54B29 /* libRailwayAPI.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0C0885E12AF4C58F00F54B29 /* ProjectTest */ = {
+			isa = PBXGroup;
+			children = (
+				0C0885E22AF4C58F00F54B29 /* main.cpp */,
+			);
+			path = ProjectTest;
+			sourceTree = "<group>";
+		};
+		0C0885EE2AF4D5FA00F54B29 /* RailwayAPI */ = {
+			isa = PBXGroup;
+			children = (
+				0C0885F32AF4D5FA00F54B29 /* RailwayAPI.cpp */,
+				0C0885EF2AF4D5FA00F54B29 /* RailwayAPI.hpp */,
+				0C0885FC2AF4EBDB00F54B29 /* Base */,
+				0CBC50C82B0F3B0E00CBBAD1 /* Curve */,
+				0C0885FD2AF4EBEC00F54B29 /* LineElement */,
+			);
+			path = RailwayAPI;
+			sourceTree = "<group>";
+		};
+		0C0885F82AF4DEA800F54B29 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		0C0885FC2AF4EBDB00F54B29 /* Base */ = {
+			isa = PBXGroup;
+			children = (
+				0C0885FE2AF4ED0000F54B29 /* BaseCalFun.cpp */,
+				0C0886002AF4ED0000F54B29 /* BaseCalFun.hpp */,
+				0C0885FF2AF4ED0000F54B29 /* BasePoint.hpp */,
+				0C0886012AF4ED0000F54B29 /* BaseStruct.hpp */,
+			);
+			path = Base;
+			sourceTree = "<group>";
+		};
+		0C0885FD2AF4EBEC00F54B29 /* LineElement */ = {
+			isa = PBXGroup;
+			children = (
+				0C08860C2AF4EF6500F54B29 /* BaseLineElement.hpp */,
+				0C0886182AF4F0EA00F54B29 /* ArcElement.cpp */,
+				0C08860B2AF4EF6500F54B29 /* ArcElement.hpp */,
+				0C0886092AF4EF6500F54B29 /* CurveElement.cpp */,
+				0C08860E2AF4EF6500F54B29 /* CurveElement.hpp */,
+				0C0886062AF4EF6500F54B29 /* StraightLineElement.cpp */,
+				0C0886072AF4EF6500F54B29 /* StraightLineElement.hpp */,
+			);
+			path = LineElement;
+			sourceTree = "<group>";
+		};
+		0CBC50C82B0F3B0E00CBBAD1 /* Curve */ = {
+			isa = PBXGroup;
+			children = (
+				0C08860D2AF4EF6500F54B29 /* LineElementManager.cpp */,
+				0C08860A2AF4EF6500F54B29 /* LineElementManager.hpp */,
+				0C11B0852AF8DB5E000BA76F /* HorizontalCurve.cpp */,
+				0C11B0862AF8DB5E000BA76F /* HorizontalCurve.hpp */,
+				0C11B0892AF8DC3B000BA76F /* VerticalCurve.cpp */,
+				0C11B08A2AF8DC3B000BA76F /* VerticalCurve.hpp */,
+			);
+			path = Curve;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		0C0885E92AF4D5FA00F54B29 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0C0885F02AF4D5FA00F54B29 /* RailwayAPI.hpp in Headers */,
+				0C0886052AF4ED0100F54B29 /* BaseStruct.hpp in Headers */,
+				0C0886032AF4ED0000F54B29 /* BasePoint.hpp in Headers */,
+				0C0886042AF4ED0100F54B29 /* BaseCalFun.hpp in Headers */,
+				0C0886152AF4EF6600F54B29 /* BaseLineElement.hpp in Headers */,
+				0C0886142AF4EF6600F54B29 /* ArcElement.hpp in Headers */,
+				0C0886172AF4EF6600F54B29 /* CurveElement.hpp in Headers */,
+				0C0886102AF4EF6500F54B29 /* StraightLineElement.hpp in Headers */,
+				0C0886132AF4EF6500F54B29 /* LineElementManager.hpp in Headers */,
+				0C11B0882AF8DB5E000BA76F /* HorizontalCurve.hpp in Headers */,
+				0C11B08C2AF8DC3B000BA76F /* VerticalCurve.hpp in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0C0885FA2AF4E06700F54B29 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		0C0885DE2AF4C58F00F54B29 /* ProjectTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0C0885E62AF4C58F00F54B29 /* Build configuration list for PBXNativeTarget "ProjectTest" */;
+			buildPhases = (
+				0C0885FA2AF4E06700F54B29 /* Headers */,
+				0C0885DB2AF4C58F00F54B29 /* Sources */,
+				0C0885DC2AF4C58F00F54B29 /* Frameworks */,
+				0C0885DD2AF4C58F00F54B29 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ProjectTest;
+			productName = ProjectTest;
+			productReference = 0C0885DF2AF4C58F00F54B29 /* ProjectTest */;
+			productType = "com.apple.product-type.tool";
+		};
+		0C0885EC2AF4D5FA00F54B29 /* RailwayAPI */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0C0885F52AF4D5FA00F54B29 /* Build configuration list for PBXNativeTarget "RailwayAPI" */;
+			buildPhases = (
+				0C0885E92AF4D5FA00F54B29 /* Headers */,
+				0C0885EA2AF4D5FA00F54B29 /* Sources */,
+				0C0885EB2AF4D5FA00F54B29 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RailwayAPI;
+			productName = RailwayAPI;
+			productReference = 0C0885ED2AF4D5FA00F54B29 /* libRailwayAPI.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0C0885D72AF4C58F00F54B29 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1510;
+				TargetAttributes = {
+					0C0885DE2AF4C58F00F54B29 = {
+						CreatedOnToolsVersion = 15.0.1;
+					};
+					0C0885EC2AF4D5FA00F54B29 = {
+						CreatedOnToolsVersion = 15.0.1;
+					};
+				};
+			};
+			buildConfigurationList = 0C0885DA2AF4C58F00F54B29 /* Build configuration list for PBXProject "ProjectTest" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 0C0885D62AF4C58F00F54B29;
+			productRefGroup = 0C0885E02AF4C58F00F54B29 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				0C0885DE2AF4C58F00F54B29 /* ProjectTest */,
+				0C0885EC2AF4D5FA00F54B29 /* RailwayAPI */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0C0885DB2AF4C58F00F54B29 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0C0885E32AF4C58F00F54B29 /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0C0885EA2AF4D5FA00F54B29 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0C0886122AF4EF6500F54B29 /* CurveElement.cpp in Sources */,
+				0C08860F2AF4EF6500F54B29 /* StraightLineElement.cpp in Sources */,
+				0C0885F42AF4D5FA00F54B29 /* RailwayAPI.cpp in Sources */,
+				0C0886162AF4EF6600F54B29 /* LineElementManager.cpp in Sources */,
+				0C11B08B2AF8DC3B000BA76F /* VerticalCurve.cpp in Sources */,
+				0C0886022AF4ED0000F54B29 /* BaseCalFun.cpp in Sources */,
+				0C11B0872AF8DB5E000BA76F /* HorizontalCurve.cpp in Sources */,
+				0C0886192AF4F0EA00F54B29 /* ArcElement.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		0C0885E42AF4C58F00F54B29 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		0C0885E52AF4C58F00F54B29 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		0C0885E72AF4C58F00F54B29 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = 3XLAL8XSKX;
+				ENABLE_HARDENED_RUNTIME = YES;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Build/Products/Debug/usr/local/include";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		0C0885E82AF4C58F00F54B29 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = 3XLAL8XSKX;
+				ENABLE_HARDENED_RUNTIME = YES;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Build/Products/Debug/usr/local/include";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		0C0885F62AF4D5FA00F54B29 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = 3XLAL8XSKX;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		0C0885F72AF4D5FA00F54B29 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = 3XLAL8XSKX;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0C0885DA2AF4C58F00F54B29 /* Build configuration list for PBXProject "ProjectTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0C0885E42AF4C58F00F54B29 /* Debug */,
+				0C0885E52AF4C58F00F54B29 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0C0885E62AF4C58F00F54B29 /* Build configuration list for PBXNativeTarget "ProjectTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0C0885E72AF4C58F00F54B29 /* Debug */,
+				0C0885E82AF4C58F00F54B29 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0C0885F52AF4D5FA00F54B29 /* Build configuration list for PBXNativeTarget "RailwayAPI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0C0885F62AF4D5FA00F54B29 /* Debug */,
+				0C0885F72AF4D5FA00F54B29 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0C0885D72AF4C58F00F54B29 /* Project object */;
+}
