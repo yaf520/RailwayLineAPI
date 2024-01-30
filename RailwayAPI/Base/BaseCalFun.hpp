@@ -66,7 +66,7 @@ public:
     ///   - dMileVal: 冠号
     ///   - nPrec: 精度
     ///   - bDelZero: 是否删0
-    static void MileCharacterStr(const char strMilepost[12], double dMileVal, int nPrec, bool bDelZero, char strOut[64]);
+    static void MileCharacterStr(const char strMilepost[16], double dMileVal, int nPrec, bool bDelZero, char strOut[64]);
     
     static int CalDecimalDigits(double dValue);
 };

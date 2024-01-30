@@ -25,8 +25,8 @@ struct tagDLInfo
 {
     double dBefLich;        //断前里程
     double dBehLich;        //断后里程
-    char strBefNo[12];      //断前冠号
-    char strBehNo[12];      //断后冠号
+    char strBefNo[16];      //断前冠号
+    char strBehNo[16];      //断后冠号
     
     tagDLInfo()
     {
@@ -49,7 +49,7 @@ struct tagDLInfo
 ///坡度信息
 struct tagSlopeInfo
 {
-    char strNo[12];         //冠号
+    char strNo[16];         //冠号
     double dCml;            //变坡点里程
     double dHeight;         //变坡点高程
     double dArcR;           //竖曲线半径

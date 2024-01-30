@@ -98,21 +98,21 @@ double HorizontalCurve::GetSumLengthOfMile(char strMark[16], double dMileValue, 
 {
     double dConMile = 0.0;
     double dTmpConMile = 0.0;
-    char strMark2[16] = {0};
+    char strMarkCpy[16] = {0};
     int shCounter = 0;
     int iDl = 0;
     bool bLawless = false;
     
     if (strlen(strMark) < 1)
     {
-        snprintf(strErr, 64, "没有里程冠号: %s", strMark);
-        iReliability = 1000;
+        snprintf(strErr, 64, "没有里程冠号");
+        iReliability = 0;
     }
     
     if (m_nDLCount  == 0)
     {
-        snprintf(strErr, 64, "无断链表");
-        iReliability = 1000;
+        snprintf(strErr, 64, "无断链表,无法进行里程转换");
+        iReliability = 0;
         return 0.0;
     }
     
@@ -125,24 +125,24 @@ double HorizontalCurve::GetSumLengthOfMile(char strMark[16], double dMileValue, 
     {
         if (m_pDLArr[iDl - 1].dBehLich <= dMileValue && dMileValue <= m_pDLArr[iDl].dBefLich)
         {
-            strcpy(strMark2, m_pDLArr[iDl - 1].strBehNo);
+            strcpy(strMarkCpy, m_pDLArr[iDl - 1].strBehNo);
             
-            for (int i = 0; strMark2[i] != '\0'; i++)
-                strMark2[i] = toupper(strMark2[i]);
+            for (int i = 0; strMarkCpy[i] != '\0'; i++)
+                strMarkCpy[i] = toupper(strMarkCpy[i]);
             
-            if (strcmp(strMark, strMark2) == 0)
+            if (strcmp(strMark, strMarkCpy) == 0)
             {
                 dConMile = dTmpConMile + dMileValue - m_pDLArr[iDl - 1].dBehLich;
                 shCounter++;
             }
             else
             {
-                strcpy(strMark2, m_pDLArr[iDl].strBefNo);
+                strcpy(strMarkCpy, m_pDLArr[iDl].strBefNo);
                 
-                for (int i = 0; strMark2[i] != '\0'; i++)
-                    strMark2[i] = toupper(strMark2[i]);
+                for (int i = 0; strMarkCpy[i] != '\0'; i++)
+                    strMarkCpy[i] = toupper(strMarkCpy[i]);
                 
-                if (strcmp(strMark, strMark2) == 0)
+                if (strcmp(strMark, strMarkCpy) == 0)
                 {
                     dConMile = dTmpConMile + dMileValue - m_pDLArr[iDl - 1].dBehLich;
                     shCounter++;
@@ -170,41 +170,44 @@ double HorizontalCurve::GetSumLengthOfMile(char strMark[16], double dMileValue, 
         {
             dConMile = dTmpConMile + (dMileValue - m_pDLArr[m_nDLCount - 1].dBehLich);
             shCounter++;
-            iReliability = 1002;
+            iReliability = 1;
             bLawless = true;
-            snprintf(strErr, 64, "非法里程");
+            snprintf(strErr, 64, "%s%0.3f超过了本方案设计终点", strMark, dMileValue);
         }
         else if (dMileValue < m_pDLArr[0].dBefLich)
         {
             dConMile = dMileValue - m_pDLArr[0].dBefLich;
             shCounter++;
-            iReliability = 1001;
+            iReliability = 1;
             bLawless = true;
-            snprintf(strErr, 64, "非法里程");
+            snprintf(strErr, 64, "%s%0.3f在本方案设计起点之前", strMark, dMileValue);
         }
     }
     
-    if (shCounter == 1 && !bLawless)
+    if (shCounter == 1)
     {
-        iReliability = 1;
-        snprintf(strErr, 64, "");
+        if (!bLawless)
+        {
+            iReliability = 1;
+            snprintf(strErr, 64, "");
+        }
     }
     else if (shCounter > 1)
     {
         iReliability = 0;
-        snprintf(strErr, 64, "断链设置不合理");
+        snprintf(strErr, 64, "%s%0.3f在线路上有%d个位置点，断链设置不合理", strMark, dMileValue, shCounter);
     }
     else
     {
         dConMile = dMileValue;
         iReliability = 0;
-        snprintf(strErr, 64, "输入里程错误");
+        snprintf(strErr, 64, "本方案上没有%s%0.3f里程点", strMark, dMileValue);
     }
     
     return dConMile;
 }
 
-double HorizontalCurve::GetMilepost(double dConitinueMile, char strMark[12], int& iReliability, char strErr[64])
+double HorizontalCurve::GetMilepost(double dConitinueMile, char strMark[16], int& iReliability, char strErr[64])
 {
     double dMileValue = __DBL_MIN__;
     strMark[0] = '\0';
@@ -218,7 +221,7 @@ double HorizontalCurve::GetMilepost(double dConitinueMile, char strMark[12], int
     if (dConitinueMile < dConMileTab)
     {
         snprintf(strErr, 64, "输入里程超出范围");
-        iReliability = -1;
+        iReliability = 0;
         return 0.0;
     }
     else if (fabs(dConMileTab - dConitinueMile) <= 0.0000001)
@@ -292,7 +295,7 @@ double HorizontalCurve::GetMilepost(double dConitinueMile, char strMark[12], int
     if (iDl >= m_nDLCount)
     {
         snprintf(strErr, 64, "输入里程超出范围");
-        iReliability = -1;
+        iReliability = 0;
         return 0.0;
     }
     
@@ -330,7 +333,7 @@ double HorizontalCurve::GetLength()
     return m_arrLineElement[m_nElementCount - 1]->m_dStartCml + m_arrLineElement[m_nElementCount - 1]->m_dTotalLen;
 }
 
-void HorizontalCurve::TrsCmltoCkml(const double& cml, char ckml[64])
+bool HorizontalCurve::TrsCmltoCkml(const double& cml, char ckml[64], int nPrec)
 {
     
 #if 0
@@ -360,7 +363,7 @@ void HorizontalCurve::TrsCmltoCkml(const double& cml, char ckml[64])
     
 #else
     if (m_nDLCount == 0)
-        return;
+        return false;
     
     char strMark[16] = {0};
     int iReliability = 0;
@@ -368,15 +371,16 @@ void HorizontalCurve::TrsCmltoCkml(const double& cml, char ckml[64])
     
     double dCkml = GetMilepost(cml + m_pDLArr[0].dBehLich, strMark, iReliability, strErr);
     if (iReliability)
-        //BaseCalFun::to_stringFormat(strMark, dCkml, ckml);
-        BaseCalFun::MileCharacterStr(strMark, dCkml, 3, false, ckml);
+        BaseCalFun::MileCharacterStr(strMark, dCkml, nPrec, false, ckml);
     else
         strcpy(ckml, strErr);
+    
+    return iReliability;
 #endif
     
 }
 
-void HorizontalCurve::TrsCkmlToCml(char ckml[64], double& cml, bool& bReliability, char strErr[64])
+bool HorizontalCurve::TrsCkmlToCml(char ckml[64], double& cml, char strErr[64])
 {
     double dMileValue = 0.0;
     char strNO[16] = {0};
@@ -384,6 +388,6 @@ void HorizontalCurve::TrsCkmlToCml(char ckml[64], double& cml, bool& bReliabilit
     
     int iReliability = 0;
     cml = GetSumLengthOfMile(strNO, dMileValue, iReliability, strErr);
-    bReliability = bReliability;
+    return iReliability;
 }
 

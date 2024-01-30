@@ -17,6 +17,7 @@ RailwayAPI::RailwayAPI()
     m_pHorCurve = new (nothrow) HorizontalCurve;
     m_pVerCurve = new (nothrow) VerticalCurve(m_pHorCurve);
 }
+
 RailwayAPI::~RailwayAPI()
 {
     if (m_pHorCurve)
@@ -65,14 +66,14 @@ double RailwayAPI::GetLength()
 }
 
 ///连续里程->现场里程
-void RailwayAPI::TrsCmltoCkml(const double& cml, char ckml[64])
+bool RailwayAPI::TrsCmltoCkml(const double& cml, char ckml[64], int nPrec)
 {
-    m_pHorCurve->TrsCmltoCkml(cml, ckml);
+    return m_pHorCurve->TrsCmltoCkml(cml, ckml, nPrec);
 }
 
-void RailwayAPI::TrsCkmlToCml(char ckml[64], double& cml, bool& bReliability, char strErr[64])
+bool RailwayAPI::TrsCkmlToCml(char ckml[64], double& cml, char strErr[64])
 {
-    m_pHorCurve->TrsCkmlToCml(ckml, cml, bReliability, strErr);
+    return m_pHorCurve->TrsCkmlToCml(ckml, cml, strErr);
 }
 
 void RailwayAPI::GetDesignHeight(double dCml, double& dHZ, double& dFyj)

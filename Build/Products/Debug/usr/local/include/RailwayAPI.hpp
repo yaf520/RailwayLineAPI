@@ -66,13 +66,13 @@ public:
     
     /// 连续里程->现场里程
     /// - Parameter cml: 连续里程
-    void TrsCmltoCkml(const double& cml, char ckml[64]);
+    bool TrsCmltoCkml(const double& cml, char ckml[64], int nPrec = 3);
     
     /// 现场里程->连续里程
     /// - Parameters:
     ///   - cml: 连续里程
     ///   - bReliability: 是否可靠
-    void TrsCkmlToCml(char ckml[64], double& cml, bool& bReliability, char strErr[64]);
+    bool TrsCkmlToCml(char ckml[64], double& cml, char strErr[64]);
     
     /// 连续里程->轨面高程
     /// - Parameters:

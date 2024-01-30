@@ -181,7 +181,7 @@ void BaseCalFun::SplitMilepost(const char strMilepost[64], double& dMileValue, c
     }
 }
 
-void BaseCalFun::MileCharacterStr(const char strMilepost[12], double dMileVal, int nPrec, bool bDelZero, char strOut[64])
+void BaseCalFun::MileCharacterStr(const char strMilepost[16], double dMileVal, int nPrec, bool bDelZero, char strOut[64])
 {
     int nKilo = 0;
     double dHundred = 0.0;

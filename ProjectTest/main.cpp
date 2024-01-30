@@ -598,7 +598,6 @@ int main(int argc, const char * argv[]) {
     //api.TrsNEToCmlDist(3010907, 498984, dCml, dDist, dFwj);
     char buffer[200] = {0};
     char strErr[64] = {0};
-    bool bSuccess = false;
     
     dDist = 2.3;
     double dTotalLen = api.GetLength();
@@ -616,7 +615,7 @@ int main(int argc, const char * argv[]) {
         cout << buffer << endl;
         api.TrsCmltoCkml(dCml, buffer);
         cout << "Ckml: " << buffer << endl;
-        api.TrsCkmlToCml(buffer, dCml, bSuccess, strErr);
+        api.TrsCkmlToCml(buffer, dCml, strErr);
         cout << "Cml: " << dCml << endl;
         api.GetDesignHeight(dCml, dHZ, dFyj);
         cout << "Cml: " << dCml << " Height: " << dHZ << " Fyj: " << dFyj << endl;

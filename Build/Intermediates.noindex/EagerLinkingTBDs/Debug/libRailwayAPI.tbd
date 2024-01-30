@@ -4,12 +4,11 @@
       {
         "data": {
           "global": [
-            "__ZTI10ArcElement",
+            "__ZTV10ArcElement",
             "__ZTI18LineElementManager",
             "__ZTS15HorizontalCurve",
-            "__ZTV10ArcElement",
-            "__ZTV10RailwayAPI",
             "__ZTV18LineElementManager",
+            "__ZTV10RailwayAPI",
             "__ZTS12CurveElement",
             "__ZTV13VerticalCurve",
             "__ZTI15HorizontalCurve",
@@ -24,18 +23,20 @@
             "__ZTS19StraightLineElement",
             "__ZTS10RailwayAPI",
             "__ZTI10RailwayAPI",
-            "__ZTV19StraightLineElement"
+            "__ZTV19StraightLineElement",
+            "__ZTI10ArcElement"
           ]
         },
         "text": {
           "global": [
             "__ZN18LineElementManager13CalTangentLenEddddb",
             "__ZN10BaseCalFun21PointToLineProjectionE11BasePoint2dS0_S0_Rd",
-            "__ZN10RailwayAPI12TrsCkmlToCmlEPcRdRbS0_",
             "__ZN15HorizontalCurve11GetMilepostEdPcRiS0_",
             "__ZN10RailwayAPI15GetDesignHeightEdRdS0_",
             "__ZN10BaseCalFun13SplitMilepostEPKcRdPc",
+            "__ZN15HorizontalCurve12TrsCmltoCkmlERKdPci",
             "__ZN18LineElementManagerC2Ev",
+            "__ZN10RailwayAPI12TrsCmltoCkmlERKdPci",
             "__ZN10RailwayAPID0Ev",
             "__ZN10BaseCalFun14KeepAngleIn2PIERd",
             "__ZN15HorizontalCurve18GetSumLengthOfMileEPcdRiS0_",
@@ -49,12 +50,12 @@
             "__ZN15HorizontalCurve14TrsCmlDistToNEERKdS1_RdS2_S2_",
             "__ZN15HorizontalCurveC2Ev",
             "__ZN18LineElementManager11CalCurvePosEdd",
-            "__ZN10RailwayAPI12TrsCmltoCkmlERKdPc",
             "__ZN10RailwayAPI14TrsNEToCmlDistERKdS1_RdS2_S2_",
             "__ZN15HorizontalCurve11PosBelongToE11BasePoint2d",
             "__ZN15HorizontalCurveC1Ev",
             "__ZN10RailwayAPI14TrsCmlDistToNEERKdS1_RdS2_S2_",
             "__ZN10RailwayAPI7SetDataEPK9tagJDInfojPK9tagDLInfojPK12tagSlopeInfoj",
+            "__ZN15HorizontalCurve12TrsCkmlToCmlEPcRdS0_",
             "__ZN15HorizontalCurveD0Ev",
             "__ZN19StraightLineElement19TrsCmlToNE_RelativeERKd",
             "__ZN18LineElementManager9SetJDDataEPK9tagJDInfoj",
@@ -81,14 +82,13 @@
             "__ZN15HorizontalCurve9SetDLDataEPK9tagDLInfoj",
             "__ZN13VerticalCurve11CmlBelongToEd",
             "__ZN15HorizontalCurve11CmlBelongToEd",
+            "__ZN10RailwayAPI12TrsCkmlToCmlEPcRdS0_",
             "__ZN10ArcElement14TrsCmlToHeightERKdRdS2_",
-            "__ZN15HorizontalCurve12TrsCkmlToCmlEPcRdRbS0_",
             "__ZN10BaseCalFun16CalDecimalDigitsEd",
-            "__ZN15HorizontalCurve12TrsCmltoCkmlERKdPc",
             "__ZN15HorizontalCurve14TrsNEToCmlDistERKdS1_RdS2_S2_",
             "__ZN12CurveElement14TrsNEToCmlDistERKdS1_RdS2_S2_",
-            "__ZN10RailwayAPIC1Ev",
             "__ZN10ArcElement22TrsCmlToAngle_RelativeERKd",
+            "__ZN10RailwayAPIC1Ev",
             "__ZN13VerticalCurve12SetSlopeDataEPK12tagSlopeInfoj"
           ]
         }

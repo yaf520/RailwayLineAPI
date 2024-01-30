@@ -29,7 +29,7 @@ private:
     ///计算里程属于哪一线元
     BaseLineElement* CmlBelongTo(double dCml) override;
     ///计算外业测量里程
-    double GetMilepost(double dConitinueMile, char strMark[12], int& iReliability, char strErr[64]);
+    double GetMilepost(double dConitinueMile, char strMark[16], int& iReliability, char strErr[64]);
     
 public:
     ///计算累计曲线长度
@@ -45,9 +45,9 @@ public:
     ///获取线路长度
     double GetLength();
     ///连续里程->现场里程
-    void TrsCmltoCkml(const double& cml, char ckml[64]);
+    bool TrsCmltoCkml(const double& cml, char ckml[64], int nPrec);
     ///现场里程->连续里程
-    void TrsCkmlToCml(char ckml[64], double& cml, bool& bReliability, char strErr[64]);
+    bool TrsCkmlToCml(char ckml[64], double& cml, char strErr[64]);
 };
 
 #endif /* HorizontalObject_hpp */

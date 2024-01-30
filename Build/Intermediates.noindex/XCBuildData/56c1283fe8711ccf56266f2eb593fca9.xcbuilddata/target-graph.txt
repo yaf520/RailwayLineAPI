@@ -1,4 +1,0 @@
-Target dependency graph (2 targets)
-Target 'ProjectTest' in project 'ProjectTest'
-➜ Implicit dependency on target 'RailwayAPI' in project 'ProjectTest' via file 'libRailwayAPI.dylib' in build phase 'Link Binary'
-Target 'RailwayAPI' in project 'ProjectTest' (no dependencies)

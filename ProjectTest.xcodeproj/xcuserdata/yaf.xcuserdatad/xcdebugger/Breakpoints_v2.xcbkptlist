@@ -14,41 +14,9 @@
             filePath = "RailwayAPI/Curve/HorizontalCurve.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "381"
-            endingLineNumber = "381"
-            landmarkName = "HorizontalCurve::TrsCkmlToCml(ckml, cml, bReliability, strErr)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "763CA357-36E0-4C47-A168-2D89D800524D"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "RailwayAPI/Curve/HorizontalCurve.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "155"
-            endingLineNumber = "155"
-            landmarkName = "HorizontalCurve::GetSumLengthOfMile(strMark, dMileValue, iReliability, strErr)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "984B2692-3F33-48C4-8C56-F1887971E81D"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "RailwayAPI/Curve/HorizontalCurve.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "99"
-            endingLineNumber = "99"
-            landmarkName = "HorizontalCurve::GetSumLengthOfMile(strMark, dMileValue, iReliability, strErr)"
+            startingLineNumber = "385"
+            endingLineNumber = "385"
+            landmarkName = "HorizontalCurve::TrsCkmlToCml(ckml, cml, strErr)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
