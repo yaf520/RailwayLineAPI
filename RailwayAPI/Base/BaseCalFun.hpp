@@ -57,6 +57,12 @@ public:
     /// - Parameter dAngle: 弧度值
     static void KeepAngleIn2PI(double& dAngle);
     
+    /// 四舍五入小数点
+    /// - Parameters:
+    ///   - dValue: 源数值
+    ///   - nPrec: 小数位数
+    static double Round(const double& dValue, int nPrec);
+    
     /// 将外业里程冠号与数值分开
     /// - Parameter dMileValue: 数字部分
     static void SplitMilepost(const char strMilepost[64], double& dMileValue, char strMakr[16]);

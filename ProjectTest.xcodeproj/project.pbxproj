@@ -153,6 +153,8 @@
 				0C08860E2AF4EF6500F54B29 /* CurveElement.hpp */,
 				0C0886062AF4EF6500F54B29 /* StraightLineElement.cpp */,
 				0C0886072AF4EF6500F54B29 /* StraightLineElement.hpp */,
+				0C08860D2AF4EF6500F54B29 /* LineElementManager.cpp */,
+				0C08860A2AF4EF6500F54B29 /* LineElementManager.hpp */,
 			);
 			path = LineElement;
 			sourceTree = "<group>";
@@ -160,8 +162,6 @@
 		0CBC50C82B0F3B0E00CBBAD1 /* Curve */ = {
 			isa = PBXGroup;
 			children = (
-				0C08860D2AF4EF6500F54B29 /* LineElementManager.cpp */,
-				0C08860A2AF4EF6500F54B29 /* LineElementManager.hpp */,
 				0C11B0852AF8DB5E000BA76F /* HorizontalCurve.cpp */,
 				0C11B0862AF8DB5E000BA76F /* HorizontalCurve.hpp */,
 				0C11B0892AF8DC3B000BA76F /* VerticalCurve.cpp */,

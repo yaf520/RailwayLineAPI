@@ -95,6 +95,12 @@ void BaseCalFun::KeepAngleIn2PI(double& dAngle)
     }
 }
 
+double BaseCalFun::Round(const double& dValue, int nPrec)
+{
+    double dRound = pow(10.0, nPrec);
+    return round(dValue * dRound) / dRound;
+}
+
 void BaseCalFun::SplitMilepost(const char strMilepost[64], double& dMileValue, char strMark[16])
 {
     char strTmp[64] = {0};

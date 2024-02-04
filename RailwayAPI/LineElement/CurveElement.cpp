@@ -93,9 +93,26 @@ bool CurveElement::TrsNEToCmlDist(const double& dX, const double& dY, double& dC
             break;
         }
         else if (dDot < 0.0)
+        {
+            if (dMidCml < dCalPrecision)
+            {
+                assert(false);
+                return false;
+            }
+            
             dEndCml = dMidCml;
+        }
         else if (dDot > 0.0)
+        {
+            if (abs(dMidCml - m_dTotalLen) < dCalPrecision)
+            {
+                assert(false);
+                return false;
+            }
+            
             dStartCml = dMidCml;
+        }
+            
     } while (true);
     
     /*

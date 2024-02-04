@@ -601,7 +601,7 @@ int main(int argc, const char * argv[]) {
     
     dDist = 2.3;
     double dTotalLen = api.GetLength();
-    for (dCml = 0; dCml <= dTotalLen; dCml += 50.0)
+    for (dCml = 0; dCml <= dTotalLen; dCml += 1.3958)
     {
         dCml = std::min(dCml, dTotalLen);
         api.TrsCmlDistToNE(dCml, dDist, dY, dX, dFwj);
