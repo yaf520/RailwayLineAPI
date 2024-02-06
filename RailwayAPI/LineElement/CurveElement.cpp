@@ -74,7 +74,7 @@ bool CurveElement::TrsNEToCmlDist(const double& dX, const double& dY, double& dC
         Vector2d vecTan(cos(dCurveAngle), sin(dCurveAngle));
         //点乘为0时为垂直
         double dDot = vecTan.dot(vecCal);
-        if (abs(dDot) < dCalPrecision)
+        if (vecCal.isZeroVec() || abs(dDot) < dCalPrecision)
         {
             //里程
             dCml = m_dStartCml +
@@ -84,17 +84,23 @@ bool CurveElement::TrsNEToCmlDist(const double& dX, const double& dY, double& dC
                 (bTurnDir ? dCurveAngle : -dCurveAngle);
             if (!bFront)
                 dAngle += (dAngle > MATH_PI ? -MATH_PI : MATH_PI);
-            //左右侧(叉乘判断左右)
-            double dCross = vecTan.cross(vecCal);
-            bool bOnLeft = ((dCross > 0.0 && m_bTurnLeft) || (dCross < 0.0 && !m_bTurnLeft));
-            //投影距离
-            dDist = vecCal.model() * (bOnLeft ? 1.0 : -1.0);
+            
+            if (vecCal.isZeroVec())
+                dDist = 0.0;
+            else
+            {
+                //左右侧(叉乘判断左右)
+                double dCross = vecTan.cross(vecCal);
+                bool bOnLeft = ((dCross > 0.0 && m_bTurnLeft) || (dCross < 0.0 && !m_bTurnLeft));
+                //投影距离
+                dDist = vecCal.model() * (bOnLeft ? 1.0 : -1.0);
+            }
             
             break;
         }
-        else if (dDot < 0.0)
+        else if (dDot <= -dCalPrecision)
         {
-            if (dMidCml < dCalPrecision)
+            if (dMidCml < dCalPrecision_1)
             {
                 assert(false);
                 return false;
@@ -102,9 +108,9 @@ bool CurveElement::TrsNEToCmlDist(const double& dX, const double& dY, double& dC
             
             dEndCml = dMidCml;
         }
-        else if (dDot > 0.0)
+        else if (dDot >= dCalPrecision)
         {
-            if (abs(dMidCml - m_dTotalLen) < dCalPrecision)
+            if (abs(dMidCml - m_dTotalLen) < dCalPrecision_1)
             {
                 assert(false);
                 return false;

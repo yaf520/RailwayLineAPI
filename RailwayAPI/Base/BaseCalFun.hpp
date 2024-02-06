@@ -61,7 +61,7 @@ public:
     /// - Parameters:
     ///   - dValue: 源数值
     ///   - nPrec: 小数位数
-    static double Round(const double& dValue, int nPrec);
+    static double Round(const double& dValue, int nPrec = 6);
     
     /// 将外业里程冠号与数值分开
     /// - Parameter dMileValue: 数字部分

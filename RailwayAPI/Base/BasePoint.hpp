@@ -13,6 +13,7 @@
 static const double MATH_PI = 3.14159265358979323846264338327950288;
 static const double MATH_PI_2 = 1.57079632679489661923132169163975144;
 static const double dCalPrecision = 0.000001;
+static const double dCalPrecision_1 = 0.0000001;
 
 ///基础二维点、向量结构体
 typedef struct BasePoint2d
@@ -163,6 +164,16 @@ typedef struct BasePoint2d
     virtual double model() const
     {
         return sqrt(x * x + y * y);
+    }
+    
+    virtual bool isZeroVec()
+    {
+        return (abs(x) < dCalPrecision_1 && abs(y) < dCalPrecision_1);
+    }
+    
+    virtual bool isZeroVec() const
+    {
+        return (abs(x) < dCalPrecision_1 && abs(y) < dCalPrecision_1);
     }
 }Point2d, Vector2d;
 

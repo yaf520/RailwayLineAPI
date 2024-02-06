@@ -42,10 +42,13 @@ BaseLineElement* HorizontalCurve::PosBelongTo(Point2d pos)
 #ifdef USE_VECTOR
     
     Vector2d vecCal = pos - m_arrLineElement[iMinDisIndex]->m_posStart;
+    if (vecCal.isZeroVec())
+        return m_arrLineElement[iMinDisIndex];
+    
     double dLineElementAngle = m_arrLineElement[iMinDisIndex]->m_dStartTanAngle;
     Vector2d vecTan(cos(dLineElementAngle), sin(dLineElementAngle));
     
-    double dDot = vecTan.dot(vecCal) / vecCal.model();
+    double dDot = BaseCalFun::Round(vecTan.dot(vecCal) / vecCal.model()) ;
     assert(dDot >= -1.0 && dDot <= 1.0);
     if (dDot < -1.0 || dDot > 1.0) return nullptr;
     //是否在前一线元
