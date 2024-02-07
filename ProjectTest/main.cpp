@@ -592,7 +592,7 @@ int main(int argc, const char * argv[]) {
     snprintf(DLInfo.strBehNo, sizeof(DLInfo.strBehNo), "DK");
     vecDL.emplace_back(DLInfo);
     
-    api.SetData(&vecJD[0], vecJD.size(), &vecDL[0], vecDL.size(), &vecSlope[0], vecSlope.size());
+    api.SetData(&vecJD.front(), vecJD.size(), &vecDL.front(), vecDL.size(), &vecSlope.front(), vecSlope.size());
     
     //api.TrsNEToCmlDist(3050146, 500808, dCml, dDist, dFwj);
     //api.TrsNEToCmlDist(3010907, 498984, dCml, dDist, dFwj);

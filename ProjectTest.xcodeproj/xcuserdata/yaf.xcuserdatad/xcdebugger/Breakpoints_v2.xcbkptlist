@@ -14,8 +14,8 @@
             filePath = "RailwayAPI/Curve/HorizontalCurve.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "388"
-            endingLineNumber = "388"
+            startingLineNumber = "395"
+            endingLineNumber = "395"
             landmarkName = "HorizontalCurve::TrsCkmlToCml(ckml, cml, strErr)"
             landmarkType = "7">
          </BreakpointContent>

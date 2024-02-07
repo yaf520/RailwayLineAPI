@@ -110,7 +110,7 @@ bool CurveElement::TrsNEToCmlDist(const double& dX, const double& dY, double& dC
         }
         else if (dDot >= dCalPrecision)
         {
-            if (abs(dMidCml - m_dTotalLen) < dCalPrecision_1)
+            if (m_dTotalLen - dMidCml < dCalPrecision_1)
             {
                 assert(false);
                 return false;

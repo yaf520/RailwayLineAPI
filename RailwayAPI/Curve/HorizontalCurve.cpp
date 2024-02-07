@@ -26,7 +26,7 @@ HorizontalCurve::~HorizontalCurve()
 BaseLineElement* HorizontalCurve::PosBelongTo(Point2d pos)
 {
     //查找距离起点最近的线元
-    uint32_t iMinDisIndex = 0;
+    uint32_t nMinDisIndex = 0;
     double dMinDis = __DBL_MAX__;
     double dDisTemp = 0.0;
     for (uint32_t i = 0; i < m_nElementCount; i++)
@@ -35,17 +35,17 @@ BaseLineElement* HorizontalCurve::PosBelongTo(Point2d pos)
         if (dDisTemp < dMinDis)
         {
             dMinDis = dDisTemp;
-            iMinDisIndex = i;
+            nMinDisIndex = i;
         }
     }
     
 #ifdef USE_VECTOR
     
-    Vector2d vecCal = pos - m_arrLineElement[iMinDisIndex]->m_posStart;
+    Vector2d vecCal = pos - m_arrLineElement[nMinDisIndex]->m_posStart;
     if (vecCal.isZeroVec())
-        return m_arrLineElement[iMinDisIndex];
+        return m_arrLineElement[nMinDisIndex];
     
-    double dLineElementAngle = m_arrLineElement[iMinDisIndex]->m_dStartTanAngle;
+    double dLineElementAngle = m_arrLineElement[nMinDisIndex]->m_dStartTanAngle;
     Vector2d vecTan(cos(dLineElementAngle), sin(dLineElementAngle));
     
     double dDot = BaseCalFun::Round(vecTan.dot(vecCal) / vecCal.model()) ;
@@ -53,11 +53,18 @@ BaseLineElement* HorizontalCurve::PosBelongTo(Point2d pos)
     if (dDot < -1.0 || dDot > 1.0) return nullptr;
     //是否在前一线元
     bool bInPreElement = (dDot < 0.0);
-    if (bInPreElement && iMinDisIndex == 0)
+    if (bInPreElement && nMinDisIndex == 0)
+    {
+        Vector2d vec = m_arrLineElement[nMinDisIndex]->m_posStart - m_arrLineElement[m_nElementCount - 1]->m_posEnd;
+        if (vec.model() < 0.0001 &&
+            abs(m_arrLineElement[nMinDisIndex]->m_dStartTanAngle - m_arrLineElement[m_nElementCount - 1]->m_dStartTanAngle) < dCalPrecision)
+            return m_arrLineElement[m_nElementCount - 1];
+        
         return nullptr;
+    }
     
     //最终属于哪一线元
-    return m_arrLineElement[(bInPreElement ? iMinDisIndex - 1 : iMinDisIndex)];
+    return m_arrLineElement[(bInPreElement ? nMinDisIndex - 1 : nMinDisIndex)];
     
 #else
     
