@@ -55,6 +55,13 @@ void LineElementManager::ResetData()
         m_arrLineElement = nullptr;
         m_nElementCount = 0;
     }
+    
+    if (m_arrJD)
+    {
+        delete m_arrJD;
+        m_arrJD = nullptr;
+        m_nJDCount = 0;
+    }
 }
 
 ///设置数据
@@ -93,6 +100,11 @@ void LineElementManager::SetJDData(const tagJDInfo* pJDInfo, uint32_t iCount)
     uint32_t nMaxCount = iCount * 4 - 7;
     //m_arrLineElement = (BaseLineElement**)new uint64_t[maxCount];
     m_arrLineElement = new BaseLineElement*[nMaxCount];
+    
+    //保存交点
+    m_nJDCount = iCount;
+    m_arrJD = new tagJDInfo[m_nJDCount];
+    memcpy(m_arrJD, pJDInfo, sizeof(tagJDInfo) * m_nJDCount);
     
     //变量定义
     double dCurrentCml = 0.0;
@@ -143,9 +155,12 @@ void LineElementManager::SetJDData(const tagJDInfo* pJDInfo, uint32_t iCount)
             pLineElement->m_nIndex = m_nElementCount;
             m_arrLineElement[m_nElementCount++] = pLineElement;
             dCurrentCml += pLineElement->m_dTotalLen;
+            
+            (m_arrJD + i)->nBelongTo = pLineElement->m_nIndex;
         }
         else
         {
+            //夹直线
             BaseLineElement* backElement = m_arrLineElement[m_nElementCount - 1];
             backElement->m_posEnd = posZH;
             backElement->m_dTotalLen = backElement->m_posStart.distanceTo(posZH);
@@ -190,6 +205,9 @@ void LineElementManager::SetJDData(const tagJDInfo* pJDInfo, uint32_t iCount)
             m_arrLineElement[m_nElementCount++] = pArcElement;
             dCurrentCml += pArcElement->m_dTotalLen;
             
+            //交点信息
+            (m_arrJD + i + 1)->nBelongTo = pArcElement->m_nIndex;
+            
             if (dBL > 0.0)
             {
                 //后缓和曲线
@@ -219,5 +237,154 @@ void LineElementManager::SetJDData(const tagJDInfo* pJDInfo, uint32_t iCount)
         pLineElement->m_dTotalLen = posHZ.distanceTo(posJD3);
         pLineElement->m_nIndex = m_nElementCount;
         m_arrLineElement[m_nElementCount++] = pLineElement;
+        
+        //最后一段
+        if (i + 2 == iCount - 1)
+            (m_arrJD + i + 2)->nBelongTo = pLineElement->m_nIndex;
     }
+}
+
+bool LineElementManager::UpdateJD(uint32_t nIndex, const Point2d& pos)
+{
+    if (nIndex >= m_nJDCount)
+        return false;
+    
+    //更新交点
+    m_arrJD[nIndex].dX = pos.x;
+    m_arrJD[nIndex].dY = pos.y;
+    
+    //需要更新的交点索引
+    uint32_t nStartJDIndex = nIndex - 2;
+    uint32_t nEndJDIndex = nIndex + 2;
+    
+    //需要更新的线元索引
+    uint32_t nStartElementIndex = (m_arrJD + nIndex - 1)->nBelongTo - ((m_arrJD + nIndex - 1)->dFL > 0.0 ? 2 : 1);
+    uint32_t nEndElementIndex = (m_arrJD + nIndex + 1)->nBelongTo + ((m_arrJD + nIndex + 1)->dBL > 0.0 ? 2 : 1);
+    
+    //起始里程
+    double dCurrentCml = m_arrLineElement[nStartElementIndex]->m_dStartCml;
+    //当前更新的线元索引
+    uint32_t nCurrentElementIndex = nStartElementIndex;
+    
+    //临时变量
+    Point2d posJD1, posJD2, posJD3, posZH, posHY, posYH, posHZ;
+    for (int i = nStartJDIndex; i + 2 <= nEndJDIndex; i++)
+    {
+        //交点坐标
+        posJD1.Set((m_arrJD + i)->dX, (m_arrJD + i)->dY);
+        posJD2.Set((m_arrJD + i + 1)->dX, (m_arrJD + i + 1)->dY);
+        posJD3.Set((m_arrJD + i + 2)->dX, (m_arrJD + i + 2)->dY);
+        
+        //缓和曲线长度
+        double dFL = (m_arrJD + i + 1)->dFL;
+        double dBL = (m_arrJD + i + 1)->dBL;
+        //圆曲线半径
+        double dArcR = (m_arrJD + i + 1)->dArcR;
+        //转向角
+        double dTurnAngle = BaseCalFun::CalTurnAngle(posJD1, posJD2, posJD3);
+        bool bTurnLeft = (dTurnAngle > 0.0);
+        
+        //计算属性点
+        //ZH点
+        double dAngle_JD1_JD2 = BaseCalFun::CalAngleX(posJD1, posJD2);
+        double dTangentLen = CalTangentLen(dFL, dBL, dArcR, abs(dTurnAngle), true);
+        posZH = posJD2 - Point2d(cos(dAngle_JD1_JD2), sin(dAngle_JD1_JD2)) * dTangentLen;
+        //HY点
+        posHY = (dFL > 0.0 ?
+                 BaseCalFun::TransferPos(posZH, CalCurvePos(dFL, dArcR), bTurnLeft, -dAngle_JD1_JD2) : posZH);
+        //HZ点
+        double dAngle_JD3_JD2 = BaseCalFun::CalAngleX(posJD3, posJD2);
+        dTangentLen = CalTangentLen(dFL, dBL, dArcR, abs(dTurnAngle), false);
+        posHZ = posJD2 - Point2d(cos(dAngle_JD3_JD2), sin(dAngle_JD3_JD2)) * dTangentLen;
+        //YH点
+        posYH = (dBL > 0.0 ?
+                 BaseCalFun::TransferPos(posHZ, CalCurvePos(dBL, dArcR), !bTurnLeft, -dAngle_JD3_JD2) : posHZ);
+        
+        if (nCurrentElementIndex ==  nStartElementIndex)
+        {
+            //头段直线
+            BaseLineElement* pLineElement = m_arrLineElement[nCurrentElementIndex++];
+            pLineElement->m_posEnd = posZH;
+            pLineElement->m_dTotalLen = pLineElement->m_posStart.distanceTo(posZH);
+            dCurrentCml += pLineElement->m_dTotalLen;
+        }
+        else
+        {
+            //夹直线
+            BaseLineElement* backElement = m_arrLineElement[nCurrentElementIndex - 1];
+            backElement->m_posEnd = posZH;
+            backElement->m_dTotalLen = backElement->m_posStart.distanceTo(posZH);
+            dCurrentCml += backElement->m_dTotalLen;
+        }
+        
+        if (dArcR > 0.0)
+        {
+            //缓和曲线角度
+            double dFrontCurveAngle = dFL / (dArcR * 2.0);
+            double dBackCurveAngle = dBL / (dArcR * 2.0);
+            
+            if (dFL > 0.0)
+            {
+                //前缓和曲线
+                CurveElement* pFrontCurveElement = (CurveElement*)m_arrLineElement[nCurrentElementIndex++];
+                pFrontCurveElement->m_posStart = posZH;
+                pFrontCurveElement->m_posEnd = posHY;
+                pFrontCurveElement->m_dStartTanAngle = dAngle_JD1_JD2;
+                pFrontCurveElement->m_dEndTanAngle = dAngle_JD1_JD2 + (bTurnLeft ? dFrontCurveAngle : -dFrontCurveAngle);
+                pFrontCurveElement->m_dArcR = dArcR;
+                pFrontCurveElement->m_dStartCml = dCurrentCml;
+                pFrontCurveElement->m_dTotalLen = dFL;
+                pFrontCurveElement->m_bTurnLeft = bTurnLeft;
+                dCurrentCml += pFrontCurveElement->m_dTotalLen;
+            }
+            
+            //圆弧段
+            ArcElement* pArcElement = (ArcElement*)m_arrLineElement[nCurrentElementIndex++];
+            pArcElement->m_posStart = posHY;
+            pArcElement->m_posEnd = posYH;
+            pArcElement->m_dStartTanAngle = dAngle_JD1_JD2 + (bTurnLeft ? dFrontCurveAngle : -dFrontCurveAngle);
+            pArcElement->m_dArcR = dArcR;
+            pArcElement->m_dStartCml = dCurrentCml;
+            pArcElement->m_dTotalLen = dArcR * (abs(dTurnAngle) - dFrontCurveAngle - dBackCurveAngle);
+            pArcElement->m_bTurnLeft = bTurnLeft;
+            dCurrentCml += pArcElement->m_dTotalLen;
+            
+            if (dBL > 0.0)
+            {
+                //后缓和曲线
+                CurveElement* pBackCurveElement = (CurveElement*)m_arrLineElement[nCurrentElementIndex++];
+                pBackCurveElement->m_posStart = posYH;
+                pBackCurveElement->m_posEnd = posHZ;
+                pBackCurveElement->m_dStartTanAngle = dAngle_JD3_JD2 + (bTurnLeft ? -dBackCurveAngle : dBackCurveAngle) + MATH_PI;
+                pBackCurveElement->m_dEndTanAngle = dAngle_JD3_JD2;
+                pBackCurveElement->m_dArcR = dArcR;
+                pBackCurveElement->m_dStartCml = dCurrentCml;
+                pBackCurveElement->m_dTotalLen = dBL;
+                pBackCurveElement->m_bTurnLeft = bTurnLeft;
+                dCurrentCml += pBackCurveElement->m_dTotalLen;
+            }
+        }
+        
+        //后直线
+        BaseLineElement* pLineElement = m_arrLineElement[nCurrentElementIndex++];
+        pLineElement->m_posStart = posHZ;
+        pLineElement->m_dStartCml = dCurrentCml;
+        pLineElement->m_dStartTanAngle = dAngle_JD3_JD2 + (dAngle_JD3_JD2 > MATH_PI ? -MATH_PI : MATH_PI);
+        
+        if (nCurrentElementIndex - 1 == nEndElementIndex)
+        {
+            pLineElement->m_posEnd = m_arrLineElement[nCurrentElementIndex]->m_posStart;
+            pLineElement->m_dTotalLen = pLineElement->m_posStart.distanceTo(pLineElement->m_posEnd);
+            dCurrentCml += pLineElement->m_dTotalLen;
+        }
+    }
+    
+    //更新后续里程
+    for (uint32_t i = nCurrentElementIndex; i < m_nElementCount; i++)
+    {
+        m_arrLineElement[i]->m_dStartCml = dCurrentCml;
+        dCurrentCml += m_arrLineElement[i]->m_dTotalLen;
+    }
+    
+    return true;
 }

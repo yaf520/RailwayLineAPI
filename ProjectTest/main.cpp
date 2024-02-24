@@ -16,7 +16,7 @@ int main(int argc, const char * argv[]) {
     cout << fixed;
     cout.precision(5);
     
-    RailwayAPI api;
+    RailwayAPI* pAPI = new RailwayAPI;
     double dCml, dDist, dFwj, dX, dY, dHZ, dFyj;
     //交点信息
     std::vector<tagJDInfo> vecJD;
@@ -465,8 +465,8 @@ int main(int argc, const char * argv[]) {
     JDInfo.dBL = 370.0;
     vecJD.emplace_back(JDInfo);
     
-    JDInfo.dX = 493305.671077984;
-    JDInfo.dY = 3032712.60604076;
+    JDInfo.dX = 493305.671077984 + 23.927;
+    JDInfo.dY = 3032712.60604076 - 17.986;
     JDInfo.dArcR = 8000.0;
     JDInfo.dFL = 590.0;
     JDInfo.dBL = 590.0;
@@ -592,36 +592,44 @@ int main(int argc, const char * argv[]) {
     snprintf(DLInfo.strBehNo, sizeof(DLInfo.strBehNo), "DK");
     vecDL.emplace_back(DLInfo);
     
-    api.SetData(&vecJD.front(), vecJD.size(), &vecDL.front(), vecDL.size(), &vecSlope.front(), vecSlope.size());
+    pAPI->SetData(&vecJD.front(), vecJD.size(), &vecDL.front(), vecDL.size(), &vecSlope.front(), vecSlope.size());
     
-    //api.TrsNEToCmlDist(3050146, 500808, dCml, dDist, dFwj);
-    //api.TrsNEToCmlDist(3010907, 498984, dCml, dDist, dFwj);
+    /*
+    uint32_t nUpdateIndex = 3;
+    double dUpdateX = 493305.671077984;
+    double dUpdateY = 3032712.60604076;
+    pAPI->UpdateHorJD(nUpdateIndex, dUpdateX + 23.927, dUpdateY - 17.986);
+    */
     char buffer[200] = {0};
     char strErr[64] = {0};
     
     dDist = 0.0;
-    double dTotalLen = api.GetLength();
+    double dTotalLen = pAPI->GetLength();
     for (dCml = 0; dCml <= dTotalLen; dCml += 1.3958)
     {
         dCml = std::min(dCml, dTotalLen);
-        api.TrsCmlDistToNE(dCml, dDist, dY, dX, dFwj);
+        pAPI->TrsCmlDistToNE(dCml, dDist, dY, dX, dFwj);
         snprintf(buffer, sizeof(buffer), "dCml: %0.5f, dDist: %0.5f =====> dX: %0.5f, dY: %0.5f, dAngle: %0.5f", dCml, dDist, dX, dY, dFwj);
         cout << buffer << endl;
         double dCmlTemp = 0.0;
         double dDistTemp = 0.0;
         double dAngleTemp = 0.0;
-        api.TrsNEToCmlDist(dY, dX, dCmlTemp, dDistTemp, dAngleTemp);
+        pAPI->TrsNEToCmlDist(dY, dX, dCmlTemp, dDistTemp, dAngleTemp);
         snprintf(buffer, sizeof(buffer), "dX: %0.5f, dY: %0.5f =====> dCml: %0.5f, dDist: %0.5f, dAngle: %0.5f", dX, dY, dCmlTemp, dDistTemp, dAngleTemp);
         cout << buffer << endl;
-        api.TrsCmltoCkml(dCml, buffer);
-        cout << "Ckml: " << buffer << endl;
-        api.TrsCkmlToCml(buffer, dCml, strErr);
-        cout << "Cml: " << dCml << endl;
-        api.GetDesignHeight(dCml, dHZ, dFyj);
-        cout << "Cml: " << dCml << " Height: " << dHZ << " Fyj: " << dFyj << endl;
         
+        /*
+        pAPI->TrsCmltoCkml(dCml, buffer);
+        cout << "Ckml: " << buffer << endl;
+        pAPI->TrsCkmlToCml(buffer, dCml, strErr);
+        cout << "Cml: " << dCml << endl;
+        pAPI->GetDesignHeight(dCml, dHZ, dFyj);
+        cout << "Cml: " << dCml << " Height: " << dHZ << " Fyj: " << dFyj << endl;
+        */
         cout << endl;
     }
+    
+    delete pAPI;
 
     return 0;
 }

@@ -80,6 +80,13 @@ public:
     ///   - dHZ: 轨面高程
     ///   - dFyj: 俯仰角
     void GetDesignHeight(double dCml, double& dHZ, double& dFyj);
+    
+    /// 更新平曲线交点坐标
+    /// - Parameters:
+    ///   - nIndex: 交点索引
+    ///   - dX: X坐标
+    ///   - dY: Y坐标
+    bool UpdateHorJD(uint32_t nIndex, const double& dX, const double& dY);
 };
 
 #pragma GCC visibility pop

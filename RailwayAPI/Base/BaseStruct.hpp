@@ -18,6 +18,17 @@ struct tagJDInfo
     double dFL;             //前缓和曲线长度
     double dBL;             //后缓和曲线长度
     double dArcR;           //圆曲线半径
+    int nBelongTo;          //所属线元索引
+    
+    tagJDInfo()
+    {
+        dX = 0.0;
+        dY = 0.0;
+        dFL = 0.0;
+        dBL = 0.0;
+        dArcR = 0.0;
+        nBelongTo = -1;
+    }
 };
 
 ///断链信息

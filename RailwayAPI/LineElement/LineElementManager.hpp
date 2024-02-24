@@ -27,6 +27,10 @@ protected:
     BaseLineElement** m_arrLineElement;
     ///线元数目
     uint32_t m_nElementCount;
+    //交点数组
+    tagJDInfo* m_arrJD;
+    //交点数目
+    uint32_t m_nJDCount;
     
 private:
     /// 切线长度
@@ -60,6 +64,12 @@ public:
     ///   - pJDInfo: 交点数组
     ///   - iCount: 数组大小
     void SetJDData(const tagJDInfo* pJDInfo, uint32_t iCount);
+    
+    /// 更新交点
+    /// - Parameters:
+    ///   - nIndex: 交点索引
+    ///   - pos: 交点坐标
+    bool UpdateJD(uint32_t nIndex, const Point2d& pos);
 };
 
 #endif /* LineElementManager_hpp */
