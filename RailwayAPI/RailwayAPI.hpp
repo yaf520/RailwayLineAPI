@@ -87,6 +87,20 @@ public:
     ///   - dX: X坐标
     ///   - dY: Y坐标
     bool UpdateHorJD(uint32_t nIndex, const double& dX, const double& dY);
+    
+    /// 导出指定里程范围内平曲线数据
+    /// - Parameters:
+    ///   - nArrCount: 数组大小
+    ///   - dStartCml: 起点里程
+    ///   - dEndCml: 终点里程
+    ///   - dDist: 偏移距离
+    ///   - dCurveStep: 缓和曲线步长
+    ///   - return: 线元数组首地址
+    tagExportLineElement* ExportHorCurve(int& nArrCount, double dStartCml, double dEndCml, double dDist, double dCurveStep);
+    
+    /// 导出交点信息
+    /// - Parameter nCount: 交点数目
+    const tagJDInfo* ExportJDInfo(int& nCount);
 };
 
 #pragma GCC visibility pop

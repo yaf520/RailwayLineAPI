@@ -6,6 +6,7 @@
 //
 
 #include <iostream>
+#include <assert.h>
 #include "RailwayAPI.hpp"
 
 using namespace std;
@@ -465,8 +466,8 @@ int main(int argc, const char * argv[]) {
     JDInfo.dBL = 370.0;
     vecJD.emplace_back(JDInfo);
     
-    JDInfo.dX = 493305.671077984 + 23.927;
-    JDInfo.dY = 3032712.60604076 - 17.986;
+    JDInfo.dX = 493305.671077984 /*+ 23.927*/;
+    JDInfo.dY = 3032712.60604076 /*- 17.986*/;
     JDInfo.dArcR = 8000.0;
     JDInfo.dFL = 590.0;
     JDInfo.dBL = 590.0;
@@ -594,12 +595,13 @@ int main(int argc, const char * argv[]) {
     
     pAPI->SetData(&vecJD.front(), vecJD.size(), &vecDL.front(), vecDL.size(), &vecSlope.front(), vecSlope.size());
     
-    /*
-    uint32_t nUpdateIndex = 3;
-    double dUpdateX = 493305.671077984;
-    double dUpdateY = 3032712.60604076;
-    pAPI->UpdateHorJD(nUpdateIndex, dUpdateX + 23.927, dUpdateY - 17.986);
-    */
+    int nArrCount = 0;
+    auto pArrLineElement = pAPI->ExportHorCurve(nArrCount, 0.0, pAPI->GetLength(), 0.0, 10.0);
+//    uint32_t nUpdateIndex = 3;
+//    double dUpdateX = 493305.671077984;
+//    double dUpdateY = 3032712.60604076;
+//    pAPI->UpdateHorJD(nUpdateIndex, dUpdateX + 23.927, dUpdateY - 17.986);
+    
     char buffer[200] = {0};
     char strErr[64] = {0};
     
@@ -617,15 +619,15 @@ int main(int argc, const char * argv[]) {
         pAPI->TrsNEToCmlDist(dY, dX, dCmlTemp, dDistTemp, dAngleTemp);
         snprintf(buffer, sizeof(buffer), "dX: %0.5f, dY: %0.5f =====> dCml: %0.5f, dDist: %0.5f, dAngle: %0.5f", dX, dY, dCmlTemp, dDistTemp, dAngleTemp);
         cout << buffer << endl;
+        assert(abs(dCml - dCmlTemp) < 0.00001);
         
-        /*
         pAPI->TrsCmltoCkml(dCml, buffer);
         cout << "Ckml: " << buffer << endl;
         pAPI->TrsCkmlToCml(buffer, dCml, strErr);
         cout << "Cml: " << dCml << endl;
         pAPI->GetDesignHeight(dCml, dHZ, dFyj);
         cout << "Cml: " << dCml << " Height: " << dHZ << " Fyj: " << dFyj << endl;
-        */
+        
         cout << endl;
     }
     

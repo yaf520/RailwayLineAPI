@@ -40,6 +40,9 @@ public:
     ///里程->高程+俯仰角
     virtual bool TrsCmlToHeight(const double& dCml, double& dHeight, double& dFyj) = 0;
     
+    //导出平曲线范围里程内的线元数据
+    virtual tagExportLineElement* ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep) = 0;
+    
 protected:
     //相对里程->相对坐标
     virtual Point2d TrsCmlToNE_Relative(const double& dCml) = 0;

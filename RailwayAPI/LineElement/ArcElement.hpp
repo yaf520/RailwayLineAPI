@@ -28,6 +28,8 @@ public:
     
     bool TrsCmlToHeight(const double& dCml, double& dHeight, double& dFyj) override;
     
+    tagExportLineElement* ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep) override;
+    
 protected:
     //相对里程->相对坐标
     Point2d TrsCmlToNE_Relative(const double& dCml) override;

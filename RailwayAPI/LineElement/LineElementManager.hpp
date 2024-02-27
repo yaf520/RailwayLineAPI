@@ -65,11 +65,27 @@ public:
     ///   - iCount: 数组大小
     void SetJDData(const tagJDInfo* pJDInfo, uint32_t iCount);
     
-    /// 更新交点
+    
+    /// 更新交点坐标
     /// - Parameters:
     ///   - nIndex: 交点索引
-    ///   - pos: 交点坐标
-    bool UpdateJD(uint32_t nIndex, const Point2d& pos);
+    ///   - dX: X坐标
+    ///   - dY: Y坐标
+    bool UpdateJD(const uint32_t& nIndex, const double& dX, const double& dY);
+    
+    /// 导出指定里程范围内平曲线数据
+    /// - Parameters:
+    ///   - nArrCount: 数组大小
+    ///   - dStartCml: 起点里程
+    ///   - dEndCml: 终点里程
+    ///   - dDist: 偏移距离
+    ///   - dCurveStep: 缓和曲线步长
+    ///   - return: 线元数组首地址
+    tagExportLineElement* ExportHorCurve(int& nArrCount, double dStartCml, double dEndCml, double dDist, double dCurveStep);
+    
+    /// 导出交点信息
+    /// - Parameter nCount: 交点数目
+    const tagJDInfo* ExportJDInfo(int& nCount);
 };
 
 #endif /* LineElementManager_hpp */

@@ -183,6 +183,27 @@ bool ArcElement::TrsCmlToHeight(const double& dCml, double& dHeight, double& dFy
     return true;
 }
 
+tagExportLineElement* ArcElement::ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep)
+{
+    double dDeltaLen = BaseCalFun::Round(dEndCml - dStartCml);
+    double dTotalLenTmp = BaseCalFun::Round(m_dTotalLen);
+    assert(dStartCml >= m_dStartCml && dDeltaLen <= dTotalLenTmp);
+    if (dStartCml < m_dStartCml || dDeltaLen > dTotalLenTmp)
+        return nullptr;
+    
+    double dAngle = 0.0;
+    tagExportLineElement* pRet = new tagExportLineElement;
+    pRet->nPosCount = 3;
+    pRet->eLineType = m_eElementType;
+    pRet->pArrPos = new PointExport[3];
+    
+    TrsCmlDistToNE(dStartCml, dDist, pRet->pArrPos[0].dX, pRet->pArrPos[0].dY, dAngle);
+    TrsCmlDistToNE((dStartCml + dEndCml) / 2.0, dDist, pRet->pArrPos[2].dX, pRet->pArrPos[2].dY, dAngle);
+    TrsCmlDistToNE(dEndCml, dDist, pRet->pArrPos[1].dX, pRet->pArrPos[1].dY, dAngle);
+    
+    return pRet;
+}
+
 Point2d ArcElement::TrsCmlToNE_Relative(const double& dCml)
 {
     double dArcAngle = dCml / m_dArcR;

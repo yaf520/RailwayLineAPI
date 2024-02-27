@@ -75,4 +75,56 @@ enum ElementType
     BackCurve               //后缓和曲线
 };
 
+struct PointExport
+{
+    double dX;
+    double dY;
+    
+    PointExport()
+    {
+        dX = 0.0;
+        dY = 0.0;
+    }
+    
+    PointExport(double dX, double dY)
+    {
+        this->dX = dX;
+        this->dY = dY;
+    }
+};
+
+//导出子项
+struct tagExportLineElement
+{
+    ElementType eLineType;
+    PointExport* pArrPos;
+    int nPosCount;
+    
+    tagExportLineElement()
+    {
+        eLineType = (ElementType)-1;
+        pArrPos = nullptr;
+        nPosCount = 0;
+    }
+    
+    virtual ~tagExportLineElement()
+    {
+        if (pArrPos)
+        {
+            delete[] pArrPos;
+            pArrPos = nullptr;
+            nPosCount = 0;
+        }
+    }
+    
+    virtual tagExportLineElement& operator = (const tagExportLineElement& data)
+    {
+        this->eLineType = data.eLineType;
+        this->nPosCount = data.nPosCount;
+        this->pArrPos = new PointExport[this->nPosCount];
+        memcpy(this->pArrPos, data.pArrPos, sizeof(PointExport) * this->nPosCount);
+        return *this;
+    }
+};
+
 #endif /* ElementInfo_hpp */

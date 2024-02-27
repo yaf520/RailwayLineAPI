@@ -11,6 +11,8 @@ LineElementManager::LineElementManager()
 {
     m_arrLineElement = nullptr;
     m_nElementCount = 0;
+    m_arrJD = nullptr;
+    m_nJDCount = 0;
 }
 
 LineElementManager::~LineElementManager()
@@ -112,15 +114,15 @@ void LineElementManager::SetJDData(const tagJDInfo* pJDInfo, uint32_t iCount)
     for (uint32_t i = 0; i + 2 < iCount; i++)
     {
         //交点坐标
-        posJD1.Set((pJDInfo + i)->dX, (pJDInfo + i)->dY);
-        posJD2.Set((pJDInfo + i + 1)->dX, (pJDInfo + i + 1)->dY);
-        posJD3.Set((pJDInfo + i + 2)->dX, (pJDInfo + i + 2)->dY);
+        posJD1.Set((m_arrJD + i)->dX, (m_arrJD + i)->dY);
+        posJD2.Set((m_arrJD + i + 1)->dX, (m_arrJD + i + 1)->dY);
+        posJD3.Set((m_arrJD + i + 2)->dX, (m_arrJD + i + 2)->dY);
         
         //缓和曲线长度
-        double dFL = (pJDInfo + i + 1)->dFL;
-        double dBL = (pJDInfo + i + 1)->dBL;
+        double dFL = (m_arrJD + i + 1)->dFL;
+        double dBL = (m_arrJD + i + 1)->dBL;
         //圆曲线半径
-        double dArcR = (pJDInfo + i + 1)->dArcR;
+        double dArcR = (m_arrJD + i + 1)->dArcR;
         //转向角
         double dTurnAngle = BaseCalFun::CalTurnAngle(posJD1, posJD2, posJD3);
         bool bTurnLeft = (dTurnAngle > 0.0);
@@ -244,14 +246,14 @@ void LineElementManager::SetJDData(const tagJDInfo* pJDInfo, uint32_t iCount)
     }
 }
 
-bool LineElementManager::UpdateJD(uint32_t nIndex, const Point2d& pos)
+bool LineElementManager::UpdateJD(const uint32_t& nIndex, const double& dX, const double& dY)
 {
     if (nIndex >= m_nJDCount)
         return false;
     
     //更新交点
-    m_arrJD[nIndex].dX = pos.x;
-    m_arrJD[nIndex].dY = pos.y;
+    m_arrJD[nIndex].dX = dX;
+    m_arrJD[nIndex].dY = dY;
     
     //需要更新的交点索引
     uint32_t nStartJDIndex = nIndex - 2;
@@ -387,4 +389,44 @@ bool LineElementManager::UpdateJD(uint32_t nIndex, const Point2d& pos)
     }
     
     return true;
+}
+
+tagExportLineElement* LineElementManager::ExportHorCurve(int& nArrCount, double dStartCml, double dEndCml, double dDist, double dCurveStep)
+{
+    if (dEndCml - dStartCml < 0.0)
+    {
+        nArrCount = 0;
+        return nullptr;
+    }
+    
+    int nStartIndex = CmlBelongTo(dStartCml)->m_nIndex;
+    int nEndIndex = CmlBelongTo(dEndCml)->m_nIndex;
+    
+    nArrCount = nEndIndex - nStartIndex + 1;
+    tagExportLineElement* pRet = new tagExportLineElement[nArrCount];
+    int nExportIndex = 0;
+    for (int nCurInex = nStartIndex; nCurInex <= nEndIndex; nCurInex++)
+    {
+        BaseLineElement* pCurLineElement = m_arrLineElement[nCurInex];
+        
+        double dCurStartCml = (nCurInex == nStartIndex ? dStartCml : pCurLineElement->m_dStartCml);
+        double dCurEndCml = (nCurInex == nEndIndex ? dEndCml : pCurLineElement->m_dStartCml + pCurLineElement->m_dTotalLen);
+        tagExportLineElement* pExportInfo = pCurLineElement->ExportHorCurve(dCurStartCml, dCurEndCml, dDist, dCurveStep);
+        if (!pExportInfo)
+        {
+            nArrCount = 0;
+            delete[] pRet;
+            return nullptr;
+        }
+        pRet[nExportIndex++] = *pExportInfo;
+        delete pExportInfo;
+    }
+    
+    return pRet;
+}
+
+const tagJDInfo* LineElementManager::ExportJDInfo(int& nCount)
+{
+    nCount = m_nJDCount;
+    return m_arrJD;
 }

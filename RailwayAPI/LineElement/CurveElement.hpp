@@ -26,7 +26,9 @@ public:
     
     bool TrsNEToCmlDist(const double& dX, const double& dY, double& dCml, double& dDist, double& dAngle) override;
     
-    bool TrsCmlToHeight(const double& dCml, double& dHeight, double& dAngle) override;
+    bool TrsCmlToHeight(const double& dCml, double& dHeight, double& dAngle) override { return false;};
+    
+    tagExportLineElement* ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep) override;
     
 protected:
     //相对里程->相对坐标

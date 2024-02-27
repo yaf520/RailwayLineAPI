@@ -52,6 +52,25 @@ bool StraightLineElement::TrsNEToCmlDist(const double& dX, const double& dY, dou
     return true;
 }
 
+tagExportLineElement* StraightLineElement::ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep)
+{
+    double dDeltaLen = BaseCalFun::Round(dEndCml - dStartCml);
+    double dTotalLenTmp = BaseCalFun::Round(m_dTotalLen);
+    assert(dStartCml >= m_dStartCml && dDeltaLen <= dTotalLenTmp);
+    if (dStartCml < m_dStartCml || dDeltaLen > dTotalLenTmp)
+        return nullptr;
+    
+    double dAngle = 0.0;
+    tagExportLineElement* pRet = new tagExportLineElement;
+    pRet->nPosCount = 2;
+    pRet->eLineType = m_eElementType;
+    pRet->pArrPos = new PointExport[2];
+    TrsCmlDistToNE(dStartCml, dDist, pRet->pArrPos[0].dX, pRet->pArrPos[0].dY, dAngle);
+    TrsCmlDistToNE(dEndCml, dDist, pRet->pArrPos[1].dX, pRet->pArrPos[1].dY, dAngle);
+    
+    return pRet;
+}
+
 Point2d StraightLineElement::TrsCmlToNE_Relative(const double& dCml)
 {
     return Point2d(cos(m_dStartTanAngle), sin(m_dStartTanAngle)) * dCml;

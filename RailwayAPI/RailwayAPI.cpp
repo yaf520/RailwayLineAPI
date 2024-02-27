@@ -83,5 +83,20 @@ void RailwayAPI::GetDesignHeight(double dCml, double& dHZ, double& dFyj)
 
 bool RailwayAPI::UpdateHorJD(uint32_t nIndex, const double& dX, const double& dY)
 {
-    return m_pHorCurve->UpdateJD(nIndex, Point2d(dX, dY));
+    return m_pHorCurve->UpdateJD(nIndex, dX, dY);
+}
+
+tagExportLineElement* RailwayAPI::ExportHorCurve(int& nArrCount, double dStartCml, double dEndCml, double dDist, double dCurveStep)
+{
+    if (!m_pHorCurve)
+    {
+        nArrCount = 0;
+        return nullptr;
+    }
+    return m_pHorCurve->ExportHorCurve(nArrCount, dStartCml, dEndCml, dDist, dCurveStep);
+}
+
+const tagJDInfo* RailwayAPI::ExportJDInfo(int& nCount)
+{
+    return m_pHorCurve->ExportJDInfo(nCount);
 }

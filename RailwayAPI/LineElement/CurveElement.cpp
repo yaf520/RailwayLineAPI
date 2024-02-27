@@ -198,9 +198,30 @@ bool CurveElement::TrsNEToCmlDist(const double& dX, const double& dY, double& dC
     return true;
 }
 
-bool CurveElement::TrsCmlToHeight(const double& dCml, double& dHeight, double& dFyj)
+tagExportLineElement* CurveElement::ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep)
 {
-    return false;
+    double dDeltaLen = BaseCalFun::Round(dEndCml - dStartCml);
+    double dTotalLenTmp = BaseCalFun::Round(m_dTotalLen);
+    assert(dStartCml >= m_dStartCml && dDeltaLen <= dTotalLenTmp);
+    if (dStartCml < m_dStartCml || dDeltaLen > dTotalLenTmp)
+        return nullptr;
+    
+    int nPosCount = ceil((dEndCml - dStartCml) / dCurveStep) + 1;
+    double dAngle = 0.0;
+    tagExportLineElement* pRet = new tagExportLineElement;
+    pRet->eLineType = m_eElementType;
+    pRet->nPosCount = nPosCount;
+    pRet->pArrPos = new PointExport[nPosCount];
+    
+    double dCurCml = dStartCml;
+    for (int i = 0; i < nPosCount; i++)
+    {
+        dCurCml = __min(dCurCml, dEndCml);
+        TrsCmlDistToNE(dCurCml, dDist, pRet->pArrPos[i].dX, pRet->pArrPos[i].dY, dAngle);
+        dCurCml += dCurveStep;
+    }
+    
+    return pRet;
 }
 
 Point2d CurveElement::TrsCmlToNE_Relative(const double& dCml)
