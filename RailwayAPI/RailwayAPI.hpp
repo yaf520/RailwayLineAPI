@@ -20,7 +20,7 @@ class VerticalCurve;
 #pragma GCC visibility push(default)
 
 class RailwayAPI
-{ 
+{
 public:
     RailwayAPI();
     virtual ~RailwayAPI();
@@ -86,7 +86,7 @@ public:
     ///   - nIndex: 交点索引
     ///   - dX: X坐标
     ///   - dY: Y坐标
-    bool UpdateHorJD(uint32_t nIndex, const double& dX, const double& dY);
+    bool UpdateHorJD(const int& nIndex, const double& dX, const double& dY);
     
     /// 导出指定里程范围内平曲线数据
     /// - Parameters:

@@ -71,7 +71,7 @@ public:
     ///   - nIndex: 交点索引
     ///   - dX: X坐标
     ///   - dY: Y坐标
-    bool UpdateJD(const uint32_t& nIndex, const double& dX, const double& dY);
+    bool UpdateJD(const int& nIndex, const double& dX, const double& dY);
     
     /// 导出指定里程范围内平曲线数据
     /// - Parameters:

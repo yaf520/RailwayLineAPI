@@ -81,7 +81,7 @@ void RailwayAPI::GetDesignHeight(double dCml, double& dHZ, double& dFyj)
     m_pVerCurve->TrsCmlToHeight(dCml, dHZ, dFyj);
 }
 
-bool RailwayAPI::UpdateHorJD(uint32_t nIndex, const double& dX, const double& dY)
+bool RailwayAPI::UpdateHorJD(const int& nIndex, const double& dX, const double& dY)
 {
     return m_pHorCurve->UpdateJD(nIndex, dX, dY);
 }
