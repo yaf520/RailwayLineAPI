@@ -1,13 +1,12 @@
 //
 //  BaseCalFun.cpp
-//  icon_dg
 //
 //  Created by 易傲飞 on 2023/10/27.
 //
 
-#include "BaseCalFun.hpp"
 #include <stdio.h>
 #include <string.h>
+#include "BaseCalFun.hpp"
 
 double BaseCalFun::CalAngleX(Point2d posStart, Point2d posEnd)
 {

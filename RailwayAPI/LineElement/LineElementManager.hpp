@@ -14,11 +14,19 @@
 #include "ArcElement.hpp"
 #include "BaseStruct.hpp"
 
+
+/// 曲线类型
+enum class CurveType
+{
+    HorizontalCurve = 0,        //平曲线
+    VerticalCurve               //竖曲线
+};
+
 /// 线元管理类
 class LineElementManager
 {
 public:
-    LineElementManager();
+    LineElementManager(CurveType eType);
     
     virtual ~LineElementManager();
     
@@ -31,6 +39,8 @@ protected:
     tagJDInfo* m_arrJD;
     //交点数目
     uint32_t m_nJDCount;
+    ///曲线类别
+    CurveType m_eCurvetype;
     
 private:
     /// 切线长度

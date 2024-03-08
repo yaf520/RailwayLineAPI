@@ -1,13 +1,12 @@
 //
 //  StraightLineElement.cpp
-//  icon_dg
 //
 //  Created by 易傲飞 on 2023/10/27.
 //
 
+#include <cassert>
 #include "StraightLineElement.hpp"
 #include "BaseCalFun.hpp"
-#include <cassert>
 
 bool StraightLineElement::TrsCmlDistToNE(const double& dCml, const double& dDist, double& dX, double& dY, double& dAngle)
 {
@@ -69,6 +68,11 @@ tagExportLineElement* StraightLineElement::ExportHorCurve(double dStartCml, doub
     TrsCmlDistToNE(dEndCml, dDist, pRet->pArrPos[1].dX, pRet->pArrPos[1].dY, dAngle);
     
     return pRet;
+}
+
+tagExportLineElement* StraightLineElement::ExportVerCurve(double dStartCml, double dEndCml, double dArcStep, double dScaleX, double dScaleY)
+{
+    return nullptr;
 }
 
 Point2d StraightLineElement::TrsCmlToNE_Relative(const double& dCml)

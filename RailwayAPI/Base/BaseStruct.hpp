@@ -1,6 +1,5 @@
 //
 //  ElementInfo.hpp
-//  icon_dg
 //
 //  Created by 易傲飞 on 2023/10/20.
 //
@@ -67,7 +66,7 @@ struct tagSlopeInfo
 };
 
 //线元类型
-enum ElementType
+enum class ElementType
 {
     Line = 0,               //直线
     Arc,                    //圆弧

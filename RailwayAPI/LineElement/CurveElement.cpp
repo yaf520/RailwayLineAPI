@@ -4,9 +4,9 @@
 //  Created by 易傲飞 on 2023/10/27.
 //
 
+#include <cassert>
 #include "CurveElement.hpp"
 #include "BaseCalFun.hpp"
-#include <cassert>
 
 bool CurveElement::TrsCmlDistToNE(const double& dCml, const double& dDist, double& dX, double& dY, double& dAngle)
 {

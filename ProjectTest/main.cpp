@@ -606,7 +606,7 @@ int main(int argc, const char * argv[]) {
     char buffer[200] = {0};
     char strErr[64] = {0};
     
-    dDist = -1.5839;
+    dDist = 1.5839;
     double dTotalLen = pAPI->GetLength();
     for (dCml = 0; dCml <= dTotalLen; dCml += 1.3958)
     {

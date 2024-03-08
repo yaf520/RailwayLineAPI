@@ -1,6 +1,5 @@
 //
 //  BaseLineElement.hpp
-//  icon_dg
 //
 //  Created by 易傲飞 on 2023/10/27.
 //
@@ -40,14 +39,17 @@ public:
     ///里程->高程+俯仰角
     virtual bool TrsCmlToHeight(const double& dCml, double& dHeight, double& dFyj) = 0;
     
-    //导出平曲线范围里程内的线元数据
+    ///导出平曲线范围里程内的线元数据
     virtual tagExportLineElement* ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep) = 0;
     
+    ///导出竖曲线范围里程内的线元数据
+    virtual tagExportLineElement* ExportVerCurve(double dStartCml, double dEndCml, double dArcStep, double dScaleX, double dScaleY) = 0;
+    
 protected:
-    //相对里程->相对坐标
+    ///相对里程->相对坐标
     virtual Point2d TrsCmlToNE_Relative(const double& dCml) = 0;
     
-    //相对里程->相对角度
+    ///相对里程->相对角度
     virtual double TrsCmlToAngle_Relative(const double& dCml) = 0;
 };
 

@@ -1,6 +1,5 @@
 //
 //  StraightLineElement.hpp
-//  icon_dg
 //
 //  Created by 易傲飞 on 2023/10/27.
 //
@@ -24,6 +23,8 @@ public:
     bool TrsCmlToHeight(const double& dCml, double& dHeight, double& dFyj) override;
     
     tagExportLineElement* ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep) override;
+    
+    tagExportLineElement* ExportVerCurve(double dStartCml, double dEndCml, double dArcStep, double dScaleX, double dScaleY) override;
     
 protected:
     //相对里程->相对坐标

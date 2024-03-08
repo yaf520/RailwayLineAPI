@@ -7,6 +7,12 @@
 
 #include "VerticalCurve.hpp"
 
+VerticalCurve::VerticalCurve(HorizontalCurve* pHorizontal)
+    : LineElementManager(CurveType::VerticalCurve)
+{
+    m_pHorizontalCurve = pHorizontal;
+}
+
 void VerticalCurve::SetSlopeData(const tagSlopeInfo* pSlopeInfo, uint32_t iSlopeCount)
 {
     if (m_pHorizontalCurve == nullptr)

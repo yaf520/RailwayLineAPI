@@ -14,8 +14,8 @@
             filePath = "RailwayAPI/Curve/HorizontalCurve.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "395"
-            endingLineNumber = "395"
+            startingLineNumber = "396"
+            endingLineNumber = "396"
             landmarkName = "HorizontalCurve::TrsCkmlToCml(ckml, cml, strErr)"
             landmarkType = "7">
          </BreakpointContent>
@@ -46,9 +46,9 @@
             filePath = "RailwayAPI/LineElement/LineElementManager.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "117"
-            endingLineNumber = "117"
-            landmarkName = "LineElementManager::SetJDData(pJDInfo, iCount)"
+            startingLineNumber = "118"
+            endingLineNumber = "118"
+            landmarkName = "LineElementManager::SetJDData(pJDInfo, nCount)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

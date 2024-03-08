@@ -7,12 +7,13 @@
 #include "LineElementManager.hpp"
 #include "BaseCalFun.hpp"
 
-LineElementManager::LineElementManager()
+LineElementManager::LineElementManager(CurveType eType)
 {
     m_arrLineElement = nullptr;
     m_nElementCount = 0;
     m_arrJD = nullptr;
     m_nJDCount = 0;
+    m_eCurvetype = eType;
 }
 
 LineElementManager::~LineElementManager()
@@ -67,15 +68,15 @@ void LineElementManager::ResetData()
 }
 
 ///设置数据
-void LineElementManager::SetJDData(const tagJDInfo* pJDInfo, uint32_t iCount)
+void LineElementManager::SetJDData(const tagJDInfo* pJDInfo, uint32_t nCount)
 {
-    if (!pJDInfo || iCount < 2) return;
+    if (!pJDInfo || nCount < 2) return;
     
     //重置数据
     ResetData();
     
     Point2d posJD1, posJD2;
-    if (iCount == 2)
+    if (nCount == 2)
     {
         m_arrLineElement = new BaseLineElement*[1];
         
@@ -99,19 +100,19 @@ void LineElementManager::SetJDData(const tagJDInfo* pJDInfo, uint32_t iCount)
     }
     
     //最大线元数量
-    uint32_t nMaxCount = iCount * 4 - 7;
+    uint32_t nMaxCount = ((m_eCurvetype == CurveType::HorizontalCurve) ? (nCount * 4 - 7) : (nCount * 2 - 3));
     //m_arrLineElement = (BaseLineElement**)new uint64_t[maxCount];
     BaseLineElement** arrLineElement = new BaseLineElement*[nMaxCount];
     
     //保存交点
-    m_nJDCount = iCount;
+    m_nJDCount = nCount;
     m_arrJD = new tagJDInfo[m_nJDCount];
     memcpy(m_arrJD, pJDInfo, sizeof(tagJDInfo) * m_nJDCount);
     
     //变量定义
     double dCurrentCml = 0.0;
     Point2d posJD3, posZH, posHY, posYH, posHZ;
-    for (uint32_t i = 0; i + 2 < iCount; i++)
+    for (uint32_t i = 0; i + 2 < nCount; i++)
     {
         //交点坐标
         posJD1.Set((m_arrJD + i)->dX, (m_arrJD + i)->dY);
@@ -241,7 +242,7 @@ void LineElementManager::SetJDData(const tagJDInfo* pJDInfo, uint32_t iCount)
         arrLineElement[m_nElementCount++] = pLineElement;
         
         //最后一段
-        if (i + 2 == iCount - 1)
+        if (i + 2 == nCount - 1)
             (m_arrJD + i + 2)->nBelongTo = pLineElement->m_nIndex;
     }
     

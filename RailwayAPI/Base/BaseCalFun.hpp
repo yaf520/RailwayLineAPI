@@ -1,6 +1,5 @@
 //
 //  BaseCalFun.hpp
-//  icon_dg
 //
 //  Created by 易傲飞 on 2023/10/27.
 //

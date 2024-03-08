@@ -5,12 +5,13 @@
 //  Created by 易傲飞 on 2023/11/6.
 //
 
-#include "HorizontalCurve.hpp"
 #include <assert.h>
 #include <stdio.h>
 #include <ctype.h>
+#include "HorizontalCurve.hpp"
 
 HorizontalCurve::HorizontalCurve()
+    : LineElementManager(CurveType::HorizontalCurve)
 {
     m_pDLArr = nullptr;
     m_nDLCount = 0;
