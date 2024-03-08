@@ -14,17 +14,17 @@ double BaseCalFun::CalAngleX(Point2d posStart, Point2d posEnd)
     double dDeltaX = posEnd.x - posStart.x;
     double dDeltaY = posEnd.y - posStart.y;
     if (abs(dDeltaX) < dCalPrecision)
-        return (dDeltaY > 0.0 ? MATH_PI_2 : MATH_PI * 1.5);
+        return (dDeltaY >= 0.0 ? MATH_PI_2 : MATH_PI * 1.5);
     
     double dAngle = atan(dDeltaY / dDeltaX);
-    if (dDeltaY > 0.0)
+    if (dDeltaY >= 0.0)
     {
-        if (dAngle < 0.0)
+        if (dDeltaX < -dCalPrecision)
             dAngle += MATH_PI;
     }
     else
     {
-        if (dAngle > 0.0)
+        if (dDeltaX < -dCalPrecision)
             dAngle += MATH_PI;
         else
             dAngle += MATH_PI * 2.0;

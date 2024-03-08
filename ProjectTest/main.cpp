@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <assert.h>
+#include <vector>
 #include "RailwayAPI.hpp"
 
 using namespace std;
@@ -605,7 +606,7 @@ int main(int argc, const char * argv[]) {
     char buffer[200] = {0};
     char strErr[64] = {0};
     
-    dDist = 0.0;
+    dDist = -1.5839;
     double dTotalLen = pAPI->GetLength();
     for (dCml = 0; dCml <= dTotalLen; dCml += 1.3958)
     {
@@ -619,7 +620,7 @@ int main(int argc, const char * argv[]) {
         pAPI->TrsNEToCmlDist(dY, dX, dCmlTemp, dDistTemp, dAngleTemp);
         snprintf(buffer, sizeof(buffer), "dX: %0.5f, dY: %0.5f =====> dCml: %0.5f, dDist: %0.5f, dAngle: %0.5f", dX, dY, dCmlTemp, dDistTemp, dAngleTemp);
         cout << buffer << endl;
-        assert(abs(dCml - dCmlTemp) < 0.00001);
+        assert(abs(dCml - dCmlTemp) < 0.000001);
         
         pAPI->TrsCmltoCkml(dCml, buffer);
         cout << "Ckml: " << buffer << endl;
