@@ -36,8 +36,8 @@ bool StraightLineElement::TrsNEToCmlDist(const double& dX, const double& dY, dou
     Point2d posBase(dX, dY);
     Point2d posPrj = BaseCalFun::PointToLineProjection(posBase, m_posStart, m_posEnd, dPecent);
     
-    assert(dPecent >= 0.0 && dPecent <= 1.0);
-    if (dPecent < 0.0 || dPecent > 1.0) return false;
+    assert(dPecent >= -dCalPrecision_1 && dPecent <= 1.0 + dCalPrecision_1);
+    if (dPecent < -dCalPrecision_1 || dPecent > 1.0 + dCalPrecision_1) return false;
     
     dAngle = m_dStartTanAngle;
     dCml = m_dStartCml + posPrj.distanceTo(m_posStart);

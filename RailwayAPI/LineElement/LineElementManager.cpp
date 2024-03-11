@@ -202,7 +202,7 @@ void LineElementManager::SetJDData(const tagJDInfo* pJDInfo, uint32_t nCount)
             pArcElement->m_eElementType = ElementType::Arc;
             pArcElement->m_dArcR = dArcR;
             pArcElement->m_dStartCml = dCurrentCml;
-            pArcElement->m_dTotalLen = dArcR * (abs(dTurnAngle) - dFrontCurveAngle - dBackCurveAngle);
+            pArcElement->m_dTotalLen = dArcR * abs(abs(dTurnAngle) - dFrontCurveAngle - dBackCurveAngle);
             pArcElement->m_bTurnLeft = bTurnLeft;
             pArcElement->m_nIndex = m_nElementCount;
             arrLineElement[m_nElementCount++] = pArcElement;
@@ -363,7 +363,7 @@ bool LineElementManager::UpdateJD(const int& nIndex, const double& dX, const dou
             pArcElement->m_dStartTanAngle = dAngle_JD1_JD2 + (bTurnLeft ? dFrontCurveAngle : -dFrontCurveAngle);
             pArcElement->m_dArcR = dArcR;
             pArcElement->m_dStartCml = dCurrentCml;
-            pArcElement->m_dTotalLen = dArcR * (abs(abs(dTurnAngle) - dFrontCurveAngle - dBackCurveAngle));
+            pArcElement->m_dTotalLen = dArcR * abs(abs(dTurnAngle) - dFrontCurveAngle - dBackCurveAngle);
             pArcElement->m_bTurnLeft = bTurnLeft;
             dCurrentCml += pArcElement->m_dTotalLen;
             

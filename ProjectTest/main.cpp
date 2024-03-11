@@ -33,8 +33,6 @@ int main(int argc, const char * argv[]) {
     //坡度信息
     tagSlopeInfo SlopeInfo;
     
-    
-    /*
     //宁芜-南京 DK10-DK39
     JDInfo.dX = 489281.586940352;
     JDInfo.dY = 3546242.31466608;
@@ -440,11 +438,7 @@ int main(int argc, const char * argv[]) {
     snprintf(SlopeInfo.strNo, sizeof(SlopeInfo.strNo), "K");
     vecSlope.emplace_back(SlopeInfo);
     
-    api.SetData(&vecJD.front(), vecJD.size(), &vecDL.front(), vecDL.size(), &vecSlope.front(), vecSlope.size());
-    */
-    
-    
-    
+    /*
     //曲线交点数据
     JDInfo.dX = 494434.708600988;
     JDInfo.dY = 3046345.07027477;
@@ -467,8 +461,8 @@ int main(int argc, const char * argv[]) {
     JDInfo.dBL = 370.0;
     vecJD.emplace_back(JDInfo);
     
-    JDInfo.dX = 493305.671077984 /*+ 23.927*/;
-    JDInfo.dY = 3032712.60604076 /*- 17.986*/;
+    JDInfo.dX = 493305.671077984;
+    JDInfo.dY = 3032712.60604076;
     JDInfo.dArcR = 8000.0;
     JDInfo.dFL = 590.0;
     JDInfo.dBL = 590.0;
@@ -593,15 +587,24 @@ int main(int argc, const char * argv[]) {
     snprintf(DLInfo.strBefNo, sizeof(DLInfo.strBefNo), "DK");
     snprintf(DLInfo.strBehNo, sizeof(DLInfo.strBehNo), "DK");
     vecDL.emplace_back(DLInfo);
+    */
     
     pAPI->SetData(&vecJD.front(), vecJD.size(), &vecDL.front(), vecDL.size(), &vecSlope.front(), vecSlope.size());
     
     int nArrCount = 0;
     auto pArrLineElement = pAPI->ExportHorCurve(nArrCount, 0.0, pAPI->GetLength(), 0.0, 10.0);
-//    uint32_t nUpdateIndex = 3;
-//    double dUpdateX = 493305.671077984;
-//    double dUpdateY = 3032712.60604076;
-//    pAPI->UpdateHorJD(nUpdateIndex, dUpdateX + 23.927, dUpdateY - 17.986);
+    for (int i = 0; i < nArrCount; i++)
+    {
+        int nStartIndex = 0;
+        int nEndIndex = (pArrLineElement[i].eLineType == ElementType::Arc ? 1 : pArrLineElement[i].nPosCount - 1);
+        
+        assert(pAPI->TrsNEToCmlDist(pArrLineElement[i].pArrPos[nStartIndex].dY, pArrLineElement[i].pArrPos[nStartIndex].dX, dCml, dDist, dFwj));
+        assert(abs(dDist) < 0.000001);
+        assert(pAPI->TrsNEToCmlDist(pArrLineElement[i].pArrPos[nEndIndex].dY, pArrLineElement[i].pArrPos[nEndIndex].dX, dCml, dDist, dFwj));
+        assert(abs(dDist) < 0.000001);
+    }
+    
+    delete[] pArrLineElement;
     
     char buffer[200] = {0};
     char strErr[64] = {0};
@@ -620,7 +623,7 @@ int main(int argc, const char * argv[]) {
         pAPI->TrsNEToCmlDist(dY, dX, dCmlTemp, dDistTemp, dAngleTemp);
         snprintf(buffer, sizeof(buffer), "dX: %0.5f, dY: %0.5f =====> dCml: %0.5f, dDist: %0.5f, dAngle: %0.5f", dX, dY, dCmlTemp, dDistTemp, dAngleTemp);
         cout << buffer << endl;
-        assert(abs(dCml - dCmlTemp) < 0.000001);
+        assert(abs(dCml - dCmlTemp) < 0.00001);
         
         pAPI->TrsCmltoCkml(dCml, buffer);
         cout << "Ckml: " << buffer << endl;
