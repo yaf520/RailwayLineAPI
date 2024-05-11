@@ -7,22 +7,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "8E621D3D-90EF-42FF-8BB6-F32548A16654"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "RailwayAPI/Curve/HorizontalCurve.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "396"
-            endingLineNumber = "396"
-            landmarkName = "HorizontalCurve::TrsCkmlToCml(ckml, cml, strErr)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "CC2323B6-6C92-41FF-9ABA-C5F80317BAD0"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -30,8 +14,8 @@
             filePath = "ProjectTest/main.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "609"
-            endingLineNumber = "609"
+            startingLineNumber = "728"
+            endingLineNumber = "728"
             landmarkName = "main(argc, argv)"
             landmarkType = "9">
          </BreakpointContent>
@@ -39,33 +23,34 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "5E8719C3-FFAD-4564-B642-E7F0622BC015"
+            uuid = "63D1D582-7558-42CD-B246-8CF270E9403A"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "RailwayAPI/LineElement/LineElementManager.cpp"
+            filePath = "ProjectTest/main.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "118"
-            endingLineNumber = "118"
-            landmarkName = "LineElementManager::SetJDData(pJDInfo, nCount)"
-            landmarkType = "7">
+            startingLineNumber = "713"
+            endingLineNumber = "713"
+            landmarkName = "main(argc, argv)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "0D6F9BAD-8CD2-48C0-9C2E-CACD4F9EA246"
+            uuid = "103234A3-B2F7-47A7-A1D8-47F4B1F7CE72"
             shouldBeEnabled = "Yes"
+            condition = "dCml &gt; 46632.0"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "RailwayAPI/RailwayAPI.cpp"
+            filePath = "ProjectTest/main.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "52"
-            endingLineNumber = "52"
-            landmarkName = "RailwayAPI::TrsNEToCmlDist(N_Y, E_X, dCml, dDist, dFwj)"
-            landmarkType = "7">
+            startingLineNumber = "735"
+            endingLineNumber = "735"
+            landmarkName = "main(argc, argv)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

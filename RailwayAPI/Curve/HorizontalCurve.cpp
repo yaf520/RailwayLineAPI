@@ -5,13 +5,12 @@
 //  Created by 易傲飞 on 2023/11/6.
 //
 
+#include "HorizontalCurve.hpp"
 #include <assert.h>
 #include <stdio.h>
 #include <ctype.h>
-#include "HorizontalCurve.hpp"
 
 HorizontalCurve::HorizontalCurve()
-    : LineElementManager(CurveType::HorizontalCurve)
 {
     m_pDLArr = nullptr;
     m_nDLCount = 0;
@@ -58,7 +57,7 @@ BaseLineElement* HorizontalCurve::PosBelongTo(Point2d pos)
     {
         Vector2d vec = m_arrLineElement[nMinDisIndex]->m_posStart - m_arrLineElement[m_nElementCount - 1]->m_posEnd;
         if (vec.model() < 0.0001 &&
-            abs(m_arrLineElement[nMinDisIndex]->m_dStartTanAngle - m_arrLineElement[m_nElementCount - 1]->m_dStartTanAngle) < dCalPrecision)
+            abs(m_arrLineElement[nMinDisIndex]->m_dStartTanAngle - m_arrLineElement[m_nElementCount - 1]->m_dStartTanAngle) < s_dCalPrecision)
             return m_arrLineElement[m_nElementCount - 1];
         
         return nullptr;
@@ -337,6 +336,40 @@ bool HorizontalCurve::TrsNEToCmlDist(const double& dX, const double& dY, double&
     BaseLineElement* pLineElement = PosBelongTo(Point2d(dX, dY));
     if (!pLineElement) return false;
     return pLineElement->TrsNEToCmlDist(dX, dY, dCml, dDist, dAngle);
+}
+
+tagCmlDistAngle* HorizontalCurve::TrsNEToCmlDist(const double& dX, const double& dY, uint32_t& nArrCount)
+{
+    nArrCount = 0;
+    tagCmlDistAngle* pArrRet = nullptr;
+    
+    for (uint32_t nIndex = 0; nIndex < m_nElementCount; nIndex++)
+    {
+        double dCml = 0.0, dDist = 0.0, dAngle = 0.0;
+        if (m_arrLineElement[nIndex]->TrsNEToCmlDist(dX, dY, dCml, dDist, dAngle))
+        {
+            if (!pArrRet)
+                pArrRet = new tagCmlDistAngle[m_nElementCount];
+            
+            pArrRet[nArrCount].dCml = dCml;
+            pArrRet[nArrCount].dDist = -dDist;
+            
+            double dAngleTmp = MATH_PI / 2.0 - dAngle;
+            BaseCalFun::KeepAngleIn2PI(dAngleTmp);
+            pArrRet[nArrCount++].dFwj = dAngleTmp;
+        }
+    }
+    
+    //调整内存大小
+    if (pArrRet && nArrCount < m_nElementCount)
+    {
+        tagCmlDistAngle* pTmp = new tagCmlDistAngle[nArrCount];
+        memcpy(pTmp, pArrRet, sizeof(tagCmlDistAngle) * nArrCount);
+        delete [] pArrRet;
+        pArrRet = pTmp;
+    }
+    
+    return pArrRet;
 }
 
 double HorizontalCurve::GetLength()

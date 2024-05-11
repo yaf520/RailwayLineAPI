@@ -42,6 +42,8 @@ public:
     bool TrsCmlDistToNE(const double& dCml, const double& dDist, double& dX, double& dY, double& dAngle);
     ///坐标计算投影点里程+投影距离+切线角
     bool TrsNEToCmlDist(const double& dX, const double& dY, double& dCml, double& dDist, double& dAngle);
+    ///坐标计算投影点里程+投影距离+切线角集合
+    tagCmlDistAngle* TrsNEToCmlDist(const double& dX, const double& dY, uint32_t& nArrCount);
     ///获取线路长度
     double GetLength();
     ///连续里程->现场里程

@@ -12,18 +12,18 @@ double BaseCalFun::CalAngleX(Point2d posStart, Point2d posEnd)
 {
     double dDeltaX = posEnd.x - posStart.x;
     double dDeltaY = posEnd.y - posStart.y;
-    if (abs(dDeltaX) < dCalPrecision)
+    if (abs(dDeltaX) < s_dCalPrecision)
         return (dDeltaY >= 0.0 ? MATH_PI_2 : MATH_PI * 1.5);
     
     double dAngle = atan(dDeltaY / dDeltaX);
     if (dDeltaY >= 0.0)
     {
-        if (dDeltaX < -dCalPrecision)
+        if (dDeltaX < -s_dCalPrecision)
             dAngle += MATH_PI;
     }
     else
     {
-        if (dDeltaX < -dCalPrecision)
+        if (dDeltaX < -s_dCalPrecision)
             dAngle += MATH_PI;
         else
             dAngle += MATH_PI * 2.0;
@@ -59,6 +59,23 @@ double BaseCalFun::CalTurnAngle(Point2d p1, Point2d p2, Point2d p3)
     return (dCrossAO_OB > 0.0 ? dTurnAngle : -dTurnAngle);
 }
 
+double BaseCalFun::CalTurnAngle(Point2d p1, Point2d p2, Point2d p3, Point2d p4)
+{
+    Vector2d vecAO = p2 - p1;
+    Vector2d vecOB = p4 - p3;
+    
+    double dModelAO = vecAO.model();
+    double dModelOB = vecOB.model();
+    double dDotAO_OB = vecAO.dot(vecOB);
+    double dValue = dDotAO_OB /  (dModelAO * dModelOB);
+    //限制范围
+    dValue = __max(dValue, -1.0);
+    dValue = __min(dValue, 1.0);
+    double dTurnAngle = acos(dValue);
+    double dCrossAO_OB = vecAO.cross(vecOB);
+    return (dCrossAO_OB > 0.0 ? dTurnAngle : -dTurnAngle);
+}
+
 Point2d BaseCalFun::TransferPos(Point2d posBase, Point2d posTransfer, bool bTurnDir, double dAngle)
 {
     if (!bTurnDir)
@@ -80,6 +97,17 @@ Point2d BaseCalFun::TransferPosReversal(Point2d posBase, Point2d posTransfer, bo
         posRet.y *= -1.0;
     
     return posRet;
+}
+
+Point2d BaseCalFun::TransferBasePos(Point2d posTarget, Point2d posRelative, bool bTurnDir, double dAngle)
+{
+    if (!bTurnDir)
+        posRelative.y *= -1.0;
+    
+    Point2d vecOffset(cos(dAngle) * posRelative.x + sin(dAngle) * posRelative.y,
+                  -sin(dAngle) * posRelative.x + cos(dAngle) * posRelative.y);
+    
+    return posTarget - vecOffset;
 }
 
 //角度转换
@@ -265,4 +293,24 @@ int BaseCalFun::CalDecimalDigits(double dValue)
     }
     
     return i;
+}
+
+uint32_t BaseCalFun::Factorial(uint32_t n)
+{
+    if (n == 0 || n == 1)
+        return 1;
+    
+    uint32_t nResult = 1;
+    for (int m = 1; m <= n; m++)
+        nResult *= m;
+    
+    return nResult;
+    
+    /*
+    //避免使用递归
+    if (i == 0 || i == 1)
+        return 1;
+    else
+        return i * Factorial(i - 1);
+     */
 }

@@ -29,7 +29,7 @@ RailwayAPI::~RailwayAPI()
 
 void RailwayAPI::SetData(const tagJDInfo* pJDInfo, uint32_t jdCount, const tagDLInfo* pDLCount, uint32_t dlCount, const tagSlopeInfo* pSlopeInfo, uint32_t slopeCount)
 {
-    m_pHorCurve->SetJDData(pJDInfo, jdCount);
+    m_pHorCurve->SetJDData_Highway(pJDInfo, jdCount);
     m_pHorCurve->SetDLData(pDLCount, dlCount);
     m_pVerCurve->SetSlopeData(pSlopeInfo, slopeCount);
 }
@@ -60,6 +60,11 @@ bool RailwayAPI::TrsNEToCmlDist(const double& N_Y, const double& E_X, double& dC
     return true;
 }
 
+tagCmlDistAngle* RailwayAPI::TrsNEToCmlDist(const double& N_Y, const double& E_X, uint32_t& nCount)
+{
+    return m_pHorCurve->TrsNEToCmlDist(E_X, N_Y, nCount);
+}
+
 double RailwayAPI::GetLength()
 {
     return m_pHorCurve->GetLength();
@@ -79,11 +84,6 @@ bool RailwayAPI::TrsCkmlToCml(char ckml[64], double& cml, char strErr[64])
 void RailwayAPI::GetDesignHeight(double dCml, double& dHZ, double& dFyj)
 {
     m_pVerCurve->TrsCmlToHeight(dCml, dHZ, dFyj);
-}
-
-bool RailwayAPI::UpdateHorJD(const int& nIndex, const double& dX, const double& dY)
-{
-    return m_pHorCurve->UpdateJD(nIndex, dX, dY);
 }
 
 tagExportLineElement* RailwayAPI::ExportHorCurve(int& nArrCount, double dStartCml, double dEndCml, double dDist, double dCurveStep)

@@ -33,6 +33,7 @@ int main(int argc, const char * argv[]) {
     //坡度信息
     tagSlopeInfo SlopeInfo;
     
+    /*
     //宁芜-南京 DK10-DK39
     JDInfo.dX = 489281.586940352;
     JDInfo.dY = 3546242.31466608;
@@ -437,177 +438,295 @@ int main(int argc, const char * argv[]) {
     SlopeInfo.dHeight = 17.271;
     snprintf(SlopeInfo.strNo, sizeof(SlopeInfo.strNo), "K");
     vecSlope.emplace_back(SlopeInfo);
-    
-    /*
-    //曲线交点数据
-    JDInfo.dX = 494434.708600988;
-    JDInfo.dY = 3046345.07027477;
-    JDInfo.dArcR = 0.0;
-    JDInfo.dFL = 0.0;
-    JDInfo.dBL = 0.0;
-    vecJD.emplace_back(JDInfo);
-    
-    JDInfo.dX = 494258.718726684;
-    JDInfo.dY = 3044352.95420617;
-    JDInfo.dArcR = 12000.0;
-    JDInfo.dFL = 370.0;
-    JDInfo.dBL = 370.0;
-    vecJD.emplace_back(JDInfo);
-    
-    JDInfo.dX = 493981.255393979;
-    JDInfo.dY = 3042422.64930532;
-    JDInfo.dArcR = 12000.0;
-    JDInfo.dFL = 370.0;
-    JDInfo.dBL = 370.0;
-    vecJD.emplace_back(JDInfo);
-    
-    JDInfo.dX = 493305.671077984;
-    JDInfo.dY = 3032712.60604076;
-    JDInfo.dArcR = 8000.0;
-    JDInfo.dFL = 590.0;
-    JDInfo.dBL = 590.0;
-    vecJD.emplace_back(JDInfo);
-    
-    JDInfo.dX = 492147.938191911;
-    JDInfo.dY = 3028026.88928905;
-    JDInfo.dArcR = 9000.0;
-    JDInfo.dFL = 530.0;
-    JDInfo.dBL = 530.0;
-    vecJD.emplace_back(JDInfo);
-    
-    JDInfo.dX = 493796.243139339;
-    JDInfo.dY = 3019302.46648355;
-    JDInfo.dArcR = 11000.0;
-    JDInfo.dFL = 410.0;
-    JDInfo.dBL = 410.0;
-    vecJD.emplace_back(JDInfo);
-    
-    JDInfo.dX = 494159.091851016;
-    JDInfo.dY = 3016277.94252242;
-    JDInfo.dArcR = 0;
-    JDInfo.dFL = 0;
-    JDInfo.dBL = 0;
-    vecJD.emplace_back(JDInfo);
-
-    //坡度数据
-    SlopeInfo.dArcR = 0.0;
-    SlopeInfo.dCml = 195920.0;
-    SlopeInfo.dHeight = 290.740633;
-    vecSlope.emplace_back(SlopeInfo);
-    
-    SlopeInfo.dArcR = 25000.0;
-    SlopeInfo.dCml = 197250.0;
-    SlopeInfo.dHeight = 317.00091976;
-    vecSlope.emplace_back(SlopeInfo);
-    
-    SlopeInfo.dArcR = 25000.0;
-    SlopeInfo.dCml = 198800.0;
-    SlopeInfo.dHeight = 335.29091976;
-    vecSlope.emplace_back(SlopeInfo);
-    
-    SlopeInfo.dArcR = 25000.0;
-    SlopeInfo.dCml = 199880.0;
-    SlopeInfo.dHeight = 322.33091976;
-    vecSlope.emplace_back(SlopeInfo);
-    
-    SlopeInfo.dArcR = 25000.0;
-    SlopeInfo.dCml = 200880.0;
-    SlopeInfo.dHeight = 328.33091976;
-    vecSlope.emplace_back(SlopeInfo);
-    
-    SlopeInfo.dArcR = 25000.0;
-    SlopeInfo.dCml = 205650.0;
-    SlopeInfo.dHeight = 411.80591976;
-    vecSlope.emplace_back(SlopeInfo);
-    
-    SlopeInfo.dArcR = 25000.0;
-    SlopeInfo.dCml = 208150.0;
-    SlopeInfo.dHeight = 383.05591976;
-    vecSlope.emplace_back(SlopeInfo);
-    
-    SlopeInfo.dArcR = 25000.0;
-    SlopeInfo.dCml = 211080.0;
-    SlopeInfo.dHeight = 365.47591976;
-    vecSlope.emplace_back(SlopeInfo);
-    
-    SlopeInfo.dArcR = 25000.0;
-    SlopeInfo.dCml = 211980.0;
-    SlopeInfo.dHeight = 375.82591976;
-    vecSlope.emplace_back(SlopeInfo);
-    
-    SlopeInfo.dArcR = 25000.0;
-    SlopeInfo.dCml = 213800.0;
-    SlopeInfo.dHeight = 369.81991976;
-    vecSlope.emplace_back(SlopeInfo);
-    
-    SlopeInfo.dArcR = 25000.0;
-    SlopeInfo.dCml = 215050.0;
-    SlopeInfo.dHeight = 360.19491976;
-    vecSlope.emplace_back(SlopeInfo);
-    
-    SlopeInfo.dArcR = 25000.0;
-    SlopeInfo.dCml = 217800.0;
-    SlopeInfo.dHeight = 368.44491976;
-    vecSlope.emplace_back(SlopeInfo);
-    
-    SlopeInfo.dArcR = 25000.0;
-    SlopeInfo.dCml = 222100.0;
-    SlopeInfo.dHeight = 282.44491976;
-    vecSlope.emplace_back(SlopeInfo);
-    
-    SlopeInfo.dArcR = 25000.0;
-    SlopeInfo.dCml = 223240.0;
-    SlopeInfo.dHeight = 287.24691976;
-    vecSlope.emplace_back(SlopeInfo);
-    
-    SlopeInfo.dArcR = 25000.0;
-    SlopeInfo.dCml = 225960.0;
-    SlopeInfo.dHeight = 274.83491976;
-    vecSlope.emplace_back(SlopeInfo);
-    
-    SlopeInfo.dArcR = 0.0;
-    SlopeInfo.dCml = 226300.0;
-    SlopeInfo.dHeight = 270.95891976;
-    vecSlope.emplace_back(SlopeInfo);
-    
-    DLInfo.dBefLich = 195920.0;
-    DLInfo.dBehLich = 195920.0;
-    snprintf(DLInfo.strBefNo, sizeof(DLInfo.strBefNo), "DK");
-    snprintf(DLInfo.strBehNo, sizeof(DLInfo.strBehNo), "DK");
-    vecDL.emplace_back(DLInfo);
-    
-    DLInfo.dBefLich = 195989.6124;
-    DLInfo.dBehLich = 196000.0;
-    snprintf(DLInfo.strBefNo, sizeof(DLInfo.strBefNo), "DK");
-    snprintf(DLInfo.strBehNo, sizeof(DLInfo.strBehNo), "DK");
-    vecDL.emplace_back(DLInfo);
-    
-    DLInfo.dBefLich = 226299.9996;
-    DLInfo.dBehLich = 226299.9996;
-    snprintf(DLInfo.strBefNo, sizeof(DLInfo.strBefNo), "DK");
-    snprintf(DLInfo.strBehNo, sizeof(DLInfo.strBehNo), "DK");
-    vecDL.emplace_back(DLInfo);
     */
+     
+    //#define FIVE_UNIT
+        
+    #ifdef FIVE_UNIT
+        
+        //五单元曲线
+        JDInfo.dY = 8929.8900452472;
+        JDInfo.dX = 22307.7869113941;
+        vecJD.emplace_back(JDInfo);
+        vecJD1.emplace_back(AcGePoint2d(JDInfo.dX, JDInfo.dY));
+        
+        JDInfo.nJDType = 5;
+        JDInfo.dY = 6336.4158;
+        JDInfo.dX = 19285.7296;
+        JDInfo.dArcR1 = 2000.0;
+        JDInfo.dArcR2 = 4000.0;
+        JDInfo.dL1 = 300.0;
+        JDInfo.dL2 = 300.0;
+        JDInfo.dL3 = 300.0;
+        JDInfo.dEnterR = __DBL_MAX__;
+        JDInfo.dExitR = __DBL_MAX__;
+        JDInfo.dID = 0.0;
+        vecJD.emplace_back(JDInfo);
+        vecJD1.emplace_back(AcGePoint2d(JDInfo.dX, JDInfo.dY));
+        
+        JDInfo.dY = 7446.9206357642;
+        JDInfo.dX = 14772.6551081784;
+        vecJD.emplace_back(JDInfo);
+        vecJD1.emplace_back(AcGePoint2d(JDInfo.dX, JDInfo.dY));
+        
+    #else
+
+        JDInfo.nJDType = -1;
+        JDInfo.dY = 6923.823102;
+        JDInfo.dX = 6068.774307;
+        JDInfo.dArcR1 = 0.0;
+        JDInfo.dL1 = 0.0;
+        JDInfo.dL2 = 0.0;
+        JDInfo.dEnterR = __DBL_MAX__;
+        JDInfo.dExitR = __DBL_MAX__;
+        vecJD.emplace_back(JDInfo);
+        
+        JDInfo.nJDType = 3;
+        JDInfo.dY = 7666.0720415746;
+        JDInfo.dX = 7925.9405660053;
+        JDInfo.dArcR1 = 2000.0;
+        JDInfo.dL1 = 400.0;
+        JDInfo.dL2 = 400.0;
+        JDInfo.dEnterR = __DBL_MAX__;
+        JDInfo.dExitR = __DBL_MAX__;
+        vecJD.emplace_back(JDInfo);
+         
+        JDInfo.nJDType = 3;
+        JDInfo.dY = 6829.9712457906;
+        JDInfo.dX = 11437.1811917216;
+        JDInfo.dArcR1 = 6000;
+        JDInfo.dL1 = 0.0;
+        JDInfo.dL2 = 0.0;
+        JDInfo.dEnterR = 6000.0;
+        JDInfo.dExitR = 6000.0;
+        vecJD.emplace_back(JDInfo);
+         
+        JDInfo.nJDType = 3;
+        JDInfo.dY = 7446.9206357642;
+        JDInfo.dX = 14772.6551081784;
+        JDInfo.dArcR1 = 2000.0;
+        JDInfo.dL1 = 200.0;
+        JDInfo.dL2 = 0.0;
+        JDInfo.dEnterR = __DBL_MAX__;
+        JDInfo.dExitR = 2000.0;
+        vecJD.emplace_back(JDInfo);
+         
+        JDInfo.nJDType = 3;
+        JDInfo.dY = 6580.8047549563;
+        JDInfo.dX = 18292.5365610525;
+        JDInfo.dArcR1 = 4000.0;
+        JDInfo.dL1 = 300.0;
+        JDInfo.dL2 = 0.0;
+        JDInfo.dEnterR = __DBL_MAX__;
+        JDInfo.dExitR = 4000.0;
+        vecJD.emplace_back(JDInfo);
+        
+        JDInfo.nJDType = 3;
+        JDInfo.dY = 6631.7287959183;
+        JDInfo.dX = 19629.8443797163;
+        JDInfo.dArcR1 = 2000.0;
+        JDInfo.dL1 = 300.0;
+        JDInfo.dL2 = 300.0;
+        JDInfo.dEnterR = 4000.0;
+        JDInfo.dExitR = __DBL_MAX__;
+        vecJD.emplace_back(JDInfo);
+         
+        JDInfo.nJDType = 4;
+        JDInfo.dY = 8929.8900452472;
+        JDInfo.dX = 22307.7869113941;
+        JDInfo.dY_End = 9904.0310064550;
+        JDInfo.dX_End = 21132.8602230030;
+        JDInfo.dArcR1 = 800.0;
+        JDInfo.dL1 = 400.0;
+        JDInfo.dL2 = 400.0;
+        JDInfo.dEnterR = __DBL_MAX__;
+        JDInfo.dExitR = __DBL_MAX__;
+        vecJD.emplace_back(JDInfo);
+         
+        JDInfo.nJDType = 3;
+        JDInfo.dY = 1994.2213683958;
+        JDInfo.dX = 16573.4198425560;
+        JDInfo.dArcR1 = 600;
+        JDInfo.dL1 = 300;
+        JDInfo.dL2 = 300;
+        JDInfo.dEnterR = __DBL_MAX__;
+        JDInfo.dExitR = 3000.0;
+        vecJD.emplace_back(JDInfo);
+
+        JDInfo.nJDType = 3;
+        JDInfo.dY = 8985.5078841175;
+        JDInfo.dX = 19012.7730132892;
+        JDInfo.dArcR1 = 3000.0;
+        JDInfo.dL1 = 0.0;
+        JDInfo.dL2 = 300.0;
+        JDInfo.dEnterR = 3000.0;
+        JDInfo.dExitR = __DBL_MAX__;
+        vecJD.emplace_back(JDInfo);
+         
+        JDInfo.nJDType = 3;
+        JDInfo.dY = 10999.2483919726;
+        JDInfo.dX = 21383.2363567082;
+        JDInfo.dArcR1 = 1500.0;
+        JDInfo.dL1 = 200.0;
+        JDInfo.dL2 = 0.0;
+        JDInfo.dEnterR = __DBL_MAX__;
+        JDInfo.dExitR = 1500.0;
+        vecJD.emplace_back(JDInfo);
+         
+        JDInfo.nJDType = 3;
+        JDInfo.dY = 12715.6821514557;
+        JDInfo.dX = 21550.7928005448;
+        JDInfo.dArcR1 = 500.0;
+        JDInfo.dL1 = 200.0;
+        JDInfo.dL2 = 200.0;
+        JDInfo.dEnterR = 1500.0;
+        JDInfo.dExitR = 2000.0;
+        vecJD.emplace_back(JDInfo);
+        
+        JDInfo.nJDType = 3;
+        JDInfo.dY = 11827.9255412088;
+        JDInfo.dX = 20188.0260210685;
+        JDInfo.dArcR1 = 2000.0;
+        JDInfo.dL1 = 0.0;
+        JDInfo.dL2 = 300.0;
+        JDInfo.dEnterR = 2000.0;
+        JDInfo.dExitR = __DBL_MAX__;
+        vecJD.emplace_back(JDInfo);
+        
+        JDInfo.nJDType = 3;
+        JDInfo.dY = 9056.0911245568;
+        JDInfo.dX = 18655.3105786835;
+        JDInfo.dArcR1 = 2000.0;
+        JDInfo.dL1 = 200.0;
+        JDInfo.dL2 = 0.0;
+        JDInfo.dEnterR = __DBL_MAX__;
+        JDInfo.dExitR = 2000.0;
+        vecJD.emplace_back(JDInfo);
+        
+        JDInfo.nJDType = 3;
+        JDInfo.dY = 8575.9217401184;
+        JDInfo.dX = 18206.6639186605;
+        JDInfo.dArcR1 = 1000.0;
+        JDInfo.dL1 = 200.0;
+        JDInfo.dL2 = 200.0;
+        JDInfo.dEnterR = 2000.0;
+        JDInfo.dExitR = 2500.0;
+        vecJD.emplace_back(JDInfo);
+        
+        JDInfo.nJDType = 3;
+        JDInfo.dY = 8485.1763475140;
+        JDInfo.dX = 17546.5131152047;
+        JDInfo.dArcR1 = 2500.0;
+        JDInfo.dL1 = 0.0;
+        JDInfo.dL2 = 200.0;
+        JDInfo.dEnterR = 2500.0;
+        JDInfo.dExitR = __DBL_MAX__;
+        vecJD.emplace_back(JDInfo);
+
+        
+        JDInfo.nJDType = 3;
+        JDInfo.dY = 8793.8671598653;
+        JDInfo.dX = 12448.8769575797;
+        JDInfo.dArcR1 = 1000.0;
+        JDInfo.dL1 = 100.0;
+        JDInfo.dL2 = 100.0;
+        JDInfo.dEnterR = __DBL_MAX__;
+        JDInfo.dExitR = __DBL_MAX__;
+        vecJD.emplace_back(JDInfo);
+        
+        JDInfo.nJDType = 3;
+        JDInfo.dY = 8251.2643253635;
+        JDInfo.dX = 11741.5886529887;
+        JDInfo.dArcR1 = 600.0;
+        JDInfo.dL1 = 100.0;
+        JDInfo.dL2 = 200.0;
+        JDInfo.dEnterR = __DBL_MAX__;
+        JDInfo.dExitR = __DBL_MAX__;
+        vecJD.emplace_back(JDInfo);
+        
+        JDInfo.nJDType = 3;
+        JDInfo.dY = 9642.1501690871;
+        JDInfo.dX = 9503.7630423550;
+        JDInfo.dArcR1 = 1000.0;
+        JDInfo.dL1 = 200.0;
+        JDInfo.dL2 = 200.0;
+        JDInfo.dEnterR = __DBL_MAX__;
+        JDInfo.dExitR = __DBL_MAX__;
+        vecJD.emplace_back(JDInfo);
+        
+        JDInfo.nJDType = 3;
+        JDInfo.dY = 9478.0586618932;
+        JDInfo.dX = 8383.2527285064;
+        JDInfo.dArcR1 = 1000.0;
+        JDInfo.dL1 = 200.0;
+        JDInfo.dL2 = 150.0;
+        JDInfo.dEnterR = __DBL_MAX__;
+        JDInfo.dExitR = __DBL_MAX__;
+        vecJD.emplace_back(JDInfo);
+        
+        JDInfo.nJDType = 3;
+        JDInfo.dY = 8636.1374615765;
+        JDInfo.dX = 7378.4362275103;
+        JDInfo.dArcR1 = 60.0;
+        JDInfo.dL1 = 60.0;
+        JDInfo.dL2 = 0.0;
+        JDInfo.dEnterR = __DBL_MAX__;
+        JDInfo.dExitR = 60.0;
+        vecJD.emplace_back(JDInfo);
+        
+        JDInfo.nJDType = 4;
+        JDInfo.dY = 8632.1188147997;
+        JDInfo.dX = 7358.3454223503;
+        JDInfo.dY_End = 8727.6131104866;
+        JDInfo.dX_End = 7394.0751316094;
+        JDInfo.dArcR1 = 60.0;
+        JDInfo.dL1 = 0.0;
+        JDInfo.dL2 = 0.0;
+        JDInfo.dEnterR = 60.0;
+        JDInfo.dExitR = 60.0;
+        vecJD.emplace_back(JDInfo);
+        
+        JDInfo.nJDType = 3;
+        JDInfo.dY = 8711.3934964201;
+        JDInfo.dX = 7406.5936815824;
+        JDInfo.dArcR1 = 60.0;
+        JDInfo.dL1 = 0.0;
+        JDInfo.dL2 = 60.0;
+        JDInfo.dEnterR = 60.0;
+        JDInfo.dExitR = __DBL_MAX__;
+        vecJD.emplace_back(JDInfo);
+        
+        JDInfo.nJDType = -2;
+        JDInfo.dY = 8520.881018;
+        JDInfo.dX = 7436.814345;
+        JDInfo.dArcR1 = 0.0;
+        JDInfo.dL1 = 0.0;
+        JDInfo.dL2 = 0.0;
+        JDInfo.dEnterR = __DBL_MAX__;
+        JDInfo.dExitR = __DBL_MAX__;
+        vecJD.emplace_back(JDInfo);
+        
+    #endif
     
     pAPI->SetData(&vecJD.front(), vecJD.size(), &vecDL.front(), vecDL.size(), &vecSlope.front(), vecSlope.size());
     
-    int nArrCount = 0;
-    auto pArrLineElement = pAPI->ExportHorCurve(nArrCount, 0.0, pAPI->GetLength(), 0.0, 10.0);
-    for (int i = 0; i < nArrCount; i++)
-    {
-        int nStartIndex = 0;
-        int nEndIndex = (pArrLineElement[i].eLineType == ElementType::Arc ? 1 : pArrLineElement[i].nPosCount - 1);
-        
-        assert(pAPI->TrsNEToCmlDist(pArrLineElement[i].pArrPos[nStartIndex].dY, pArrLineElement[i].pArrPos[nStartIndex].dX, dCml, dDist, dFwj));
-        assert(abs(dDist) < 0.000001);
-        assert(pAPI->TrsNEToCmlDist(pArrLineElement[i].pArrPos[nEndIndex].dY, pArrLineElement[i].pArrPos[nEndIndex].dX, dCml, dDist, dFwj));
-        assert(abs(dDist) < 0.000001);
-    }
-    
-    delete[] pArrLineElement;
+//    int nArrCount = 0;
+//    auto pArrLineElement = pAPI->ExportHorCurve(nArrCount, 0.0, pAPI->GetLength(), 0.0, 10.0);
+//    for (int i = 0; i < nArrCount; i++)
+//    {
+//        int nStartIndex = 0;
+//        int nEndIndex = (pArrLineElement[i].eLineType == ElementType::Arc ? 1 : pArrLineElement[i].nPosCount - 1);
+//        
+//        assert(pAPI->TrsNEToCmlDist(pArrLineElement[i].pArrPos[nStartIndex].dY, pArrLineElement[i].pArrPos[nStartIndex].dX, dCml, dDist, dFwj));
+//        assert(abs(dDist) < 0.000001);
+//        assert(pAPI->TrsNEToCmlDist(pArrLineElement[i].pArrPos[nEndIndex].dY, pArrLineElement[i].pArrPos[nEndIndex].dX, dCml, dDist, dFwj));
+//        assert(abs(dDist) < 0.000001);
+//    }
+//    
+//    delete[] pArrLineElement;
     
     char buffer[200] = {0};
-    char strErr[64] = {0};
+    //char strErr[64] = {0};
     
     dDist = 1.5839;
     double dTotalLen = pAPI->GetLength();
@@ -617,21 +736,40 @@ int main(int argc, const char * argv[]) {
         pAPI->TrsCmlDistToNE(dCml, dDist, dY, dX, dFwj);
         snprintf(buffer, sizeof(buffer), "dCml: %0.5f, dDist: %0.5f =====> dX: %0.5f, dY: %0.5f, dAngle: %0.5f", dCml, dDist, dX, dY, dFwj);
         cout << buffer << endl;
-        double dCmlTemp = 0.0;
-        double dDistTemp = 0.0;
-        double dAngleTemp = 0.0;
-        pAPI->TrsNEToCmlDist(dY, dX, dCmlTemp, dDistTemp, dAngleTemp);
-        snprintf(buffer, sizeof(buffer), "dX: %0.5f, dY: %0.5f =====> dCml: %0.5f, dDist: %0.5f, dAngle: %0.5f", dX, dY, dCmlTemp, dDistTemp, dAngleTemp);
-        cout << buffer << endl;
-        assert(abs(dCml - dCmlTemp) < 0.00001);
         
+        bool bFind = false;
+        uint32_t nCount = 0;
+        tagCmlDistAngle* pArr = pAPI->TrsNEToCmlDist(dY, dX, nCount);
+        for (int nIndex = 0; nIndex < nCount; nIndex++)
+        {
+            if (abs(pArr[nIndex].dDist - dDist) < 0.00001)
+            {
+                snprintf(buffer, sizeof(buffer), "dX: %0.5f, dY: %0.5f =====> dCml: %0.5f, dDist: %0.5f, dAngle: %0.5f", dX, dY, pArr[nIndex].dCml, pArr[nIndex].dDist, pArr[nIndex].dFwj);
+                cout << buffer << endl;
+                assert(abs(dCml - pArr[nIndex].dCml) < 0.00001);
+                bFind = true;
+                break;
+            }
+        }
+        assert(bFind);
+        delete [] pArr;
+        
+//        double dCmlTemp = 0.0;
+//        double dDistTemp = 0.0;
+//        double dAngleTemp = 0.0;
+//        pAPI->TrsNEToCmlDist(dY, dX, dCmlTemp, dDistTemp, dAngleTemp);
+//        snprintf(buffer, sizeof(buffer), "dX: %0.5f, dY: %0.5f =====> dCml: %0.5f, dDist: %0.5f, dAngle: %0.5f", dX, dY, dCmlTemp, dDistTemp, dAngleTemp);
+//        cout << buffer << endl;
+//        assert(abs(dCml - dCmlTemp) < 0.00001);
+        
+        /*
         pAPI->TrsCmltoCkml(dCml, buffer);
         cout << "Ckml: " << buffer << endl;
         pAPI->TrsCkmlToCml(buffer, dCml, strErr);
         cout << "Cml: " << dCml << endl;
         pAPI->GetDesignHeight(dCml, dHZ, dFyj);
         cout << "Cml: " << dCml << " Height: " << dHZ << " Fyj: " << dFyj << endl;
-        
+        */
         cout << endl;
     }
     

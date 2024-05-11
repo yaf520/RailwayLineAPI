@@ -14,7 +14,7 @@
 class VerticalCurve : public LineElementManager
 {
 public:
-    VerticalCurve(HorizontalCurve* pHorizontal);
+    VerticalCurve(HorizontalCurve* pHorizontal) { m_pHorizontalCurve = pHorizontal; }
     virtual ~VerticalCurve() { }
     
 private:

@@ -12,20 +12,37 @@
 ///交点信息
 struct tagJDInfo
 {
+    int nJDType;            //交点类型(-1:起点 -2:终点 3:三单元平曲线 4:三单元回头曲线 5:五单元平曲线 6:五单元回头曲线 0:转折点坐标)
     double dX;              //X坐标
     double dY;              //Y坐标
-    double dFL;             //前缓和曲线长度
-    double dBL;             //后缓和曲线长度
-    double dArcR;           //圆曲线半径
+    double dX_End;          //X结束坐标
+    double dY_End;          //Y结束坐标
+    double dL1;             //第一缓和曲线长度
+    double dL2;             //第二缓和曲线长度
+    double dL3;             //第三缓和曲线长度
+    double dEnterR;         //入缓和曲线半径(__DBL_MAX__代表无穷大,即直线)
+    double dExitR;          //出缓和曲线半径(__DBL_MAX__代表无穷大,即直线)
+    double dArcR1;          //第一圆曲线半径
+    double dArcR2;          //第二圆曲线半径
+    double dID;             //弧长控制参数(0为两段圆弧相等，非0则为第一段圆弧长度)
     int nBelongTo;          //所属线元索引
     
+    ///初始化值
     tagJDInfo()
     {
+        nJDType = __INTMAX_MAX__;
         dX = 0.0;
         dY = 0.0;
-        dFL = 0.0;
-        dBL = 0.0;
-        dArcR = 0.0;
+        dL1 = 0.0;
+        dL2 = 0.0;
+        dL3 = 0.0;
+        dX_End = 0.0;
+        dY_End = 0.0;
+        dArcR1 = 0.0;
+        dArcR2 = 0.0;
+        dID = 0.0;
+        dEnterR = __DBL_MAX__;
+        dExitR = __DBL_MAX__;
         nBelongTo = -1;
     }
 };
@@ -66,12 +83,12 @@ struct tagSlopeInfo
 };
 
 //线元类型
-enum class ElementType
+enum ElementType : int
 {
-    Line = 0,               //直线
+    Invalid = -1,
+    Line,                   //直线
     Arc,                    //圆弧
-    FrontCurve,             //前缓和曲线
-    BackCurve               //后缓和曲线
+    SpiralCurve             //缓和曲线
 };
 
 struct PointExport
@@ -123,6 +140,21 @@ struct tagExportLineElement
         this->pArrPos = new PointExport[this->nPosCount];
         memcpy(this->pArrPos, data.pArrPos, sizeof(PointExport) * this->nPosCount);
         return *this;
+    }
+};
+
+///里程+投影距离+方位角
+struct tagCmlDistAngle
+{
+    double dCml;
+    double dDist;
+    double dFwj;
+    
+    tagCmlDistAngle()
+    {
+        dCml = 0.0;
+        dDist = 0.0;
+        dFwj = 0.0;
     }
 };
 

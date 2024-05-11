@@ -8,6 +8,11 @@
 #include "StraightLineElement.hpp"
 #include "BaseCalFun.hpp"
 
+StraightLineElement::StraightLineElement()
+{
+    m_eElementType = ElementType::Line;
+}
+
 bool StraightLineElement::TrsCmlDistToNE(const double& dCml, const double& dDist, double& dX, double& dY, double& dAngle)
 {
     assert(dCml >= m_dStartCml);
@@ -36,8 +41,7 @@ bool StraightLineElement::TrsNEToCmlDist(const double& dX, const double& dY, dou
     Point2d posBase(dX, dY);
     Point2d posPrj = BaseCalFun::PointToLineProjection(posBase, m_posStart, m_posEnd, dPecent);
     
-    assert(dPecent >= -dCalPrecision_1 && dPecent <= 1.0 + dCalPrecision_1);
-    if (dPecent < -dCalPrecision_1 || dPecent > 1.0 + dCalPrecision_1) return false;
+    if (dPecent < -s_dCalPrecision || dPecent > 1.0 + s_dCalPrecision) return false;
     
     dAngle = m_dStartTanAngle;
     dCml = m_dStartCml + posPrj.distanceTo(m_posStart);
@@ -70,14 +74,21 @@ tagExportLineElement* StraightLineElement::ExportHorCurve(double dStartCml, doub
     return pRet;
 }
 
-tagExportLineElement* StraightLineElement::ExportVerCurve(double dStartCml, double dEndCml, double dArcStep, double dScaleX, double dScaleY)
+bool StraightLineElement::PosBelongSelf(const double& dX, const double& dY)
 {
-    return nullptr;
+    return PosBelongSelf(Point2d(dX, dY));
 }
 
 Point2d StraightLineElement::TrsCmlToNE_Relative(const double& dCml)
 {
     return Point2d(cos(m_dStartTanAngle), sin(m_dStartTanAngle)) * dCml;
+}
+
+int StraightLineElement::PosBelongSelf(const Point2d& pos)
+{
+    double dPecent = 0.0;
+    BaseCalFun::PointToLineProjection(pos, m_posStart, m_posEnd, dPecent);
+    return (dPecent >= -s_dCalPrecision && dPecent <= 1.0 + s_dCalPrecision) ? 1 : 0;
 }
 
 bool StraightLineElement::TrsCmlToHeight(const double& dCml, double& dHeight, double& dFyj)

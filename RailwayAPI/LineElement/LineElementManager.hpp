@@ -14,19 +14,11 @@
 #include "ArcElement.hpp"
 #include "BaseStruct.hpp"
 
-
-/// 曲线类型
-enum class CurveType
-{
-    HorizontalCurve = 0,        //平曲线
-    VerticalCurve               //竖曲线
-};
-
 /// 线元管理类
 class LineElementManager
 {
 public:
-    LineElementManager(CurveType eType);
+    LineElementManager();
     
     virtual ~LineElementManager();
     
@@ -39,27 +31,16 @@ protected:
     tagJDInfo* m_arrJD;
     //交点数目
     uint32_t m_nJDCount;
-    ///曲线类别
-    CurveType m_eCurvetype;
     
 private:
-    /// 切线长度
-    /// - Parameters:
-    ///   - dFL: 前缓和曲线长度
-    ///   - dBL: 后缓和曲线长度
-    ///   - dArcR: 圆曲线半径
-    ///   - dTurnAngle: 转向角度
-    ///   - bFront: 前后标识
-    double CalTangentLen(double dFL, double dBL, double dArcR, double dTurnAngle, bool bFront);
-    
-    /// 计算缓和曲线属性点
-    /// - Parameters:
-    ///   - dL0: 缓和曲线长度
-    ///   - dArcR: 圆曲线半径
-    Point2d CalCurvePos(double dL0, double dArcR);
-    
     /// 重置数据
     void ResetData();
+    
+    /// 计算单元曲线起点
+    /// - Parameters:
+    ///   - nIndex: 单元交点索引
+    ///   - vecWhole: 曲线起始向量
+    Point2d CalUnitStartPos(uint32_t nIndex, const Vector2d& vecWhole);
     
 private:
     ///计算点的投影属于哪一线元
@@ -73,15 +54,7 @@ public:
     /// - Parameters:
     ///   - pJDInfo: 交点数组
     ///   - iCount: 数组大小
-    void SetJDData(const tagJDInfo* pJDInfo, uint32_t iCount);
-    
-    
-    /// 更新交点坐标
-    /// - Parameters:
-    ///   - nIndex: 交点索引
-    ///   - dX: X坐标
-    ///   - dY: Y坐标
-    bool UpdateJD(const int& nIndex, const double& dX, const double& dY);
+    void SetJDData_Highway(const tagJDInfo* pJDInfo, uint32_t nCount);
     
     /// 导出指定里程范围内平曲线数据
     /// - Parameters:

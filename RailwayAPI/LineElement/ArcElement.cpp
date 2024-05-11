@@ -7,6 +7,12 @@
 #include <cassert>
 #include "ArcElement.hpp"
 
+ArcElement::ArcElement()
+    : BaseLineElement()
+{
+    m_eElementType = ElementType::Arc;
+}
+
 bool ArcElement::TrsCmlDistToNE(const double& dCml, const double& dDist, double& dX, double& dY, double& dAngle)
 {
     assert(dCml >= m_dStartCml);
@@ -34,6 +40,10 @@ bool ArcElement::TrsNEToCmlDist(const double& dX, const double& dY, double& dCml
 {
     //转换为缓和曲线相对坐标系
     Point2d posTrs = BaseCalFun::TransferPosReversal(m_posStart, Point2d(dX, dY), m_bTurnLeft, m_dStartTanAngle);
+    int nBelong = PosBelongSelf(posTrs);
+    if (!nBelong)
+        return false;
+    
     //二分法搜索投影点
     double dStartCml = 0.0;
     double dEndCml = m_dTotalLen;
@@ -46,116 +56,45 @@ bool ArcElement::TrsNEToCmlDist(const double& dX, const double& dY, double& dCml
         //对应坐标
         const Point2d& pos = TrsCmlToNE_Relative(dMidCml);
         //目标点向量
-        Vector2d vecCal = posTrs - pos;
+        Vector2d vecTarget = posTrs - pos;
         //切线方向向量
         Vector2d vecTan(cos(dArcAngle), sin(dArcAngle));
         //点乘为0时为垂直
-        double dDot = vecTan.dot(vecCal);
-        if (vecCal.isZeroVec() || abs(dDot) < dCalPrecision)
+        double dDot = vecTan.dot(vecTarget)/* / vecCal.model()*/;
+        if (vecTarget.isZeroVec() || abs(dDot) <= s_dCalPrecision)
         {
             //里程
             dCml = m_dStartCml + dMidCml;
             //切线角度
             dAngle = m_dStartTanAngle + (m_bTurnLeft ? dArcAngle : -dArcAngle);
             
-            if (vecCal.isZeroVec())
+            if (vecTarget.isZeroVec())
                 dDist = 0.0;
             else
             {
                 //左右侧(叉乘判断左右)
-                double dCross = vecTan.cross(vecCal);
+                double dCross = vecTan.cross(vecTarget);
                 bool bOnLeft = ((dCross > 0.0 && m_bTurnLeft) || (dCross < 0.0 && !m_bTurnLeft));
                 //投影距离
-                dDist = vecCal.model() * (bOnLeft ? 1.0 : -1.0);
+                dDist = vecTarget.model() * (bOnLeft ? 1.0 : -1.0);
             }
             
             break;
         }
-        else if (dDot <= -dCalPrecision)
-        {
-            if (dMidCml < dCalPrecision_1)
-            {
-                assert(false);
-                return false;
-            }
-            
+        /*
+        else if (dDot < -s_dCalPrecision)
             dEndCml = dMidCml;
-        }
-        else if (dDot >= dCalPrecision)
-        {
-            if (m_dTotalLen - dMidCml < dCalPrecision_1)
-            {
-                assert(false);
-                return false;
-            }
-            
+        else if (dDot > s_dCalPrecision)
             dStartCml = dMidCml;
-        }
+         */
         
+        else if ((nBelong == 1 && dDot < -s_dCalPrecision) || (nBelong == -1 && dDot > s_dCalPrecision))
+            dEndCml = dMidCml;
+        else if ((nBelong == 1 && dDot > s_dCalPrecision) || (nBelong == -1 && dDot < -s_dCalPrecision))
+            dStartCml = dMidCml;
+         
     } while (true);
-    /*
-    double dTotalLen = 0.0;
-    do {
-        //曲线切线角度
-        double dArcAngle = TrsCmlToAngle_Relative(dTotalLen);
-        //对应坐标
-        Point2d pos = TrsCmlToNE_Relative(dTotalLen);
-        
-#ifdef USE_VECTOR
-        
-        //目标点向量
-        Vector2d vecCal = posTrs - pos;
-        //切线方向向量
-        Vector2d vecTan(cos(dArcAngle), sin(dArcAngle));
-        
-        double dDot = vecTan.dot(vecCal);
-        //点乘为0时为垂直
-        if (abs(dDot) < dCalPrecision)
-        {
-            //里程
-            dCml = m_dStartCml + dTotalLen;
-            //切线角度
-            dAngle = m_dStartTanAngle + (m_bTurnLeft ? dArcAngle : -dArcAngle);
-            //左右侧
-            double dCross = vecTan.cross(vecCal);
-            bool bOnLeft = ((dCross > 0.0 && m_bTurnLeft) || (dCross < 0.0 && !m_bTurnLeft));
-            //投影距离
-            dDist = vecCal.model() * (bOnLeft ? 1.0 : -1.0);
-            
-            break;
-        }
-        dTotalLen += dDot;
-#else
-        double dAngleTemp = BaseCalFun::CalAngleX(pos, posTrs) - dArcAngle;
-        BaseCalFun::KeepAngleIn2PI(dAngleTemp);
-        
-        double dDisTemp = posTrs.distanceTo(pos);
-        double dTemp = cos(dAngleTemp) * dDisTemp;
-        if (abs(dTemp) < dCalPrecision)
-        {
-            //里程
-            dCml = m_dStartCml + dTotalLen;
-            //切线角度
-            dAngle = m_dStartTanAngle + (m_bTurnLeft ? dArcAngle : -dArcAngle);
-            //左右侧
-            assert(abs(dAngleTemp - MATH_PI_2) < 0.0001 || abs(dAngleTemp - MATH_PI * 1.5) < 0.0001);
-            bool bOnLeft =
-                ((m_bTurnLeft && abs(dAngleTemp - MATH_PI_2) < 0.0001)
-                 || (!m_bTurnLeft && abs(dAngleTemp - MATH_PI * 1.5) < 0.0001));
-            //投影距离
-            dDist = dDisTemp * (bOnLeft ? 1.0 : -1.0);
-            
-            break;
-        }
-        dTotalLen += dTemp;
-#endif
-    
-        assert(dTotalLen >= 0.0 && dTotalLen <= m_dTotalLen);
-        if (dTotalLen < 0.0 || dTotalLen > m_dTotalLen)
-            return false;
-        
-    } while (true);
-     */
+
     return true;
 }
 
@@ -203,9 +142,29 @@ tagExportLineElement* ArcElement::ExportHorCurve(double dStartCml, double dEndCm
     return pRet;
 }
 
-tagExportLineElement* ArcElement::ExportVerCurve(double dStartCml, double dEndCml, double dArcStep, double dScaleX, double dScaleY)
+bool ArcElement::PosBelongSelf(const double& dX, const double& dY)
 {
-    return nullptr;
+    //转换为缓和曲线相对坐标系
+    Point2d posTrs = BaseCalFun::TransferPosReversal(m_posStart, Point2d(dX, dY), m_bTurnLeft, m_dStartTanAngle);
+    
+    return PosBelongSelf(posTrs);
+}
+
+int ArcElement::PosBelongSelf(const Point2d& pos)
+{
+    Vector2d vecStart = pos - TrsCmlToNE_Relative(0.0);
+    Vector2d vecEnd = pos - TrsCmlToNE_Relative(m_dTotalLen);
+    if (vecStart.isZeroVec() || vecEnd.isZeroVec())
+        return 1;
+    
+    Vector2d vecTanStart(cos(TrsCmlToAngle_Relative(0.0)), sin(TrsCmlToAngle_Relative(0.0)));
+    Vector2d vecTanEnd(cos(TrsCmlToAngle_Relative(m_dTotalLen)), sin(TrsCmlToAngle_Relative(m_dTotalLen)));
+    
+    double dDotStart = vecTanStart.dot(vecStart);
+    double dDotEnd = vecTanEnd.dot(vecEnd);
+    
+    //return (dDotStart >= -s_dCalPrecision && dDotEnd <= s_dCalPrecision) ? 1 : 0;
+    return (dDotStart >= -s_dCalPrecision && dDotEnd <= s_dCalPrecision) ? 1 : ((dDotStart <= -s_dCalPrecision && dDotEnd >= s_dCalPrecision) ? -1 : 0);
 }
 
 Point2d ArcElement::TrsCmlToNE_Relative(const double& dCml)
@@ -219,5 +178,18 @@ Point2d ArcElement::TrsCmlToNE_Relative(const double& dCml)
 double ArcElement::TrsCmlToAngle_Relative(const double& dCml)
 {
     return dCml / m_dArcR;
+}
+
+void ArcElement::InitData()
+{
+    m_posEnd = BaseCalFun::TransferPos(m_posStart, TrsCmlToNE_Relative(m_dTotalLen), m_bTurnLeft, -m_dStartTanAngle);
+    double dArcAngle = TrsCmlToAngle_Relative(m_dTotalLen);
+    m_dEndTanAngle = m_dStartTanAngle + (m_bTurnLeft ? dArcAngle : -dArcAngle);
+}
+
+void ArcElement::AdjustData(const Point2d& pos)
+{
+    m_posStart += pos;
+    m_posEnd += pos;
 }
 

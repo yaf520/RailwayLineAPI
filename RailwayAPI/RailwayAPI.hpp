@@ -61,6 +61,14 @@ public:
     ///   - dFwj: 方位角
     bool TrsNEToCmlDist(const double& N_Y, const double& E_X, double& dCml, double& dDist, double& dFwj);
     
+    /// 坐标 -> 连续里程+投影距离+方位角 集合
+    /// - Parameters:
+    ///   - N_Y: 纬距
+    ///   - E_X: 经距
+    ///   - nCount: 数组大小
+    ///   - return: 数组地址
+    tagCmlDistAngle* TrsNEToCmlDist(const double& N_Y, const double& E_X, uint32_t& nCount);
+    
     /// 线路总长度
     double GetLength();
     
