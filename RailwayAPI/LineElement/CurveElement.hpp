@@ -57,7 +57,12 @@ public:
     void AdjustData(const Point2d& pos) override;
     
 private:
-    bool Newton_Raphson(double dStartX, double dX, double dY, double& dRoot);
+    ///原函数
+    double f(double x0, double dParamX, double dParamY);
+    ///导函数
+    double f_d(double x0,  double dParamX, double dParamY);
+    ///迭代法
+    bool Newton_Raphson(double dX, double dY, double& dRoot);
 };
 
 

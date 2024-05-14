@@ -63,7 +63,7 @@ bool CurveElement::TrsNEToCmlDist(const double& dX, const double& dY, double& dC
     
     //牛顿迭代法
     double dRoot = 0.0;
-    if (Newton_Raphson(posTrs.x, posTrs.x, posTrs.y, dRoot))
+    if (Newton_Raphson(posTrs.x, posTrs.y, dRoot))
     {
         if (dRoot < m_dHideLen || dRoot > m_dTotalLen + m_dHideLen)
             return false;
@@ -315,43 +315,79 @@ void CurveElement::AdjustData(const Point2d& pos)
     m_posBase += pos;
 }
 
-bool CurveElement::Newton_Raphson(double x, double dX, double dY, double& dRoot)
+double CurveElement::f(double dL0, double dParamX, double dParamY)
 {
+    double dTanAngle = dL0 * dL0 / 2.0 / m_dC;
+    double x = 0.0, y = 0.0;
+    for (int n = 0; n < 10; n++)
+    {
+        double xAdd = RELATIVE_X(n, dL0);
+        double yAdd = RELATIVE_Y(n, dL0);
+        
+        if (abs(xAdd) < s_dValidPrecision && abs(yAdd) < s_dValidPrecision)
+            break;
+        
+        x += xAdd;
+        y += yAdd;
+    }
+    
+    return cos(dTanAngle) * (x - dParamX) + sin(dTanAngle) * (y - dParamY);
+}
+
+double CurveElement::f_d(double dL0, double dParamX, double dParamY)
+{
+    double dTanAngle = dL0 * dL0 / 2.0 / m_dC;
+    double x = 0.0, y = 0.0, dx = 0.0, dy = 0.0;
+    for (int n = 0; n < 10; n++)
+    {
+        double xAdd = RELATIVE_X(n, dL0);
+        double yAdd = RELATIVE_Y(n, dL0);
+        
+        double dxAdd = RELATIVE_DX(n, dL0);
+        double dyAdd = RELATIVE_DY(n, dL0);
+        
+        if (abs(xAdd) < s_dValidPrecision && abs(yAdd) < s_dValidPrecision
+            && abs(dxAdd) < s_dValidPrecision && abs(dyAdd) < s_dValidPrecision)
+            break;
+        
+        x += xAdd;
+        y += yAdd;
+        dx += dxAdd;
+        dy += dyAdd;
+    }
+    return -sin(dTanAngle) * (dL0 / m_dC) * (x - dParamX) + cos(dTanAngle) * dx + cos(dTanAngle) * (dL0 / m_dC) * (y - dParamY) + sin(dTanAngle) * dy;
+}
+
+bool CurveElement::Newton_Raphson(double dX, double dY, double& dRoot)
+{
+    //初始值
+    double x0 = dX;
+    
     int nIterCount = 0;
     do {
-        double dTanAngle = x * x / 2.0 / m_dC;
-        double x1 = 0.0, y1 = 0.0, dx1 = 0.0, dy1 = 0.0;
-        for (int n = 0; n < 10; n++)
-        {
-            double x1Add = RELATIVE_X(n, x);
-            double dx1Add = RELATIVE_DX(n, x);
-            
-            double y1Add = RELATIVE_Y(n, x);
-            double dy1Add = RELATIVE_DY(n, x);
-            
-            if (abs(x1Add) < s_dValidPrecision && abs(y1Add) < s_dValidPrecision && abs(dx1Add) < s_dValidPrecision && abs(dy1Add) < s_dValidPrecision)
-                break;
-            
-            x1 += x1Add;
-            y1 += y1Add;
-            dx1 += dx1Add;
-            dy1 += dy1Add;
-        }
+        double fx0 = f(x0, dX, dY);
+        double fdx0 = f_d(x0, dX, dY);
         
-        double f_x = cos(dTanAngle) * (x1 - dX) + sin(dTanAngle) * (y1 - dY);
-        double fd_x = -sin(dTanAngle) * (x / m_dC) * (x1 - dX) + cos(dTanAngle) * dx1 + cos(dTanAngle) * (x / m_dC) * (y1 - dY) + sin(dTanAngle) * dy1;
-        
-        if (abs(fd_x) < s_dCalPrecision || nIterCount > 50)
+        if (abs(fdx0) < s_dCalPrecision || nIterCount > 50)
             return false;
 
-        double x0 = x - f_x / fd_x;
-        if (abs(x0 - x) < s_dCalPrecision)
+        double L = 1.0;
+        double x1 = x0 - L * fx0 / fdx0;
+        while (abs(f(x1, dX, dY)) >= abs(fx0)) {
+            if (L < s_dValidPrecision)
+                return false;
+            
+            L /= 2.0;
+            x1 = x0 - L * fx0 / fdx0;
+        }
+        
+        if (abs(f(x1, dX, dY)) < s_dCalPrecision)
         {
-            dRoot = x0;
+            dRoot = x1;
             return true;
         }
         
         nIterCount++;
-        x = x0;
+        x0 = x1;
     } while (true);
 }
