@@ -38,6 +38,91 @@ bool ArcElement::TrsCmlDistToNE(const double& dCml, const double& dDist, double&
 
 bool ArcElement::TrsNEToCmlDist(const double& dX, const double& dY, double& dCml, double& dDist, double& dAngle)
 {
+    //计算圆心坐标
+    double dAngleR = m_dStartTanAngle + (m_bTurnLeft ? MATH_PI_2 : -MATH_PI_2);
+    Point2d O = m_posStart + Point2d(cos(dAngleR), sin(dAngleR)) * m_dArcR;
+    //目标点
+    Point2d P(dX, dY);
+    //向量
+    Vector2d vecOP = P - O;
+    double dPecent = m_dArcR / vecOP.model();
+    //两个交点
+    Point2d A(O.x + vecOP.x * dPecent, O.y + vecOP.y * dPecent);
+    Point2d B(O.x - vecOP.x * dPecent, O.y - vecOP.y * dPecent);
+    
+    Vector2d vecOA = A - O;
+    Vector2d vecOB = B - O;
+    //double dModelOA = vecOA.model();
+    //double dModelOB = vecOB.model();
+    
+    //起点向量
+    Vector2d vecStart = m_posStart - O;
+    //圆心角
+    double dArcAngle = TrsCmlToAngle_Relative(m_dTotalLen);
+    
+    double dAngleA = BaseCalFun::CalAngleBy2Vec(vecStart, vecOA);
+    if (!m_bTurnLeft)
+        dAngleA *= -1.0;
+    BaseCalFun::KeepAngleIn2PI(dAngleA);
+    
+    double dAngleB = BaseCalFun::CalAngleBy2Vec(vecStart, vecOB);
+    if (!m_bTurnLeft)
+        dAngleB *= -1.0;
+    BaseCalFun::KeepAngleIn2PI(dAngleB);
+    
+    //可能会有两个点，取投影距离小的
+    double arrCml[2] = {0};
+    double arrDist[2] = {0};
+    double arrAngle[2] = {0};
+    bool bIsA = (dAngleA <= dArcAngle);
+    bool bIsB = (dAngleB <= dArcAngle);
+    if (bIsA)
+    {
+        arrCml[0] = m_dStartCml + m_dArcR * dAngleA;
+        //切线角度
+        arrAngle[0] = m_dStartTanAngle + (m_bTurnLeft ? dAngleA : -dAngleA);
+        //投影距离
+        Vector2d vecTan(cos(arrAngle[0]), sin(arrAngle[0]));
+        Vector2d vecAP = P - A;
+        double dCross = vecTan.cross(vecAP);
+        arrDist[0] = vecAP.model() * (dCross > 0 ? 1.0 : -1.0);
+    }
+    if (bIsB)
+    {
+        arrCml[1] = m_dStartCml + m_dArcR * dAngleB;
+        //切线角度
+        arrAngle[1] = m_dStartTanAngle + (m_bTurnLeft ? dAngleB : -dAngleB);
+        //投影距离
+        Vector2d vecTan(cos(arrAngle[1]), sin(arrAngle[1]));
+        Vector2d vecBP = P - B;
+        double dCross = vecTan.cross(vecBP);
+        arrDist[1] = vecBP.model() * (dCross > 0 ? 1.0 : -1.0);
+    }
+    if (bIsA && !bIsB)
+    {
+        dCml = arrCml[0];
+        dAngle = arrAngle[0];
+        dDist = arrDist[0];
+    }
+    else if (!bIsA && bIsB)
+    {
+        dCml = arrCml[1];
+        dAngle = arrAngle[1];
+        dDist = arrDist[1];
+    }
+    else if (bIsA && bIsB)
+    {
+        int nIndex = (abs(arrDist[0]) < abs(arrDist[1]) ? 0 : 1);
+        dCml = arrCml[nIndex];
+        dAngle = arrAngle[nIndex];
+        dDist = arrDist[nIndex];
+    }
+    else
+        return false;
+    
+    return true;
+    
+    /*
     //转换为缓和曲线相对坐标系
     Point2d posTrs = BaseCalFun::TransferPosReversal(m_posStart, Point2d(dX, dY), m_bTurnLeft, m_dStartTanAngle);
     int nBelong = PosBelongSelf(posTrs);
@@ -60,7 +145,7 @@ bool ArcElement::TrsNEToCmlDist(const double& dX, const double& dY, double& dCml
         //切线方向向量
         Vector2d vecTan(cos(dArcAngle), sin(dArcAngle));
         //点乘为0时为垂直
-        double dDot = vecTan.dot(vecTarget)/* / vecCal.model()*/;
+        double dDot = vecTan.dot(vecTarget);
         if (vecTarget.isZeroVec() || abs(dDot) <= s_dCalPrecision)
         {
             //里程
@@ -81,21 +166,15 @@ bool ArcElement::TrsNEToCmlDist(const double& dX, const double& dY, double& dCml
             
             break;
         }
-        /*
-        else if (dDot < -s_dCalPrecision)
-            dEndCml = dMidCml;
-        else if (dDot > s_dCalPrecision)
-            dStartCml = dMidCml;
-         */
-        
         else if ((nBelong == 1 && dDot < -s_dCalPrecision) || (nBelong == -1 && dDot > s_dCalPrecision))
             dEndCml = dMidCml;
         else if ((nBelong == 1 && dDot > s_dCalPrecision) || (nBelong == -1 && dDot < -s_dCalPrecision))
             dStartCml = dMidCml;
          
     } while (true);
-
+     
     return true;
+    */
 }
 
 bool ArcElement::TrsCmlToHeight(const double& dCml, double& dHeight, double& dFyj)

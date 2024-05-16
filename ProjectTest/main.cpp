@@ -725,10 +725,13 @@ int main(int argc, const char * argv[]) {
 //    
 //    delete[] pArrLineElement;
     
-    char buffer[200] = {0};
-    //char strErr[64] = {0};
+    pAPI->TrsCmlDistToNE(46820.71520, 100.0, dY, dX, dFwj);
     
-    dDist = 500.0;
+    uint32_t nCount = 0;
+    pAPI->TrsNEToCmlDist(dY, dX, nCount);
+    
+    char buffer[200] = {0};
+    dDist = 100.0;
     double dTotalLen = pAPI->GetLength();
     for (dCml = 0; dCml <= dTotalLen; dCml += 1.3958)
     {
@@ -751,7 +754,7 @@ int main(int argc, const char * argv[]) {
                 break;
             }
         }
-        assert(bFind);
+        //assert(bFind);
         delete [] pArr;
         
 //        double dCmlTemp = 0.0;

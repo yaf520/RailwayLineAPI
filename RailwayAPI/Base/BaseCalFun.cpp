@@ -42,21 +42,26 @@ Point2d BaseCalFun::PointToLineProjection(Point2d A, Point2d O, Point2d B, doubl
     return Point2d(O.x + OB.x * dPecent, O.y + OB.y * dPecent);
 }
 
+double BaseCalFun::CalAngleBy2Vec(Vector2d vec1, Vector2d vec2)
+{
+    double dModel1 = vec1.model();
+    double dModel2 = vec2.model();
+    double dDot = vec1.dot(vec2);
+    double dValue = dDot /  (dModel1 * dModel2);
+    //限制范围
+    dValue = __max(dValue, -1.0);
+    dValue = __min(dValue, 1.0);
+    double dTurnAngle = acos(dValue);
+    double dCross = vec1.cross(vec2);
+    return (dCross > 0.0 ? dTurnAngle : -dTurnAngle);
+}
+
 double BaseCalFun::CalTurnAngle(Point2d p1, Point2d p2, Point2d p3)
 {
     Vector2d vecAO = p2 - p1;
     Vector2d vecOB = p3 - p2;
     
-    double dModelAO = vecAO.model();
-    double dModelOB = vecOB.model();
-    double dDotAO_OB = vecAO.dot(vecOB);
-    double dValue = dDotAO_OB /  (dModelAO * dModelOB);
-    //限制范围
-    dValue = __max(dValue, -1.0);
-    dValue = __min(dValue, 1.0);
-    double dTurnAngle = acos(dValue);
-    double dCrossAO_OB = vecAO.cross(vecOB);
-    return (dCrossAO_OB > 0.0 ? dTurnAngle : -dTurnAngle);
+    return CalAngleBy2Vec(vecAO, vecOB);
 }
 
 double BaseCalFun::CalTurnAngle(Point2d p1, Point2d p2, Point2d p3, Point2d p4)
@@ -64,16 +69,7 @@ double BaseCalFun::CalTurnAngle(Point2d p1, Point2d p2, Point2d p3, Point2d p4)
     Vector2d vecAO = p2 - p1;
     Vector2d vecOB = p4 - p3;
     
-    double dModelAO = vecAO.model();
-    double dModelOB = vecOB.model();
-    double dDotAO_OB = vecAO.dot(vecOB);
-    double dValue = dDotAO_OB /  (dModelAO * dModelOB);
-    //限制范围
-    dValue = __max(dValue, -1.0);
-    dValue = __min(dValue, 1.0);
-    double dTurnAngle = acos(dValue);
-    double dCrossAO_OB = vecAO.cross(vecOB);
-    return (dCrossAO_OB > 0.0 ? dTurnAngle : -dTurnAngle);
+    return CalAngleBy2Vec(vecAO, vecOB);
 }
 
 Point2d BaseCalFun::TransferPos(Point2d posBase, Point2d posTransfer, bool bTurnDir, double dAngle)

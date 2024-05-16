@@ -170,7 +170,7 @@ void LineElementManager::SetJDData_Highway(const tagJDInfo* pJDInfo, uint32_t nC
                 }
                 
                 //圆曲线
-                if (abs(dArcAngle) > s_dCalPrecision)
+                if (abs(dArcAngle) > 0.000001)
                 {
                     ArcElement* pArcElement = new ArcElement;
                     pArcElement->m_posStart = posCurveStart;

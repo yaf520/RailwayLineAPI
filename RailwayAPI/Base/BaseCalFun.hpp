@@ -29,6 +29,12 @@ public:
     ///   - dPecent: 百分比
     static Point2d PointToLineProjection(Point2d A, Point2d O, Point2d B, double& dPecent);
     
+    /// 计算两个向量的夹角
+    /// - Parameters:
+    ///   - vec1: 开始向量
+    ///   - vec2: 结束向量
+    static double CalAngleBy2Vec(Vector2d vec1, Vector2d vec2);
+    
     /// 计算转向角
     /// - Parameters:
     ///   - p1: 第一个点
@@ -60,6 +66,13 @@ public:
     ///   - dAngle: 转向角度
     static Point2d TransferPosReversal(Point2d posBase, Point2d posTransfer, bool bTurnDir, double dAngle);
     
+    /// 坐标转换
+    /// - Parameters:
+    ///   - posTarget: 目标点坐标
+    ///   - posRelative: 相对坐标
+    ///   - bTurnDir: 转向
+    ///   - dAngle: 转向角度
+    ///   - return: 基准点坐标
     static Point2d TransferBasePos(Point2d posTarget, Point2d posRelative, bool bTurnDir, double dAngle);
     
     /// 保持弧度值在0-2pi之间
