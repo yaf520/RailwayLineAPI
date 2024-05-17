@@ -74,23 +74,6 @@ tagExportLineElement* StraightLineElement::ExportHorCurve(double dStartCml, doub
     return pRet;
 }
 
-bool StraightLineElement::PosBelongSelf(const double& dX, const double& dY)
-{
-    return PosBelongSelf(Point2d(dX, dY));
-}
-
-Point2d StraightLineElement::TrsCmlToNE_Relative(const double& dCml)
-{
-    return Point2d(cos(m_dStartTanAngle), sin(m_dStartTanAngle)) * dCml;
-}
-
-int StraightLineElement::PosBelongSelf(const Point2d& pos)
-{
-    double dPecent = 0.0;
-    BaseCalFun::PointToLineProjection(pos, m_posStart, m_posEnd, dPecent);
-    return (dPecent >= -s_dCalPrecision && dPecent <= 1.0 + s_dCalPrecision) ? 1 : 0;
-}
-
 bool StraightLineElement::TrsCmlToHeight(const double& dCml, double& dHeight, double& dFyj)
 {
     double dDeltaCml = dCml - m_posStart.x;

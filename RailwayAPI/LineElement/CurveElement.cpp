@@ -180,16 +180,6 @@ tagExportLineElement* CurveElement::ExportHorCurve(double dStartCml, double dEnd
     return pRet;
 }
 
-bool CurveElement::PosBelongSelf(const double& dX, const double& dY)
-{
-    //转向方向
-    bool bTurnDir = ((m_bEnter && m_bTurnLeft) || (!m_bEnter && !m_bTurnLeft));
-    //转换为缓和曲线相对坐标系
-    Point2d posTrs = BaseCalFun::TransferPosReversal(m_posBase, Point2d(dX, dY), bTurnDir, m_dBaseTanAngle);
-    
-    return PosBelongSelf(posTrs);
-}
-
 Point2d CurveElement::TrsCmlToNE_Relative(const double& dCml)
 {
     //积分常数
@@ -213,26 +203,6 @@ Point2d CurveElement::TrsCmlToNE_Relative(const double& dCml)
 double CurveElement::TrsCmlToAngle_Relative(const double& dCml)
 {
     return dCml * dCml / 2.0 / m_dC;
-}
-
-int CurveElement::PosBelongSelf(const Point2d& pos)
-{
-    //以下均以曲线自身坐标系计算
-    Vector2d vecStart = pos - TrsCmlToNE_Relative(m_dHideLen);
-    Vector2d vecEnd = pos - TrsCmlToNE_Relative(m_dHideLen + m_dTotalLen);
-    if (vecStart.isZeroVec() || vecEnd.isZeroVec())
-        return 1;
-    
-    double dTanStartAngle = TrsCmlToAngle_Relative(m_dHideLen);
-    double dTanEndAngle = TrsCmlToAngle_Relative(m_dHideLen + m_dTotalLen);
-    Vector2d vecTanStart(cos(dTanStartAngle), sin(dTanStartAngle));
-    Vector2d vecTanEnd(cos(dTanEndAngle), sin(dTanEndAngle));
-    
-    double dDotStart = vecTanStart.dot(vecStart);
-    double dDotEnd = vecTanEnd.dot(vecEnd);
-    
-    return (dDotStart >= -s_dCalPrecision && dDotEnd <= s_dCalPrecision) ? 1 : 0;
-    //return (dDotStart >= -s_dCalPrecision && dDotEnd <= s_dCalPrecision) ? 1 : ((dDotStart <= -s_dCalPrecision && dDotEnd >= s_dCalPrecision) ? -1 : 0);
 }
 
 Point2d CurveElement::TrsCmlToCenter_Relative(const double& dCml)

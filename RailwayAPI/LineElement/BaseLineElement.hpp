@@ -42,18 +42,12 @@ public:
     ///导出平曲线范围里程内的线元数据
     virtual tagExportLineElement* ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep) = 0;
     
-    ///判断点的投影是否属于该线元
-    virtual bool PosBelongSelf(const double& dX, const double& dY) = 0;
-    
 protected:
     //相对里程->相对坐标
     virtual Point2d TrsCmlToNE_Relative(const double& dCml) = 0;
     
     //相对里程->相对角度
     virtual double TrsCmlToAngle_Relative(const double& dCml) = 0;
-    
-    ///判断点的投影是否属于该线元
-    virtual int PosBelongSelf(const Point2d& pos) = 0;
     
 public:
     ///初始化数据

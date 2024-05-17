@@ -52,8 +52,7 @@ bool ArcElement::TrsNEToCmlDist(const double& dX, const double& dY, double& dCml
     
     Vector2d vecOA = A - O;
     Vector2d vecOB = B - O;
-    //double dModelOA = vecOA.model();
-    //double dModelOB = vecOB.model();
+    assert(abs(vecOA.model() + vecOB.model() - 2.0 * m_dArcR) < 0.01);
     
     //起点向量
     Vector2d vecStart = m_posStart - O;
@@ -221,42 +220,12 @@ tagExportLineElement* ArcElement::ExportHorCurve(double dStartCml, double dEndCm
     return pRet;
 }
 
-bool ArcElement::PosBelongSelf(const double& dX, const double& dY)
-{
-    //转换为缓和曲线相对坐标系
-    Point2d posTrs = BaseCalFun::TransferPosReversal(m_posStart, Point2d(dX, dY), m_bTurnLeft, m_dStartTanAngle);
-    
-    return PosBelongSelf(posTrs);
-}
-
-int ArcElement::PosBelongSelf(const Point2d& pos)
-{
-    Vector2d vecStart = pos - TrsCmlToNE_Relative(0.0);
-    Vector2d vecEnd = pos - TrsCmlToNE_Relative(m_dTotalLen);
-    if (vecStart.isZeroVec() || vecEnd.isZeroVec())
-        return 1;
-    
-    Vector2d vecTanStart(cos(TrsCmlToAngle_Relative(0.0)), sin(TrsCmlToAngle_Relative(0.0)));
-    Vector2d vecTanEnd(cos(TrsCmlToAngle_Relative(m_dTotalLen)), sin(TrsCmlToAngle_Relative(m_dTotalLen)));
-    
-    double dDotStart = vecTanStart.dot(vecStart);
-    double dDotEnd = vecTanEnd.dot(vecEnd);
-    
-    //return (dDotStart >= -s_dCalPrecision && dDotEnd <= s_dCalPrecision) ? 1 : 0;
-    return (dDotStart >= -s_dCalPrecision && dDotEnd <= s_dCalPrecision) ? 1 : ((dDotStart <= -s_dCalPrecision && dDotEnd >= s_dCalPrecision) ? -1 : 0);
-}
-
 Point2d ArcElement::TrsCmlToNE_Relative(const double& dCml)
 {
     double dArcAngle = dCml / m_dArcR;
     double dDeltaX = sin(dArcAngle) * m_dArcR;
     double dDeltaY = (1 - cos(dArcAngle)) * m_dArcR;
     return Point2d(dDeltaX, dDeltaY);
-}
-
-double ArcElement::TrsCmlToAngle_Relative(const double& dCml)
-{
-    return dCml / m_dArcR;
 }
 
 void ArcElement::InitData()

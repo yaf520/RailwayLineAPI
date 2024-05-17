@@ -24,15 +24,11 @@ public:
     
     tagExportLineElement* ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep) override;
     
-    bool PosBelongSelf(const double& dX, const double& dY) override;
-    
 protected:
     //相对里程->相对坐标
-    Point2d TrsCmlToNE_Relative(const double& dCml) override;
+    Point2d TrsCmlToNE_Relative(const double& dCml) override { return Point2d(cos(m_dStartTanAngle), sin(m_dStartTanAngle)) * dCml; };
     
-    double TrsCmlToAngle_Relative(const double& dCml) override { return 0.0;}
-    
-    int PosBelongSelf(const Point2d& pos) override;
+    double TrsCmlToAngle_Relative(const double& dCml) override { return m_dStartTanAngle; }
     
 public:
     void InitData() override {};
