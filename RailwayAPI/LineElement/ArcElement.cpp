@@ -46,6 +46,7 @@ bool ArcElement::TrsNEToCmlDist(const double& dX, const double& dY, double& dCml
     //向量
     Vector2d vecOP = P - O;
     double dPecent = m_dArcR / vecOP.model();
+    dPecent = BaseCalFun::Round(dPecent);
     //两个交点
     Point2d A(O.x + vecOP.x * dPecent, O.y + vecOP.y * dPecent);
     Point2d B(O.x - vecOP.x * dPecent, O.y - vecOP.y * dPecent);
@@ -73,8 +74,8 @@ bool ArcElement::TrsNEToCmlDist(const double& dX, const double& dY, double& dCml
     double arrCml[2] = {0};
     double arrDist[2] = {0};
     double arrAngle[2] = {0};
-    bool bIsA = (dAngleA <= dArcAngle);
-    bool bIsB = (dAngleB <= dArcAngle);
+    bool bIsA = (dAngleA <= dArcAngle + s_dCalPrecision);
+    bool bIsB = (dAngleB <= dArcAngle + s_dCalPrecision);
     if (bIsA)
     {
         arrCml[0] = m_dStartCml + m_dArcR * dAngleA;

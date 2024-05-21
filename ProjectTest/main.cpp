@@ -27,8 +27,8 @@ bool LoadEIFile(std::string strDir, std::vector<tagJDInfo>& vecJD)
         while (getline(infile, buffer)) {
             int nDataIndex = 0;
             
-            int nStartIndex = 0;
-            int nEndIndex = 0;
+            size_t nStartIndex = 0;
+            size_t nEndIndex = 0;
             tagJDInfo JDInfo;
             do {
                 std::string strSub;
@@ -42,6 +42,8 @@ bool LoadEIFile(std::string strDir, std::vector<tagJDInfo>& vecJD)
                     {
                         //起点桩号
                     }
+                    else if (JDInfo.nJDType == 5)
+                        JDInfo.dID = std::stod(strSub);
                     else
                     {
                         double dExitR = std::stod(strSub);
@@ -68,7 +70,7 @@ bool LoadEIFile(std::string strDir, std::vector<tagJDInfo>& vecJD)
                         }
                         else if (nDataIndex == 4)
                         {
-                            int nType = strSub.find("L");
+                            size_t nType = strSub.find("L");
                             if (nType == std::string::npos)
                             {
                                 
@@ -80,7 +82,7 @@ bool LoadEIFile(std::string strDir, std::vector<tagJDInfo>& vecJD)
                             JDInfo.dArcR1 = std::stod(strSub);
                         else if (nDataIndex == 6)
                         {
-                            int nType = strSub.find("L");
+                            size_t nType = strSub.find("L");
                             if (nType == std::string::npos)
                             {
                                 
@@ -102,7 +104,7 @@ bool LoadEIFile(std::string strDir, std::vector<tagJDInfo>& vecJD)
                         }
                         else if (nDataIndex == 6)
                         {
-                            int nType = strSub.find("L");
+                            size_t nType = strSub.find("L");
                             if (nType == std::string::npos)
                             {
                                 
@@ -114,7 +116,7 @@ bool LoadEIFile(std::string strDir, std::vector<tagJDInfo>& vecJD)
                             JDInfo.dArcR1 = std::stod(strSub);
                         else if (nDataIndex == 8)
                         {
-                            int nType = strSub.find("L");
+                            size_t nType = strSub.find("L");
                             if (nType == std::string::npos)
                             {
                                 
@@ -125,7 +127,50 @@ bool LoadEIFile(std::string strDir, std::vector<tagJDInfo>& vecJD)
                     }
                     else if (JDInfo.nJDType == 5)
                     {
-                        
+                        if (nDataIndex == 3)
+                        {
+                            double dEnterR = std::stod(strSub);
+                            JDInfo.dEnterR = (dEnterR == 10000000000.0 ? __DBL_MAX__ : dEnterR);
+                        }
+                        else if (nDataIndex == 4)
+                        {
+                            size_t nType = strSub.find("L");
+                            if (nType == std::string::npos)
+                            {
+                                
+                            }
+                            else
+                                JDInfo.dL1 = std::stod(strSub.substr(nType + 1));
+                        }
+                        else if (nDataIndex == 5)
+                            JDInfo.dArcR1 = std::stod(strSub);
+                        else if (nDataIndex == 6)
+                        {
+                            size_t nType = strSub.find("L");
+                            if (nType == std::string::npos)
+                            {
+                                
+                            }
+                            else
+                                JDInfo.dL2 = std::stod(strSub.substr(nType + 1));
+                        }
+                        else if (nDataIndex == 7)
+                            JDInfo.dArcR2 = std::stod(strSub);
+                        else if (nDataIndex == 8)
+                        {
+                            size_t nType = strSub.find("L");
+                            if (nType == std::string::npos)
+                            {
+                                
+                            }
+                            else
+                                JDInfo.dL3 = std::stod(strSub.substr(nType + 1));
+                        }
+                        else if (nDataIndex == 9)
+                        {
+                            double dExitR = std::stod(strSub);
+                            JDInfo.dExitR = (dExitR == 10000000000.0 ? __DBL_MAX__ : dExitR);
+                        }
                     }
                     else if (JDInfo.nJDType == 6)
                     {
@@ -233,9 +278,8 @@ int main(int argc, const char * argv[]) {
     
 #endif
     
-    /*
     int nArrCount = 0;
-    auto pArrLineElement = pAPI->ExportHorCurve(nArrCount, 0.0, pAPI->GetLength(), 0.0, 1.0);
+    const tagExportLineElement* pArrLineElement = pAPI->ExportHorCurve(nArrCount, 0.0, pAPI->GetLength(), 0.0, 1.0);
     for (int i = 0; i < nArrCount; i++)
     {
         int nStartIndex = 0;
@@ -247,11 +291,11 @@ int main(int argc, const char * argv[]) {
         assert(abs(dDist) < 0.000001);
     }
     delete[] pArrLineElement;
-    */
+    
      
     char buffer[200] = {0};
     double dTotalLen = pAPI->GetLength();
-    for (dCml = 0; dCml <= dTotalLen; dCml += dStep)
+    for (dCml = 0.0; dCml <= dTotalLen; dCml += dStep)
     {
         dCml = std::min(dCml, dTotalLen);
         pAPI->TrsCmlDistToNE(dCml, dDist, dY, dX, dFwj);
@@ -263,11 +307,11 @@ int main(int argc, const char * argv[]) {
         tagCmlDistAngle* pArr = pAPI->TrsNEToCmlDist(dY, dX, nCount);
         for (int nIndex = 0; nIndex < nCount; nIndex++)
         {
-            if (abs(pArr[nIndex].dDist - dDist) < 0.00001)
+            if (abs(pArr[nIndex].dDist - dDist) < 1.0e-5)
             {
                 snprintf(buffer, sizeof(buffer), "dX: %0.5f, dY: %0.5f =====> dCml: %0.5f, dDist: %0.5f, dAngle: %0.5f", dX, dY, pArr[nIndex].dCml, pArr[nIndex].dDist, pArr[nIndex].dFwj);
                 cout << buffer << endl;
-                assert(abs(dCml - pArr[nIndex].dCml) < 0.00001);
+                assert(abs(dCml - pArr[nIndex].dCml) < 1.0e-5);
                 bFind = true;
                 break;
             }

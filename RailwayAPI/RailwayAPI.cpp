@@ -52,11 +52,6 @@ bool RailwayAPI::TrsNEToCmlDist(const double& N_Y, const double& E_X, double& dC
     if (!m_pHorCurve->TrsNEToCmlDist(E_X, N_Y, dCml, dDist, dTanAngle))
         return false;
     
-    dDist = -dDist;
-    dTanAngle = MATH_PI_2 - dTanAngle;
-    BaseCalFun::KeepAngleIn2PI(dTanAngle);
-    dFwj = dTanAngle;
-    
     return true;
 }
 

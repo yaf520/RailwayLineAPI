@@ -333,9 +333,20 @@ bool HorizontalCurve::TrsCmlDistToNE(const double& dCml, const double& dDist, do
 //坐标计算投影点里程+投影距离+切线角
 bool HorizontalCurve::TrsNEToCmlDist(const double& dX, const double& dY, double& dCml, double& dDist, double& dAngle)
 {
-    BaseLineElement* pLineElement = PosBelongTo(Point2d(dX, dY));
-    if (!pLineElement) return false;
-    return pLineElement->TrsNEToCmlDist(dX, dY, dCml, dDist, dAngle);
+    uint32_t nCount = 0;
+    const tagCmlDistAngle* pArr = TrsNEToCmlDist(dX, dY, nCount);
+    if (nCount > 0 && pArr)
+    {
+        dCml = pArr->dCml;
+        dDist = pArr->dDist;
+        dAngle = pArr->dFwj;
+        
+        delete [] pArr;
+        
+        return true;
+    }
+    
+    return false;
 }
 
 tagCmlDistAngle* HorizontalCurve::TrsNEToCmlDist(const double& dX, const double& dY, uint32_t& nArrCount)
@@ -351,22 +362,32 @@ tagCmlDistAngle* HorizontalCurve::TrsNEToCmlDist(const double& dX, const double&
             if (!pArrRet)
                 pArrRet = new tagCmlDistAngle[m_nElementCount];
             
-            pArrRet[nArrCount].dCml = dCml;
-            pArrRet[nArrCount].dDist = -dDist;
+            //插入排序
+            uint32_t nInsertIndex = 0;
+            for (nInsertIndex = 0; nInsertIndex < nArrCount; nInsertIndex++)
+                if (abs(dDist) < abs(pArrRet[nInsertIndex].dDist))
+                    break;
             
+            if (nArrCount > 0 && nInsertIndex < nArrCount)
+                memcpy(pArrRet + nInsertIndex + 1, pArrRet + nInsertIndex, (nArrCount - nInsertIndex) * sizeof(tagCmlDistAngle));
+            
+            pArrRet[nInsertIndex].dCml = dCml;
+            pArrRet[nInsertIndex].dDist = -dDist;
             double dAngleTmp = MATH_PI / 2.0 - dAngle;
             BaseCalFun::KeepAngleIn2PI(dAngleTmp);
-            pArrRet[nArrCount++].dFwj = dAngleTmp;
+            pArrRet[nInsertIndex].dFwj = dAngleTmp;
+                
+            nArrCount++;
         }
     }
     
     //调整内存大小
     if (pArrRet && nArrCount < m_nElementCount)
     {
-        tagCmlDistAngle* pTmp = new tagCmlDistAngle[nArrCount];
-        memcpy(pTmp, pArrRet, sizeof(tagCmlDistAngle) * nArrCount);
+        tagCmlDistAngle* pNewArr = new tagCmlDistAngle[nArrCount];
+        memcpy(pNewArr, pArrRet, sizeof(tagCmlDistAngle) * nArrCount);
         delete [] pArrRet;
-        pArrRet = pTmp;
+        pArrRet = pNewArr;
     }
     
     return pArrRet;

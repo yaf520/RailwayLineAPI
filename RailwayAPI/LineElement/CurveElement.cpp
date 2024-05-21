@@ -65,7 +65,7 @@ bool CurveElement::TrsNEToCmlDist(const double& dX, const double& dY, double& dC
     double dRoot = 0.0;
     if (Newton_Raphson(posTrs.x, posTrs.y, dRoot))
     {
-        if (dRoot < m_dHideLen || dRoot > m_dTotalLen + m_dHideLen)
+        if (dRoot < m_dHideLen - s_dCalPrecision || dRoot > m_dTotalLen + m_dHideLen + s_dCalPrecision)
             return false;
         
         //里程
@@ -343,7 +343,7 @@ bool CurveElement::Newton_Raphson(double dX, double dY, double& dRoot)
 
         double L = 1.0;
         double x1 = x0 - L * fx0 / fdx0;
-        while (abs(f(x1, dX, dY)) >= abs(fx0)) {
+        while (abs(f(x1, dX, dY)) > abs(fx0)) {
             if (L < s_dValidPrecision)
                 return false;
             

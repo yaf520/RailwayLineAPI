@@ -30,7 +30,7 @@ struct tagJDInfo
     ///初始化值
     tagJDInfo()
     {
-        nJDType = __INTMAX_MAX__;
+        nJDType = __INT_MAX__;
         dX = 0.0;
         dY = 0.0;
         dL1 = 0.0;
