@@ -369,7 +369,7 @@ tagCmlDistAngle* HorizontalCurve::TrsNEToCmlDist(const double& dX, const double&
                     break;
             
             if (nArrCount > 0 && nInsertIndex < nArrCount)
-                memcpy(pArrRet + nInsertIndex + 1, pArrRet + nInsertIndex, (nArrCount - nInsertIndex) * sizeof(tagCmlDistAngle));
+                memmove(pArrRet + nInsertIndex + 1, pArrRet + nInsertIndex, (nArrCount - nInsertIndex) * sizeof(tagCmlDistAngle));
             
             pArrRet[nInsertIndex].dCml = dCml;
             pArrRet[nInsertIndex].dDist = -dDist;

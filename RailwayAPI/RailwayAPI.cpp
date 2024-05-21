@@ -48,8 +48,7 @@ bool RailwayAPI::TrsCmlDistToNE(const double& dCml, const double& dDist, double&
 
 bool RailwayAPI::TrsNEToCmlDist(const double& N_Y, const double& E_X, double& dCml, double& dDist, double& dFwj)
 {
-    double dTanAngle = 0.0;
-    if (!m_pHorCurve->TrsNEToCmlDist(E_X, N_Y, dCml, dDist, dTanAngle))
+    if (!m_pHorCurve->TrsNEToCmlDist(E_X, N_Y, dCml, dDist, dFwj))
         return false;
     
     return true;

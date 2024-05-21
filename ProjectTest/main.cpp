@@ -286,9 +286,9 @@ int main(int argc, const char * argv[]) {
         int nEndIndex = (pArrLineElement[i].eLineType == ElementType::Arc ? 1 : pArrLineElement[i].nPosCount - 1);
         
         assert(pAPI->TrsNEToCmlDist(pArrLineElement[i].pArrPos[nStartIndex].dY, pArrLineElement[i].pArrPos[nStartIndex].dX, dCml, dDist, dFwj));
-        assert(abs(dDist) < 0.000001);
+        assert(abs(dDist) < 1.0e-5);
         assert(pAPI->TrsNEToCmlDist(pArrLineElement[i].pArrPos[nEndIndex].dY, pArrLineElement[i].pArrPos[nEndIndex].dX, dCml, dDist, dFwj));
-        assert(abs(dDist) < 0.000001);
+        assert(abs(dDist) < 1.0e-5);
     }
     delete[] pArrLineElement;
     

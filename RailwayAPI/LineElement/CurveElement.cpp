@@ -336,6 +336,11 @@ bool CurveElement::Newton_Raphson(double dX, double dY, double& dRoot)
     int nIterCount = 0;
     do {
         double fx0 = f(x0, dX, dY);
+        if (abs(fx0) < s_dCalPrecision)
+        {
+            dRoot = x0;
+            return true;
+        }
         double fdx0 = f_d(x0, dX, dY);
         
         if (abs(fdx0) < s_dCalPrecision || nIterCount > 50)
@@ -343,18 +348,12 @@ bool CurveElement::Newton_Raphson(double dX, double dY, double& dRoot)
 
         double L = 1.0;
         double x1 = x0 - L * fx0 / fdx0;
-        while (abs(f(x1, dX, dY)) > abs(fx0)) {
+        while (abs(f(x1, dX, dY)) >= abs(fx0)) {
             if (L < s_dValidPrecision)
                 return false;
             
             L /= 2.0;
             x1 = x0 - L * fx0 / fdx0;
-        }
-        
-        if (abs(f(x1, dX, dY)) < s_dCalPrecision)
-        {
-            dRoot = x1;
-            return true;
         }
         
         nIterCount++;

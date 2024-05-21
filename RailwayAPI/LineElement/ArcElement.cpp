@@ -53,7 +53,7 @@ bool ArcElement::TrsNEToCmlDist(const double& dX, const double& dY, double& dCml
     
     Vector2d vecOA = A - O;
     Vector2d vecOB = B - O;
-    assert(abs(vecOA.model() + vecOB.model() - 2.0 * m_dArcR) < 0.01);
+    assert(abs(vecOA.model() - m_dArcR) < 0.01 && abs(vecOB.model() - m_dArcR) < 0.01);
     
     //起点向量
     Vector2d vecStart = m_posStart - O;
