@@ -48,10 +48,7 @@ bool RailwayAPI::TrsCmlDistToNE(const double& dCml, const double& dDist, double&
 
 bool RailwayAPI::TrsNEToCmlDist(const double& N_Y, const double& E_X, double& dCml, double& dDist, double& dFwj)
 {
-    if (!m_pHorCurve->TrsNEToCmlDist(E_X, N_Y, dCml, dDist, dFwj))
-        return false;
-    
-    return true;
+    return m_pHorCurve->TrsNEToCmlDist(E_X, N_Y, dCml, dDist, dFwj);
 }
 
 tagCmlDistAngle* RailwayAPI::TrsNEToCmlDist(const double& N_Y, const double& E_X, uint32_t& nCount)

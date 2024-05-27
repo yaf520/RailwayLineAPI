@@ -63,7 +63,9 @@ bool CurveElement::TrsNEToCmlDist(const double& dX, const double& dY, double& dC
     
     //牛顿迭代法
     double dRoot = 0.0;
-    if (Newton_Raphson(posTrs.x, posTrs.y, dRoot))
+    //预估根
+    double dEstimateRoot = EstimateRoot(posTrs.x, posTrs.y);
+    if (Newton_Raphson(dEstimateRoot, posTrs.x, posTrs.y, dRoot))
     {
         if (dRoot < m_dHideLen - s_dCalPrecision || dRoot > m_dTotalLen + m_dHideLen + s_dCalPrecision)
             return false;
@@ -285,6 +287,32 @@ void CurveElement::AdjustData(const Point2d& pos)
     m_posBase += pos;
 }
 
+double CurveElement::EstimateRoot(double dParamX, double dParamY)
+{
+    const Point2d posTarget(dParamX, dParamY);
+    //分段数
+    const int nSectionCount = 20;
+    double dMinDot = __DBL_MAX__;
+    double dPerLen = m_dTotalLen / nSectionCount;
+    double dNearestLen = 0.0;
+    for (double dLen = m_dHideLen; dLen <= m_dHideLen + m_dTotalLen; dLen += dPerLen)
+    {
+        Point2d pos = TrsCmlToNE_Relative(dLen);
+        Vector2d vecTarget = posTarget - pos;
+        double dTanAngle = TrsCmlToAngle_Relative(dLen);
+        Vector2d vecTan(cos(dTanAngle), sin(dTanAngle));
+        
+        double dDot = vecTan.dot(vecTarget) / vecTarget.model();
+        if (abs(dDot) < dMinDot)
+        {
+            dMinDot = dDot;
+            dNearestLen = dLen;
+        }
+    }
+    
+    return dNearestLen;
+}
+
 double CurveElement::f(double dL0, double dParamX, double dParamY)
 {
     double dTanAngle = dL0 * dL0 / 2.0 / m_dC;
@@ -328,27 +356,27 @@ double CurveElement::f_d(double dL0, double dParamX, double dParamY)
     return -sin(dTanAngle) * (dL0 / m_dC) * (x - dParamX) + cos(dTanAngle) * dx + cos(dTanAngle) * (dL0 / m_dC) * (y - dParamY) + sin(dTanAngle) * dy;
 }
 
-bool CurveElement::Newton_Raphson(double dX, double dY, double& dRoot)
+bool CurveElement::Newton_Raphson(double dEstimateRoot, double dParamX, double dParamY, double& dRoot)
 {
     //初始值
-    double x0 = dX;
+    double x0 = dEstimateRoot;
     
     int nIterCount = 0;
     do {
-        double fx0 = f(x0, dX, dY);
+        double fx0 = f(x0, dParamX, dParamY);
         if (abs(fx0) < s_dCalPrecision)
         {
             dRoot = x0;
             return true;
         }
-        double fdx0 = f_d(x0, dX, dY);
+        double fdx0 = f_d(x0, dParamX, dParamY);
         
         if (abs(fdx0) < s_dCalPrecision || nIterCount > 50)
             return false;
 
         double L = 1.0;
         double x1 = x0 - L * fx0 / fdx0;
-        while (abs(f(x1, dX, dY)) >= abs(fx0)) {
+        while (abs(f(x1, dParamX, dParamY)) >= abs(fx0)) {
             if (L < s_dValidPrecision)
                 return false;
             

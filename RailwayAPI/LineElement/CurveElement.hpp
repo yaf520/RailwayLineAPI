@@ -53,12 +53,14 @@ public:
     void AdjustData(const Point2d& pos) override;
     
 private:
+    ///预估根
+    double EstimateRoot(double dParamX, double dParamY);
     ///原函数
     double f(double x0, double dParamX, double dParamY);
     ///导函数
     double f_d(double x0,  double dParamX, double dParamY);
     ///迭代法
-    bool Newton_Raphson(double dX, double dY, double& dRoot);
+    bool Newton_Raphson(double dEstimateRoot, double dParamX, double dParamY, double& dRoot);
 };
 
 

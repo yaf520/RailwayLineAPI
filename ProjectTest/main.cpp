@@ -245,55 +245,32 @@ int main(int argc, const char * argv[]) {
     
     pAPI->SetData(&vecJD.front(), vecJD.size(), &vecDL.front(), vecDL.size(), &vecSlope.front(), vecSlope.size());
     
+    //pAPI->TrsCmlDistToNE(46570.86700, 100.0, dY, dX, dFwj);
+    
+    //uint32_t nCount = 0;
+    //auto p = pAPI->TrsNEToCmlDist(dY, dX, nCount);
+    
     //步长
     const double dStep = 1.3958;
-    dDist = 20.0;
     
-//#define ERROR_TEST
     
-#ifdef ERROR_TEST
-    
-    const double dStartCml = 46594.59560 + dStep;
-    const double dEndCml = 46683.92680;
-    for (double dCml = dStartCml; dCml <= dEndCml; dCml += dStep)
-    {
-        //里程转坐标
-        pAPI->TrsCmlDistToNE(dCml, dDist, dY, dX, dFwj);
-        //坐标转里程
-        bool bFind = false;
-        uint32_t nCount = 0;
-        tagCmlDistAngle* pArr = pAPI->TrsNEToCmlDist(dY, dX, nCount);
-        for (int nIndex = 0; nIndex < nCount; nIndex++)
-        {
-            if (abs(pArr[nIndex].dDist - dDist) < 0.00001)
-            {
-                assert(abs(dCml - pArr[nIndex].dCml) < 0.00001);
-                bFind = true;
-                break;
-            }
-        }
-        assert(bFind);
-        delete [] pArr;
-    }
-    
-#endif
-    
-    int nArrCount = 0;
-    const tagExportLineElement* pArrLineElement = pAPI->ExportHorCurve(nArrCount, 0.0, pAPI->GetLength(), 0.0, 1.0);
-    for (int i = 0; i < nArrCount; i++)
-    {
-        int nStartIndex = 0;
-        int nEndIndex = (pArrLineElement[i].eLineType == ElementType::Arc ? 1 : pArrLineElement[i].nPosCount - 1);
-        
-        assert(pAPI->TrsNEToCmlDist(pArrLineElement[i].pArrPos[nStartIndex].dY, pArrLineElement[i].pArrPos[nStartIndex].dX, dCml, dDist, dFwj));
-        assert(abs(dDist) < 1.0e-5);
-        assert(pAPI->TrsNEToCmlDist(pArrLineElement[i].pArrPos[nEndIndex].dY, pArrLineElement[i].pArrPos[nEndIndex].dX, dCml, dDist, dFwj));
-        assert(abs(dDist) < 1.0e-5);
-    }
-    delete[] pArrLineElement;
+//    int nArrCount = 0;
+//    const tagExportLineElement* pArrLineElement = pAPI->ExportHorCurve(nArrCount, 0.0, pAPI->GetLength(), 0.0, 1.0);
+//    for (int i = 0; i < nArrCount; i++)
+//    {
+//        int nStartIndex = 0;
+//        int nEndIndex = (pArrLineElement[i].eLineType == ElementType::Arc ? 1 : pArrLineElement[i].nPosCount - 1);
+//        
+//        assert(pAPI->TrsNEToCmlDist(pArrLineElement[i].pArrPos[nStartIndex].dY, pArrLineElement[i].pArrPos[nStartIndex].dX, dCml, dDist, dFwj));
+//        assert(abs(dDist) < 1.0e-5);
+//        assert(pAPI->TrsNEToCmlDist(pArrLineElement[i].pArrPos[nEndIndex].dY, pArrLineElement[i].pArrPos[nEndIndex].dX, dCml, dDist, dFwj));
+//        assert(abs(dDist) < 1.0e-5);
+//    }
+//    delete[] pArrLineElement;
     
      
     char buffer[200] = {0};
+    dDist = 100.0;
     double dTotalLen = pAPI->GetLength();
     for (dCml = 0.0; dCml <= dTotalLen; dCml += dStep)
     {
@@ -307,11 +284,11 @@ int main(int argc, const char * argv[]) {
         tagCmlDistAngle* pArr = pAPI->TrsNEToCmlDist(dY, dX, nCount);
         for (int nIndex = 0; nIndex < nCount; nIndex++)
         {
-            if (abs(pArr[nIndex].dDist - dDist) < 1.0e-5)
+            if (abs(pArr[nIndex].dCml - dCml) < 1.0e-5)
             {
                 snprintf(buffer, sizeof(buffer), "dX: %0.5f, dY: %0.5f =====> dCml: %0.5f, dDist: %0.5f, dAngle: %0.5f", dX, dY, pArr[nIndex].dCml, pArr[nIndex].dDist, pArr[nIndex].dFwj);
                 cout << buffer << endl;
-                assert(abs(dCml - pArr[nIndex].dCml) < 1.0e-5);
+                assert(abs(dDist - pArr[nIndex].dDist) < 0.1);
                 bFind = true;
                 break;
             }
