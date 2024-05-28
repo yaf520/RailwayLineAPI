@@ -245,10 +245,10 @@ int main(int argc, const char * argv[]) {
     
     pAPI->SetData(&vecJD.front(), vecJD.size(), &vecDL.front(), vecDL.size(), &vecSlope.front(), vecSlope.size());
     
-    //pAPI->TrsCmlDistToNE(46570.86700, 100.0, dY, dX, dFwj);
+    pAPI->TrsCmlDistToNE(46570.86700, 100.0, dY, dX, dFwj);
     
-    //uint32_t nCount = 0;
-    //auto p = pAPI->TrsNEToCmlDist(dY, dX, nCount);
+    uint32_t nCount = 0;
+    auto p = pAPI->TrsNEToCmlDist(dY, dX, nCount);
     
     //步长
     const double dStep = 1.3958;

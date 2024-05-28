@@ -25,7 +25,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "07953AB7-5D11-4D4A-809A-35C83CA84052"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             condition = "nIndex == 56"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -129,8 +129,8 @@
             filePath = "RailwayAPI/LineElement/CurveElement.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "74"
-            endingLineNumber = "74"
+            startingLineNumber = "77"
+            endingLineNumber = "77"
             landmarkName = "CurveElement::TrsNEToCmlDist(dX, dY, dCml, dDist, dAngle)"
             landmarkType = "7">
          </BreakpointContent>

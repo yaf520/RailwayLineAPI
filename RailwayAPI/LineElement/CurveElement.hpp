@@ -54,7 +54,7 @@ public:
     
 private:
     ///预估根
-    double EstimateRoot(double dParamX, double dParamY);
+    bool EstimateRoot(double dParamX, double dParamY, double& dRoot);
     ///原函数
     double f(double x0, double dParamX, double dParamY);
     ///导函数

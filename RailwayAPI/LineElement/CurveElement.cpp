@@ -64,7 +64,10 @@ bool CurveElement::TrsNEToCmlDist(const double& dX, const double& dY, double& dC
     //牛顿迭代法
     double dRoot = 0.0;
     //预估根
-    double dEstimateRoot = EstimateRoot(posTrs.x, posTrs.y);
+    double dEstimateRoot = 0.0;
+    if (!EstimateRoot(posTrs.x, posTrs.y, dEstimateRoot))
+        return false;
+    
     if (Newton_Raphson(dEstimateRoot, posTrs.x, posTrs.y, dRoot))
     {
         if (dRoot < m_dHideLen - s_dCalPrecision || dRoot > m_dTotalLen + m_dHideLen + s_dCalPrecision)
@@ -287,30 +290,30 @@ void CurveElement::AdjustData(const Point2d& pos)
     m_posBase += pos;
 }
 
-double CurveElement::EstimateRoot(double dParamX, double dParamY)
+bool CurveElement::EstimateRoot(double dParamX, double dParamY, double& dRoot)
 {
     const Point2d posTarget(dParamX, dParamY);
     //分段数
-    const int nSectionCount = 20;
-    double dMinDot = __DBL_MAX__;
+    const int nSectionCount = 10;
     double dPerLen = m_dTotalLen / nSectionCount;
-    double dNearestLen = 0.0;
-    for (double dLen = m_dHideLen; dLen <= m_dHideLen + m_dTotalLen; dLen += dPerLen)
-    {
-        Point2d pos = TrsCmlToNE_Relative(dLen);
-        Vector2d vecTarget = posTarget - pos;
-        double dTanAngle = TrsCmlToAngle_Relative(dLen);
-        Vector2d vecTan(cos(dTanAngle), sin(dTanAngle));
-        
-        double dDot = vecTan.dot(vecTarget) / vecTarget.model();
-        if (abs(dDot) < dMinDot)
-        {
-            dMinDot = dDot;
-            dNearestLen = dLen;
-        }
-    }
     
-    return dNearestLen;
+    double x0 = m_dHideLen;
+    do {
+        double x1 = __min(x0 + dPerLen, m_dHideLen + m_dTotalLen);
+        
+        if (f(x0, dParamX, dParamY) * f(x1, dParamX, dParamY) <= 0.0)
+        {
+            dRoot = x0;
+            return true;
+        }
+        
+        if (x1 >= m_dHideLen + m_dTotalLen)
+            break;
+        
+        x0 = x1;
+    } while (true);
+    
+    return false;
 }
 
 double CurveElement::f(double dL0, double dParamX, double dParamY)
