@@ -68,6 +68,9 @@ bool CurveElement::TrsNEToCmlDist(const double& dX, const double& dY, double& dC
     if (!EstimateRoot(posTrs.x, posTrs.y, dEstimateRoot))
         return false;
     
+    //double dEstimateRoot = m_dHideLen + m_dTotalLen / 2.0;
+    
+    //dEstimateRoot = __max(m_dHideLen, __min(posTrs.x, m_dHideLen + m_dTotalLen));
     if (Newton_Raphson(dEstimateRoot, posTrs.x, posTrs.y, dRoot))
     {
         if (dRoot < m_dHideLen - s_dCalPrecision || dRoot > m_dTotalLen + m_dHideLen + s_dCalPrecision)
@@ -290,9 +293,66 @@ void CurveElement::AdjustData(const Point2d& pos)
     m_posBase += pos;
 }
 
-bool CurveElement::EstimateRoot(double dParamX, double dParamY, double& dRoot)
+bool CurveElement::EstimateRoot(const double& dParamX, const double& dParamY, double& dRoot)
 {
-    const Point2d posTarget(dParamX, dParamY);
+    //分段数
+    const int nSectionCount = 10;
+    double dPerLen = m_dTotalLen / nSectionCount;
+    double dRealLen = m_dHideLen + m_dTotalLen;
+    
+    double x0 = m_dHideLen;
+    double x1 = 0.0;
+    
+    double f0 = 0.0, f1 = 0.0, f0_d = 0.0, f1_d = 0.0;
+    do {
+        double L = 1.0;
+        
+        f0 = f(x0, dParamX, dParamY);
+        f0_d = f_d(x0, dParamX, dParamY);
+        do {
+            x1 = __min(x0 + L * dPerLen, dRealLen);
+            f1 = f(x1, dParamX, dParamY);
+            
+            if (f0 * f1 <= 0.0)
+            {
+                dRoot = (x0 + x1) / 2.0;
+                return true;
+            }
+            
+            f1_d = f_d(x1, dParamX, dParamY);
+            if (abs(f1_d) <= s_dCalPrecision)
+            {
+                x1 = __min(x0 + dPerLen, dRealLen);
+                break;
+            }
+            
+            L /= 2.0;
+        } while (f0_d * f1_d <= 0.0);
+        
+        if (x1 >= dRealLen)
+            break;
+        
+        x0 = x1;
+    } while (true);
+    
+    return false;
+    /*
+    if (dStart > dEnd || abs(dStart - dEnd) < s_dCalPrecision)
+        return false;
+    
+    double dMid = (dStart + dEnd) / 2.0;
+    if (f(dStart, dParamX, dParamY) * f(dEnd, dParamX, dParamY) <= 0.0)
+    {
+        dRoot = dMid;
+        return true;
+    }
+    
+    if (f_d(dStart, dParamX, dParamY) * f_d(dEnd, dParamX, dParamY) > 0.0)
+        return false;
+    
+    return (EstimateRoot(dParamX, dParamY, dStart, dMid, dRoot) || EstimateRoot(dParamX, dParamY, dMid, dEnd, dRoot));
+     */
+    /*
     //分段数
     const int nSectionCount = 10;
     double dPerLen = m_dTotalLen / nSectionCount;
@@ -314,9 +374,10 @@ bool CurveElement::EstimateRoot(double dParamX, double dParamY, double& dRoot)
     } while (true);
     
     return false;
+     */
 }
 
-double CurveElement::f(double dL0, double dParamX, double dParamY)
+double CurveElement::f(double dL0, const double& dParamX, const double& dParamY)
 {
     double dTanAngle = dL0 * dL0 / 2.0 / m_dC;
     double x = 0.0, y = 0.0;
@@ -335,7 +396,7 @@ double CurveElement::f(double dL0, double dParamX, double dParamY)
     return cos(dTanAngle) * (x - dParamX) + sin(dTanAngle) * (y - dParamY);
 }
 
-double CurveElement::f_d(double dL0, double dParamX, double dParamY)
+double CurveElement::f_d(double dL0, const double& dParamX, const double& dParamY)
 {
     double dTanAngle = dL0 * dL0 / 2.0 / m_dC;
     double x = 0.0, y = 0.0, dx = 0.0, dy = 0.0;
@@ -359,7 +420,7 @@ double CurveElement::f_d(double dL0, double dParamX, double dParamY)
     return -sin(dTanAngle) * (dL0 / m_dC) * (x - dParamX) + cos(dTanAngle) * dx + cos(dTanAngle) * (dL0 / m_dC) * (y - dParamY) + sin(dTanAngle) * dy;
 }
 
-bool CurveElement::Newton_Raphson(double dEstimateRoot, double dParamX, double dParamY, double& dRoot)
+bool CurveElement::Newton_Raphson(double dEstimateRoot, const double& dParamX, const double& dParamY, double& dRoot)
 {
     //初始值
     double x0 = dEstimateRoot;

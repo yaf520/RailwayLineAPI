@@ -6,7 +6,24 @@
          contextName = "LineElementManager::SetData(tagJDInfo const*, unsigned int):LineElementManager.cpp">
       </ContextState>
       <ContextState
+         contextName = "CurveElement::TrsNEToCmlDist(double const&amp;, double const&amp;, double&amp;, double&amp;, double&amp;):CurveElement.cpp">
+      </ContextState>
+      <ContextState
+         contextName = "CurveElement::EstimateRoot(double const&amp;, double const&amp;, double&amp;):CurveElement.cpp">
+         <PersistentStrings>
+            <PersistentString
+               value = "f1">
+            </PersistentString>
+            <PersistentString
+               value = "f0">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "BasePoint2d::~BasePoint2d():BasePoint.hpp">
+      </ContextState>
+      <ContextState
+         contextName = "CurveElement::EstimateRoot(double const&amp;, double const&amp;, double const&amp;, double const&amp;, double&amp;):CurveElement.cpp">
       </ContextState>
    </ContextStates>
 </VariablesViewState>

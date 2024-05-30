@@ -54,13 +54,13 @@ public:
     
 private:
     ///预估根
-    bool EstimateRoot(double dParamX, double dParamY, double& dRoot);
+    bool EstimateRoot(const double& dParamX, const double& dParamY, double& dRoot);
     ///原函数
-    double f(double x0, double dParamX, double dParamY);
+    double f(double x0, const double& dParamX, const double& dParamY);
     ///导函数
-    double f_d(double x0,  double dParamX, double dParamY);
+    double f_d(double x0, const double& dParamX, const double& dParamY);
     ///迭代法
-    bool Newton_Raphson(double dEstimateRoot, double dParamX, double dParamY, double& dRoot);
+    bool Newton_Raphson(double dEstimateRoot, const double& dParamX, const double& dParamY, double& dRoot);
 };
 
 
