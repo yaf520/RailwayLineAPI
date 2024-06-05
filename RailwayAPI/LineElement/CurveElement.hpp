@@ -10,6 +10,11 @@
 #include "BaseLineElement.hpp"
 #include "BaseCalFun.hpp"
 
+///原函数
+typedef double (*func)(double, double, double);
+///导函数
+typedef double (*func_d)(double, double, double);
+
 class CurveElement : public BaseLineElement
 {
 public:
@@ -56,11 +61,13 @@ private:
     ///预估根
     bool EstimateRoot(const double& dParamX, const double& dParamY, double& dRoot);
     ///原函数
-    double f(double x0, const double& dParamX, const double& dParamY);
-    ///导函数
-    double f_d(double x0, const double& dParamX, const double& dParamY);
+    double f_original(double x0, const double& dParamX, const double& dParamY);
+    ///一阶导函数
+    double f_first_deriv(double x0, const double& dParamX, const double& dParamY);
+    ///二阶导函数
+    double f_second_deriv(double x0, const double& dParamX, const double& dParamY);
     ///迭代法
-    bool Newton_Raphson(double dEstimateRoot, const double& dParamX, const double& dParamY, double& dRoot);
+    bool Newton_Raphson(double (CurveElement::*pf_original)(double, const double&, const double&), double (CurveElement::*pf_first_deriv)(double, const double&, const double&), double dEstimateRoot, const double& dParamX, const double& dParamY, double& dRoot);
 };
 
 

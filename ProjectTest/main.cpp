@@ -196,8 +196,6 @@ int main(int argc, const char * argv[]) {
     cout << fixed;
     cout.precision(5);
     
-    RailwayAPI* pAPI = new RailwayAPI;
-    double dCml, dDist, dFwj, dX, dY;
     //交点信息
     std::vector<tagJDInfo> vecJD;
     //断链信息
@@ -211,9 +209,9 @@ int main(int argc, const char * argv[]) {
     //坡度信息
     tagSlopeInfo SlopeInfo;
      
-    //#define FIVE_UNIT 五单元平曲线测试
+//#define FIVE_UNIT 五单元平曲线测试
         
-    #ifdef FIVE_UNIT
+#ifdef FIVE_UNIT
         
     //五单元曲线
     JDInfo.dY = 8929.8900452472;
@@ -237,40 +235,52 @@ int main(int argc, const char * argv[]) {
     JDInfo.dX = 14772.6551081784;
     vecJD.emplace_back(JDInfo);
     
-    #else
+#else
 
     LoadEIFile("/Users/yaf/Downloads/公路平曲线/1.JD", vecJD);
     
-    #endif
+#endif
     
+    //变量定义
+    double dCml = 0.0, dDist = 0.0, dFwj = 0.0, dX = 0.0, dY = 0.0;
+    //步长
+    const double dStep = 1.3615;
+    
+    RailwayAPI* pAPI = new RailwayAPI;
     pAPI->SetData(&vecJD.front(), vecJD.size(), &vecDL.front(), vecDL.size(), &vecSlope.front(), vecSlope.size());
     
-    pAPI->TrsCmlDistToNE(46582.03340, 100.0, dY, dX, dFwj);
+#define SINGLE_DATA_TEST //单点测试
     
+#ifdef SINGLE_DATA_TEST
+    
+    pAPI->TrsCmlDistToNE(46570.10750, 300, dY, dX, dFwj);
     uint32_t nCount = 0;
     auto p = pAPI->TrsNEToCmlDist(dY, dX, nCount);
     
-    //步长
-    const double dStep = 1.3958;
+#endif
     
+//#define KEY_POS_TEST //关键点测试
     
-//    int nArrCount = 0;
-//    const tagExportLineElement* pArrLineElement = pAPI->ExportHorCurve(nArrCount, 0.0, pAPI->GetLength(), 0.0, 1.0);
-//    for (int i = 0; i < nArrCount; i++)
-//    {
-//        int nStartIndex = 0;
-//        int nEndIndex = (pArrLineElement[i].eLineType == ElementType::Arc ? 1 : pArrLineElement[i].nPosCount - 1);
-//        
-//        assert(pAPI->TrsNEToCmlDist(pArrLineElement[i].pArrPos[nStartIndex].dY, pArrLineElement[i].pArrPos[nStartIndex].dX, dCml, dDist, dFwj));
-//        assert(abs(dDist) < 1.0e-5);
-//        assert(pAPI->TrsNEToCmlDist(pArrLineElement[i].pArrPos[nEndIndex].dY, pArrLineElement[i].pArrPos[nEndIndex].dX, dCml, dDist, dFwj));
-//        assert(abs(dDist) < 1.0e-5);
-//    }
-//    delete[] pArrLineElement;
+#ifdef KEY_POS_TEST
     
+    int nArrCount = 0;
+    const tagExportLineElement* pArrLineElement = pAPI->ExportHorCurve(nArrCount, 0.0, pAPI->GetLength(), 0.0, 1.0);
+    for (int i = 0; i < nArrCount; i++)
+    {
+        int nStartIndex = 0;
+        int nEndIndex = (pArrLineElement[i].eLineType == ElementType::Arc ? 1 : pArrLineElement[i].nPosCount - 1);
+        
+        assert(pAPI->TrsNEToCmlDist(pArrLineElement[i].pArrPos[nStartIndex].dY, pArrLineElement[i].pArrPos[nStartIndex].dX, dCml, dDist, dFwj));
+        assert(abs(dDist) < 1.0e-5);
+        assert(pAPI->TrsNEToCmlDist(pArrLineElement[i].pArrPos[nEndIndex].dY, pArrLineElement[i].pArrPos[nEndIndex].dX, dCml, dDist, dFwj));
+        assert(abs(dDist) < 1.0e-5);
+    }
+    delete[] pArrLineElement;
+    
+#endif
      
     char buffer[200] = {0};
-    dDist = 100.0;
+    dDist = 300.0;
     double dTotalLen = pAPI->GetLength();
     for (dCml = 0.0; dCml <= dTotalLen; dCml += dStep)
     {
