@@ -69,83 +69,7 @@ bool CurveElement::TrsNEToCmlDist(const double& dX, const double& dY, double& dC
     double dEstimateRoot = 0.0;
     if (!EstimateRoot(posTrs.x, posTrs.y, dEstimateRoot))
         return false;
-    
-    //double dEstimateRoot = m_dHideLen + m_dTotalLen / 2.0;
-    
-    //dEstimateRoot = __max(m_dHideLen, __min(posTrs.x, m_dHideLen + m_dTotalLen));
-    
-    /*
-    double fx0 = f(m_dHideLen, posTrs.x, posTrs.y);
-    double fx1 = f(m_dHideLen + m_dTotalLen, posTrs.x, posTrs.y);
-    double fdx0 = f_first_deriv(m_dHideLen, posTrs.x, posTrs.y);
-    double fdx1 = f_first_deriv(m_dHideLen + m_dTotalLen, posTrs.x, posTrs.y);
-    if (fx0 * fx1 > 0.0 && fdx0 * fdx1 > 0.0)
-        return false;
-    
-    //可能会有两个点，取投影距离小的
-    double arrCml[2] = {0};
-    double arrDist[2] = {0};
-    double arrAngle[2] = {0};
-    
-    bool bRet = false;
-    const double arrEstimateRoot[2] = { m_dHideLen, m_dHideLen + m_dTotalLen};
-    for (int i = 0; i < 2; i++)
-    {
-        if (Newton_Raphson(arrEstimateRoot[i], posTrs.x, posTrs.y, dRoot))
-        {
-            if (dRoot < m_dHideLen - s_dCalPrecision || dRoot > m_dTotalLen + m_dHideLen + s_dCalPrecision)
-                return false;
-            
-            bRet = true;
-            
-            //里程
-            arrCml[i] = m_dStartCml + (m_bEnter ? (dRoot - m_dHideLen) : m_dTotalLen - (dRoot - m_dHideLen));
-            
-            //切线角
-            double dAngleRelative = TrsCmlToAngle_Relative(dRoot);
-            arrAngle[i] = m_dBaseTanAngle + (bTurnDir ? dAngleRelative : -dAngleRelative);
-            if (!m_bEnter)
-                arrAngle[i] += (arrAngle[i] > MATH_PI ? -MATH_PI : MATH_PI);
-            
-            //投影距离
-            Point2d posRet = TrsCmlToNE_Relative(dRoot);
-            Vector2d vecTarget = posTrs - posRet;
-            if (vecTarget.isZeroVec())
-                arrDist[i] = 0.0;
-            else
-            {
-                Vector2d vecTan(cos(dAngleRelative), sin(dAngleRelative));
-                //左右侧(叉乘判断左右)
-                double dCross = vecTan.cross(vecTarget);
-                bool bOnLeft = ((dCross > 0.0 && m_bTurnLeft) || (dCross < 0.0 && !m_bTurnLeft));
-                //投影距离
-                arrDist[i] = vecTarget.model() * (bOnLeft ? 1.0 : -1.0);
-            }
-            
-            if (fx0 * fx1 <= 0.0)
-            {
-                dCml = arrCml[i];
-                dAngle = arrAngle[i];
-                dDist = arrDist[i];
-                return true;
-            }
-        }
-    }
-    
-    if (bRet)
-    {
-        int nIndex = (abs(arrDist[0]) < abs(arrDist[1]) ? 0 : 1);
-        dCml = arrCml[nIndex];
-        dAngle = arrAngle[nIndex];
-        dDist = arrDist[nIndex];
-        return true;
-    }
-    */
-    
-    //double (CurveElement::*pfunc)(double, const double&, const double&) = &CurveElement::f_original;
-    //(this->*pfunc)(0, 0, 0);
-    
-    //if (Newton_Raphson(dEstimateRoot, posTrs.x, posTrs.y, dRoot))
+
     if (Newton_Raphson(&CurveElement::f_original, &CurveElement::f_first_deriv, dEstimateRoot, posTrs.x, posTrs.y, dRoot))
     {
         if (dRoot < m_dHideLen - s_dCalPrecision || dRoot > m_dTotalLen + m_dHideLen + s_dCalPrecision)
@@ -381,33 +305,27 @@ bool CurveElement::EstimateRoot(const double& dParamX, const double& dParamY, do
     double f0 = 0.0, f1 = 0.0, f0_d = 0.0, f1_d = 0.0;
     do {
         f0 = f_original(x0, dParamX, dParamY);
-        f0_d = f_first_deriv(x0, dParamX, dParamY);
         
         x1 = __min(x0 + dPerLen, dRealLen);
         f1 = f_original(x1, dParamX, dParamY);
-        
         if (f0 * f1 <= 0.0)
         {
             dRoot = (x0 + x1) / 2.0;
             return true;
         }
         
+        f0_d = f_first_deriv(x0, dParamX, dParamY);
         f1_d = f_first_deriv(x1, dParamX, dParamY);
         if (f0_d * f1_d <= 0.0)
         {
             //存在极值点
-            double dLimitValue = 0.0;
-            if (Newton_Raphson(&CurveElement::f_first_deriv, &CurveElement::f_second_deriv, (x0 + x1) / 2.0, dParamX, dParamY, dLimitValue))
+            double xLimite = 0.0;
+            if (Newton_Raphson(&CurveElement::f_first_deriv, &CurveElement::f_second_deriv, (x0 + x1) / 2.0, dParamX, dParamY, xLimite))
             {
-                double fLimite = f_original(dLimitValue, dParamX, dParamY);
-                if (f0 * fLimite <= 0.0)
+                double fLimite = f_original(xLimite, dParamX, dParamY);
+                if (f0 * fLimite <= 0.0 || f1 * fLimite <= 0.0)
                 {
-                    dRoot = (f0 + fLimite) / 2.0;
-                    return true;
-                }
-                else if (f1 * fLimite <= 0.0)
-                {
-                    dRoot = (f1 + fLimite) / 2.0;
+                    dRoot = (abs(x0 - xLimite) < abs(x1 - xLimite) ? (x0 + xLimite) / 2.0 : (x1 + xLimite) / 2.0);
                     return true;
                 }
             }
