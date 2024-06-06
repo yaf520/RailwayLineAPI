@@ -161,6 +161,61 @@ bool CurveElement::TrsNEToCmlDist(const double& dX, const double& dY, double& dC
 
 }
 
+uint32_t CurveElement::TrsNEToCmlDist(const double& dX, const double& dY, double arrCml[s_nMaxProCount], double arrDist[s_nMaxProCount], double arrAngle[s_nMaxProCount])
+{
+    //转向方向
+    bool bTurnDir = ((m_bEnter && m_bTurnLeft) || (!m_bEnter && !m_bTurnLeft));
+    //转换为缓和曲线相对坐标系
+    Point2d posTrs = BaseCalFun::TransferPosReversal(m_posBase, Point2d(dX, dY), bTurnDir, m_dBaseTanAngle);
+    
+    //预估根
+    double arrEstimateRoot[s_nMaxProCount] = {0.0};
+    uint32_t nEstimateRootCount = EstimateRoot(posTrs.x, posTrs.y, arrEstimateRoot);
+    assert(nEstimateRootCount <= 2);
+    if (nEstimateRootCount == 0)
+        return false;
+
+    uint32_t nRootCount = 0;
+    for (uint32_t nIndex = 0; nIndex < nEstimateRootCount; nIndex++)
+    {
+        //牛顿迭代法
+        double dRoot = 0.0;
+        if (Newton_Raphson(&CurveElement::f_original, &CurveElement::f_first_deriv, arrEstimateRoot[nIndex], posTrs.x, posTrs.y, dRoot))
+        {
+            if (dRoot < m_dHideLen - s_dCalPrecision || dRoot > m_dTotalLen + m_dHideLen + s_dCalPrecision)
+                continue;
+            
+            //里程
+            arrCml[nRootCount] = m_dStartCml + (m_bEnter ? (dRoot - m_dHideLen) : m_dTotalLen - (dRoot - m_dHideLen));
+            
+            //切线角
+            double dAngleRelative = TrsCmlToAngle_Relative(dRoot);
+            arrAngle[nRootCount] = m_dBaseTanAngle + (bTurnDir ? dAngleRelative : -dAngleRelative);
+            if (!m_bEnter)
+                arrAngle[nRootCount] += (arrAngle[nRootCount] > MATH_PI ? -MATH_PI : MATH_PI);
+            
+            //投影距离
+            Point2d posRet = TrsCmlToNE_Relative(dRoot);
+            Vector2d vecTarget = posTrs - posRet;
+            if (vecTarget.isZeroVec())
+                arrDist[nRootCount] = 0.0;
+            else
+            {
+                Vector2d vecTan(cos(dAngleRelative), sin(dAngleRelative));
+                //左右侧(叉乘判断左右)
+                double dCross = vecTan.cross(vecTarget);
+                bool bOnLeft = ((dCross > 0.0 && m_bTurnLeft) || (dCross < 0.0 && !m_bTurnLeft));
+                //投影距离
+                arrDist[nRootCount] = vecTarget.model() * (bOnLeft ? 1.0 : -1.0);
+            }
+            
+            nRootCount++;
+        }
+    }
+    
+    return nRootCount;
+}
+
 tagExportLineElement* CurveElement::ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep)
 {
     double dDeltaLen = BaseCalFun::Round(dEndCml - dStartCml);
@@ -189,12 +244,9 @@ tagExportLineElement* CurveElement::ExportHorCurve(double dStartCml, double dEnd
 
 Point2d CurveElement::TrsCmlToNE_Relative(const double& dCml)
 {
-    //积分常数
-    const uint32_t n = 10;
-
     double dX = 0.0;
     double dY = 0.0;
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < s_nAddPreCount; i++)
     {
         double x = RELATIVE_X(i, dCml);
         double y = RELATIVE_Y(i, dCml);
@@ -308,12 +360,7 @@ bool CurveElement::EstimateRoot(const double& dParamX, const double& dParamY, do
         
         x1 = __min(x0 + dPerLen, dRealLen);
         f1 = f_original(x1, dParamX, dParamY);
-        if (f0 * f1 <= 0.0)
-        {
-            dRoot = (x0 + x1) / 2.0;
-            return true;
-        }
-        
+
         f0_d = f_first_deriv(x0, dParamX, dParamY);
         f1_d = f_first_deriv(x1, dParamX, dParamY);
         if (f0_d * f1_d <= 0.0)
@@ -323,13 +370,27 @@ bool CurveElement::EstimateRoot(const double& dParamX, const double& dParamY, do
             if (Newton_Raphson(&CurveElement::f_first_deriv, &CurveElement::f_second_deriv, (x0 + x1) / 2.0, dParamX, dParamY, xLimite))
             {
                 double fLimite = f_original(xLimite, dParamX, dParamY);
-                if (f0 * fLimite <= 0.0 || f1 * fLimite <= 0.0)
+                if (f0 * fLimite <= 0.0)
                 {
-                    dRoot = (abs(x0 - xLimite) < abs(x1 - xLimite) ? (x0 + xLimite) / 2.0 : (x1 + xLimite) / 2.0);
+                    dRoot = (x0 + xLimite) / 2.0;
+                    return true;
+                }
+                if (fLimite * f1 <= 0.0)
+                {
+                    dRoot = (xLimite + x1) / 2.0;
                     return true;
                 }
             }
         }
+        else
+        {
+            if (f0 * f1 <= 0.0)
+            {
+                dRoot = (x0 + x1) / 2.0;
+                return true;
+            }
+        }
+        
         if (x1 >= dRealLen)
             break;
         
@@ -357,11 +418,58 @@ bool CurveElement::EstimateRoot(const double& dParamX, const double& dParamY, do
    
 }
 
+uint32_t CurveElement::EstimateRoot(const double& dParamX, const double& dParamY, double arrEstimateRoot[s_nMaxProCount])
+{
+    //分段数
+    double dPerLen = m_dTotalLen / s_nEstimateRootSection;
+    double dRealLen = m_dHideLen + m_dTotalLen;
+    
+    double x0 = m_dHideLen;
+    double x1 = 0.0;
+    
+    uint32_t nCount = 0;
+    double f0 = 0.0, f1 = 0.0, f0_d = 0.0, f1_d = 0.0;
+    do {
+        f0 = f_original(x0, dParamX, dParamY);
+        
+        x1 = __min(x0 + dPerLen, dRealLen);
+        f1 = f_original(x1, dParamX, dParamY);
+
+        f0_d = f_first_deriv(x0, dParamX, dParamY);
+        f1_d = f_first_deriv(x1, dParamX, dParamY);
+        if (f0_d * f1_d <= 0.0)
+        {
+            //存在极值点
+            double xLimite = 0.0;
+            if (Newton_Raphson(&CurveElement::f_first_deriv, &CurveElement::f_second_deriv, (x0 + x1) / 2.0, dParamX, dParamY, xLimite))
+            {
+                double fLimite = f_original(xLimite, dParamX, dParamY);
+                if (f0 * fLimite <= 0.0)
+                    arrEstimateRoot[nCount++] = (x0 + xLimite) / 2.0;
+                if (fLimite * f1 <= 0.0)
+                    arrEstimateRoot[nCount++] = (xLimite + x1) / 2.0;
+            }
+        }
+        else
+        {
+            if (f0 * f1 <= 0.0)
+                arrEstimateRoot[nCount++] = (x0 + x1) / 2.0;
+        }
+        
+        if (x1 >= dRealLen)
+            break;
+        
+        x0 = x1;
+    } while (true);
+    
+    return nCount;
+}
+
 double CurveElement::f_original(double dL0, const double& dParamX, const double& dParamY)
 {
     double dTanAngle = dL0 * dL0 / 2.0 / m_dC;
     double x = 0.0, y = 0.0;
-    for (int n = 0; n < 10; n++)
+    for (int n = 0; n < s_nAddPreCount; n++)
     {
         double xAdd = RELATIVE_X(n, dL0);
         double yAdd = RELATIVE_Y(n, dL0);
@@ -380,7 +488,7 @@ double CurveElement::f_first_deriv(double dL0, const double& dParamX, const doub
 {
     double dTanAngle = dL0 * dL0 / 2.0 / m_dC;
     double x = 0.0, y = 0.0, dx = 0.0, dy = 0.0;
-    for (int n = 0; n < 10; n++)
+    for (int n = 0; n < s_nAddPreCount; n++)
     {
         double xAdd = RELATIVE_X(n, dL0);
         double yAdd = RELATIVE_Y(n, dL0);
@@ -407,7 +515,7 @@ double CurveElement::f_second_deriv(double x0, const double& dParamX, const doub
     double dDTanAngle2 = 1.0 / m_dC;
     
     double x = 0.0, y = 0.0, dx1 = 0.0, dy1 = 0.0, dx2 = 0.0, dy2 = 0.0;
-    for (int n = 0; n < 10; n++)
+    for (int n = 0; n < s_nAddPreCount; n++)
     {
         double xAdd = RELATIVE_X(n, x0);
         double yAdd = RELATIVE_Y(n, x0);
@@ -452,8 +560,9 @@ bool CurveElement::Newton_Raphson(double (CurveElement::*pf_original)(double, co
         if (abs(fdx0) < s_dCalPrecision || nIterCount > 50)
             return false;
 
-        double L = 1.0;
-        double x1 = x0 - L * fx0 / fdx0;
+        //double L = 1.0;
+        double x1 = x0 - /*L * */fx0 / fdx0;
+        /*
         while (abs((this->*pf_original)(x1, dParamX, dParamY)) >= abs(fx0)) {
             if (L < s_dValidPrecision)
                 return false;
@@ -461,7 +570,7 @@ bool CurveElement::Newton_Raphson(double (CurveElement::*pf_original)(double, co
             L /= 2.0;
             x1 = x0 - L * fx0 / fdx0;
         }
-        
+        */
         nIterCount++;
         x0 = x1;
     } while (true);

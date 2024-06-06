@@ -38,6 +38,8 @@ public:
     
     bool TrsNEToCmlDist(const double& dX, const double& dY, double& dCml, double& dDist, double& dAngle) override;
     
+    uint32_t TrsNEToCmlDist(const double& dX, const double& dY, double arrCml[s_nMaxProCount], double arrDist[s_nMaxProCount], double arrAngle[s_nMaxProCount]) override;
+    
     bool TrsCmlToHeight(const double& dCml, double& dHeight, double& dAngle) override { return false;};
     
     tagExportLineElement* ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep) override;
@@ -60,6 +62,8 @@ public:
 private:
     ///预估根
     bool EstimateRoot(const double& dParamX, const double& dParamY, double& dRoot);
+    ///预估根
+    uint32_t EstimateRoot(const double& dParamX, const double& dParamY, double arrEstimateRoot[s_nMaxProCount]);
     ///原函数
     double f_original(double x0, const double& dParamX, const double& dParamY);
     ///一阶导函数

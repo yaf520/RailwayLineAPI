@@ -249,7 +249,7 @@ int main(int argc, const char * argv[]) {
     RailwayAPI* pAPI = new RailwayAPI;
     pAPI->SetData(&vecJD.front(), vecJD.size(), &vecDL.front(), vecDL.size(), &vecSlope.front(), vecSlope.size());
     
-#define SINGLE_DATA_TEST //单点测试
+//#define SINGLE_DATA_TEST //单点测试
     
 #ifdef SINGLE_DATA_TEST
     
@@ -280,7 +280,7 @@ int main(int argc, const char * argv[]) {
 #endif
      
     char buffer[200] = {0};
-    dDist = 300.0;
+    dDist = 200.0;
     double dTotalLen = pAPI->GetLength();
     for (dCml = 0.0; dCml <= dTotalLen; dCml += dStep)
     {
@@ -290,6 +290,30 @@ int main(int argc, const char * argv[]) {
         cout << buffer << endl;
         
         bool bFind = false;
+        
+//#define USE_VECTOR
+        
+#ifdef USE_VECTOR
+        
+        std::vector<tagCmlDistAngle> vecRet;
+        if (pAPI->TrsNEToCmlDist(dY, dX, vecRet))
+        {
+            for (auto iter = vecRet.cbegin(); iter != vecRet.cend(); iter++)
+            {
+                if (abs(iter->dCml - dCml) < 1.0e-5)
+                {
+                    snprintf(buffer, sizeof(buffer), "dX: %0.5f, dY: %0.5f =====> dCml: %0.5f, dDist: %0.5f, dAngle: %0.5f", dX, dY, iter->dCml, iter->dDist, iter->dFwj);
+                    cout << buffer << endl;
+                    assert(abs(dDist - iter->dDist) < 0.1);
+                    bFind = true;
+                    break;
+                }
+            }
+        }
+        assert(bFind);
+        
+#else
+      
         uint32_t nCount = 0;
         tagCmlDistAngle* pArr = pAPI->TrsNEToCmlDist(dY, dX, nCount);
         for (int nIndex = 0; nIndex < nCount; nIndex++)
@@ -305,6 +329,9 @@ int main(int argc, const char * argv[]) {
         }
         assert(bFind);
         delete [] pArr;
+        
+#endif
+        
         
         cout << endl;
     }

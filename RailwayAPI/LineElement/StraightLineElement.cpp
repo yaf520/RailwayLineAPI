@@ -55,6 +55,21 @@ bool StraightLineElement::TrsNEToCmlDist(const double& dX, const double& dY, dou
     return true;
 }
 
+uint32_t StraightLineElement::TrsNEToCmlDist(const double& dX, const double& dY, double arrCml[s_nMaxProCount], double arrDist[s_nMaxProCount], double arrAngle[s_nMaxProCount])
+{
+    uint32_t nCount = 0;
+    double dCml = 0.0, dDist = 0.0, dAngle = 0.0;
+    if (TrsNEToCmlDist(dX, dY, dCml, dDist, dAngle))
+    {
+        arrCml[nCount] = dCml;
+        arrDist[nCount] = dDist;
+        arrAngle[nCount] = dAngle;
+        
+        nCount++;
+    }
+    return nCount;
+}
+
 tagExportLineElement* StraightLineElement::ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep)
 {
     double dDeltaLen = BaseCalFun::Round(dEndCml - dStartCml);

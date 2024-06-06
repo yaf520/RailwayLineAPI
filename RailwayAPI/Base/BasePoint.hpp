@@ -11,8 +11,17 @@
 
 static const double MATH_PI = 3.14159265358979323846264338327950288;
 static const double MATH_PI_2 = 1.57079632679489661923132169163975144;
+
+///计算精度
 static const double s_dCalPrecision = 1.0e-10;
+///有效数字精度
 static const double s_dValidPrecision = 1.0e-15;
+///线元投影点最大数目
+static const int s_nMaxProCount = 5;
+///预估根计算分段精细度
+static const int s_nEstimateRootSection = 10;
+///缓和曲线计算积分精度
+static const int s_nAddPreCount = 10;
 
 ///基础二维点、向量结构体
 typedef struct BasePoint2d
