@@ -52,115 +52,6 @@ bool CurveElement::TrsCmlDistToNE(const double& dCml, const double& dDist, doubl
     return true;
 }
 
-bool CurveElement::TrsNEToCmlDist(const double& dX, const double& dY, double& dCml, double& dDist, double& dAngle)
-{
-    //转向方向
-    bool bTurnDir = ((m_bEnter && m_bTurnLeft) || (!m_bEnter && !m_bTurnLeft));
-    //转换为缓和曲线相对坐标系
-    Point2d posTrs = BaseCalFun::TransferPosReversal(m_posBase, Point2d(dX, dY), bTurnDir, m_dBaseTanAngle);
-    
-#define NEWTON_RAPHSON
-    
-#ifdef NEWTON_RAPHSON
-    
-    //牛顿迭代法
-    double dRoot = 0.0;
-    //预估根
-    double dEstimateRoot = 0.0;
-    if (!EstimateRoot(posTrs.x, posTrs.y, dEstimateRoot))
-        return false;
-
-    if (Newton_Raphson(&CurveElement::f_original, &CurveElement::f_first_deriv, dEstimateRoot, posTrs.x, posTrs.y, dRoot))
-    {
-        if (dRoot < m_dHideLen - s_dCalPrecision || dRoot > m_dTotalLen + m_dHideLen + s_dCalPrecision)
-            return false;
-        
-        //里程
-        dCml = m_dStartCml + (m_bEnter ? (dRoot - m_dHideLen) : m_dTotalLen - (dRoot - m_dHideLen));
-        
-        //切线角
-        double dAngleRelative = TrsCmlToAngle_Relative(dRoot);
-        dAngle = m_dBaseTanAngle + (bTurnDir ? dAngleRelative : -dAngleRelative);
-        if (!m_bEnter)
-            dAngle += (dAngle > MATH_PI ? -MATH_PI : MATH_PI);
-        
-        //投影距离
-        Point2d posRet = TrsCmlToNE_Relative(dRoot);
-        Vector2d vecTarget = posTrs - posRet;
-        if (vecTarget.isZeroVec())
-            dDist = 0.0;
-        else
-        {
-            Vector2d vecTan(cos(dAngleRelative), sin(dAngleRelative));
-            //左右侧(叉乘判断左右)
-            double dCross = vecTan.cross(vecTarget);
-            bool bOnLeft = ((dCross > 0.0 && m_bTurnLeft) || (dCross < 0.0 && !m_bTurnLeft));
-            //投影距离
-            dDist = vecTarget.model() * (bOnLeft ? 1.0 : -1.0);
-        }
-        
-        return true;
-    }
-    
-    return false;
-    
-#else
-    
-    int nBelong = PosBelongSelf(posTrs);
-    if (!nBelong)
-        return false;
-    
-    //二分法搜索投影点
-    double dStartCml = 0.0;
-    double dEndCml = m_dTotalLen;
-    
-    do {
-        //二分里程
-        double dMidCml = (dStartCml + dEndCml) / 2.0;
-        //缓和曲线切线角度
-        double dCurveAngle = TrsCmlToAngle_Relative(dMidCml + m_dHideLen);
-        //对应坐标
-        const Point2d& pos = TrsCmlToNE_Relative(dMidCml + m_dHideLen);
-        //目标点向量
-        Vector2d vecTarget = posTrs - pos;
-        //切线方向向量
-        Vector2d vecTan(cos(dCurveAngle), sin(dCurveAngle));
-        //点乘为0时为垂直
-        double dDot = vecTan.dot(vecTarget);
-        if (vecTarget.isZeroVec() || abs(dDot) <= s_dCalPrecision)
-        {
-            //里程
-            dCml = m_dStartCml + (m_bEnter ? dMidCml : m_dTotalLen - dMidCml);
-            //切线角度
-            dAngle = m_dBaseTanAngle + (bTurnDir ? dCurveAngle : -dCurveAngle);
-            if (!m_bEnter)
-                dAngle += (dAngle > MATH_PI ? -MATH_PI : MATH_PI);
-            
-            if (vecTarget.isZeroVec())
-                dDist = 0.0;
-            else
-            {
-                //左右侧(叉乘判断左右)
-                double dCross = vecTan.cross(vecTarget);
-                bool bOnLeft = ((dCross > 0.0 && m_bTurnLeft) || (dCross < 0.0 && !m_bTurnLeft));
-                //投影距离
-                dDist = vecTarget.model() * (bOnLeft ? 1.0 : -1.0);
-            }
-            
-            break;
-        }
-        else if (dDot < -s_dCalPrecision)
-            dEndCml = dMidCml;
-        else if (dDot > s_dCalPrecision)
-            dStartCml = dMidCml;
-    } while (true);
-     
-    return true;
-    
-#endif
-
-}
-
 uint32_t CurveElement::TrsNEToCmlDist(const double& dX, const double& dY, double arrCml[s_nMaxProCount], double arrDist[s_nMaxProCount], double arrAngle[s_nMaxProCount])
 {
     //转向方向
@@ -171,7 +62,6 @@ uint32_t CurveElement::TrsNEToCmlDist(const double& dX, const double& dY, double
     //预估根
     double arrEstimateRoot[s_nMaxProCount] = {0.0};
     uint32_t nEstimateRootCount = EstimateRoot(posTrs.x, posTrs.y, arrEstimateRoot);
-    assert(nEstimateRootCount <= 2);
     if (nEstimateRootCount == 0)
         return false;
 
@@ -180,7 +70,7 @@ uint32_t CurveElement::TrsNEToCmlDist(const double& dX, const double& dY, double
     {
         //牛顿迭代法
         double dRoot = 0.0;
-        if (Newton_Raphson(&CurveElement::f_original, &CurveElement::f_first_deriv, arrEstimateRoot[nIndex], posTrs.x, posTrs.y, dRoot))
+        if (NewtonIter(&CurveElement::f_original, &CurveElement::f_first_deriv, arrEstimateRoot[nIndex], posTrs.x, posTrs.y, dRoot))
         {
             if (dRoot < m_dHideLen - s_dCalPrecision || dRoot > m_dTotalLen + m_dHideLen + s_dCalPrecision)
                 continue;
@@ -257,11 +147,6 @@ Point2d CurveElement::TrsCmlToNE_Relative(const double& dCml)
         dY += y;
     }
     return Point2d(dX, dY);
-}
-
-double CurveElement::TrsCmlToAngle_Relative(const double& dCml)
-{
-    return dCml * dCml / 2.0 / m_dC;
 }
 
 Point2d CurveElement::TrsCmlToCenter_Relative(const double& dCml)
@@ -344,80 +229,6 @@ void CurveElement::AdjustData(const Point2d& pos)
     m_posBase += pos;
 }
 
-bool CurveElement::EstimateRoot(const double& dParamX, const double& dParamY, double& dRoot)
-{
-    //分段数
-    const int nSectionCount = 10;
-    double dPerLen = m_dTotalLen / nSectionCount;
-    double dRealLen = m_dHideLen + m_dTotalLen;
-    
-    double x0 = m_dHideLen;
-    double x1 = 0.0;
-    
-    double f0 = 0.0, f1 = 0.0, f0_d = 0.0, f1_d = 0.0;
-    do {
-        f0 = f_original(x0, dParamX, dParamY);
-        
-        x1 = __min(x0 + dPerLen, dRealLen);
-        f1 = f_original(x1, dParamX, dParamY);
-
-        f0_d = f_first_deriv(x0, dParamX, dParamY);
-        f1_d = f_first_deriv(x1, dParamX, dParamY);
-        if (f0_d * f1_d <= 0.0)
-        {
-            //存在极值点
-            double xLimite = 0.0;
-            if (Newton_Raphson(&CurveElement::f_first_deriv, &CurveElement::f_second_deriv, (x0 + x1) / 2.0, dParamX, dParamY, xLimite))
-            {
-                double fLimite = f_original(xLimite, dParamX, dParamY);
-                if (f0 * fLimite <= 0.0)
-                {
-                    dRoot = (x0 + xLimite) / 2.0;
-                    return true;
-                }
-                if (fLimite * f1 <= 0.0)
-                {
-                    dRoot = (xLimite + x1) / 2.0;
-                    return true;
-                }
-            }
-        }
-        else
-        {
-            if (f0 * f1 <= 0.0)
-            {
-                dRoot = (x0 + x1) / 2.0;
-                return true;
-            }
-        }
-        
-        if (x1 >= dRealLen)
-            break;
-        
-        x0 = x1;
-    } while (true);
-    
-    return false;
-     
-    /*
-    if (dStart > dEnd || abs(dStart - dEnd) < s_dCalPrecision)
-        return false;
-    
-    double dMid = (dStart + dEnd) / 2.0;
-    if (f(dStart, dParamX, dParamY) * f(dEnd, dParamX, dParamY) <= 0.0)
-    {
-        dRoot = dMid;
-        return true;
-    }
-    
-    if (f_d(dStart, dParamX, dParamY) * f_d(dEnd, dParamX, dParamY) > 0.0)
-        return false;
-    
-    return (EstimateRoot(dParamX, dParamY, dStart, dMid, dRoot) || EstimateRoot(dParamX, dParamY, dMid, dEnd, dRoot));
-     */
-   
-}
-
 uint32_t CurveElement::EstimateRoot(const double& dParamX, const double& dParamY, double arrEstimateRoot[s_nMaxProCount])
 {
     //分段数
@@ -427,9 +238,12 @@ uint32_t CurveElement::EstimateRoot(const double& dParamX, const double& dParamY
     double x0 = m_dHideLen;
     double x1 = 0.0;
     
-    uint32_t nCount = 0;
+    uint32_t nCurCount = 0;
     double f0 = 0.0, f1 = 0.0, f0_d = 0.0, f1_d = 0.0;
     do {
+        if (nCurCount >= s_nMaxProCount)
+            break;
+        
         f0 = f_original(x0, dParamX, dParamY);
         
         x1 = __min(x0 + dPerLen, dRealLen);
@@ -441,19 +255,19 @@ uint32_t CurveElement::EstimateRoot(const double& dParamX, const double& dParamY
         {
             //存在极值点
             double xLimite = 0.0;
-            if (Newton_Raphson(&CurveElement::f_first_deriv, &CurveElement::f_second_deriv, (x0 + x1) / 2.0, dParamX, dParamY, xLimite))
+            if (NewtonIter(&CurveElement::f_first_deriv, &CurveElement::f_second_deriv, (x0 + x1) / 2.0, dParamX, dParamY, xLimite))
             {
                 double fLimite = f_original(xLimite, dParamX, dParamY);
-                if (f0 * fLimite <= 0.0)
-                    arrEstimateRoot[nCount++] = (x0 + xLimite) / 2.0;
-                if (fLimite * f1 <= 0.0)
-                    arrEstimateRoot[nCount++] = (xLimite + x1) / 2.0;
+                if (nCurCount < s_nMaxProCount && f0 * fLimite <= 0.0)
+                    arrEstimateRoot[nCurCount++] = (x0 + xLimite) / 2.0;
+                if (nCurCount < s_nMaxProCount && fLimite * f1 <= 0.0)
+                    arrEstimateRoot[nCurCount++] = (xLimite + x1) / 2.0;
             }
         }
         else
         {
-            if (f0 * f1 <= 0.0)
-                arrEstimateRoot[nCount++] = (x0 + x1) / 2.0;
+            if (nCurCount < s_nMaxProCount && f0 * f1 <= 0.0)
+                arrEstimateRoot[nCurCount++] = (x0 + x1) / 2.0;
         }
         
         if (x1 >= dRealLen)
@@ -462,7 +276,7 @@ uint32_t CurveElement::EstimateRoot(const double& dParamX, const double& dParamY
         x0 = x1;
     } while (true);
     
-    return nCount;
+    return nCurCount;
 }
 
 double CurveElement::f_original(double dL0, const double& dParamX, const double& dParamY)
@@ -542,7 +356,7 @@ double CurveElement::f_second_deriv(double x0, const double& dParamX, const doub
     return -cos(dTanAngle) * dDTanAngle1 * dDTanAngle1 * (x - dParamX) - sin(dTanAngle) * dDTanAngle2 * (x - dParamX) - sin(dTanAngle) * dDTanAngle1 * dx1 - sin(dTanAngle) * dDTanAngle1 * dx1 + cos(dTanAngle) * dx2 - sin(dTanAngle) * dDTanAngle1 * dDTanAngle1 * (y - dParamY) + cos(dTanAngle) * dDTanAngle2 * (y - dParamY) + cos(dTanAngle) * dDTanAngle1 * dy1 + cos(dTanAngle) * dDTanAngle1 * dy1 + sin(dTanAngle) * dy2;
 }
 
-bool CurveElement::Newton_Raphson(double (CurveElement::*pf_original)(double, const double&, const double&), double (CurveElement::*pf_first_deriv)(double, const double&, const double&), double dEstimateRoot, const double& dParamX, const double& dParamY, double& dRoot)
+bool CurveElement::NewtonIter(pFunc pf_original, pFunc pf_first_deriv, double dEstimateRoot, const double& dParamX, const double& dParamY, double& dRoot)
 {
     //初始值
     double x0 = dEstimateRoot;

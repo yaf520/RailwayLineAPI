@@ -9,8 +9,8 @@
 
 #include "math.h"
 
-static const double MATH_PI = 3.14159265358979323846264338327950288;
-static const double MATH_PI_2 = 1.57079632679489661923132169163975144;
+static const double MATH_PI = 3.1415926535897931;
+static const double MATH_PI_2 = 1.5707963267948966;
 
 ///计算精度
 static const double s_dCalPrecision = 1.0e-10;

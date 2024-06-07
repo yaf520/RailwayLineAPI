@@ -33,9 +33,6 @@ public:
     ///连续里程+投影距离 -> 坐标+切线角
     virtual bool TrsCmlDistToNE(const double& dCml, const double& dDist, double& dX, double& dY, double& dAngle) = 0;
     
-    ///坐标 -> 连续里程+投影距离+切线角
-    virtual bool TrsNEToCmlDist(const double& dX, const double& dY, double& dCml, double& dDist, double& dAngle) = 0;
-    
     ///坐标 -> 连续里程+投影距离+切线角集合
     virtual uint32_t TrsNEToCmlDist(const double& dX, const double& dY, double arrCml[s_nMaxProCount], double arrDist[s_nMaxProCount], double arrAngle[s_nMaxProCount]) = 0;
     

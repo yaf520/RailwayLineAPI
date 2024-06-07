@@ -379,38 +379,13 @@ tagCmlDistAngle* HorizontalCurve::TrsNEToCmlDist(const double& dX, const double&
                 
                 pArrRet[nInsertIndex].dCml = arrCml[nProIndex];
                 pArrRet[nInsertIndex].dDist = -arrDist[nProIndex];
-                double dAngleTmp = MATH_PI / 2.0 - arrAngle[nProIndex];
+                double dAngleTmp = MATH_PI_2 - arrAngle[nProIndex];
                 BaseCalFun::KeepAngleIn2PI(dAngleTmp);
                 pArrRet[nInsertIndex].dFwj = dAngleTmp;
                     
                 nArrCount++;
             }
         }
-        /*
-        double dCml = 0.0, dDist = 0.0, dAngle = 0.0;
-        if (m_arrLineElement[nIndex]->TrsNEToCmlDist(dX, dY, dCml, dDist, dAngle))
-        {
-            if (!pArrRet)
-                pArrRet = new tagCmlDistAngle[m_nElementCount];
-            
-            //插入排序
-            uint32_t nInsertIndex = 0;
-            for (nInsertIndex = 0; nInsertIndex < nArrCount; nInsertIndex++)
-                if (abs(dDist) < abs(pArrRet[nInsertIndex].dDist))
-                    break;
-            
-            if (nArrCount > 0 && nInsertIndex < nArrCount)
-                memmove(pArrRet + nInsertIndex + 1, pArrRet + nInsertIndex, (nArrCount - nInsertIndex) * sizeof(tagCmlDistAngle));
-            
-            pArrRet[nInsertIndex].dCml = dCml;
-            pArrRet[nInsertIndex].dDist = -dDist;
-            double dAngleTmp = MATH_PI / 2.0 - dAngle;
-            BaseCalFun::KeepAngleIn2PI(dAngleTmp);
-            pArrRet[nInsertIndex].dFwj = dAngleTmp;
-                
-            nArrCount++;
-        }
-         */
     }
     
     //调整内存大小

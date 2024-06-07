@@ -23,8 +23,6 @@ public:
 public:
     bool TrsCmlDistToNE(const double& dCml, const double& dDist, double& dX, double& dY, double& dAngle) override;
     
-    bool TrsNEToCmlDist(const double& dX, const double& dY, double& dCml, double& dDist, double& dAngle) override;
-    
     uint32_t TrsNEToCmlDist(const double& dX, const double& dY, double arrCml[s_nMaxProCount], double arrDist[s_nMaxProCount], double arrAngle[s_nMaxProCount]) override;
     
     bool TrsCmlToHeight(const double& dCml, double& dHeight, double& dFyj) override;
@@ -35,7 +33,7 @@ protected:
     //相对里程->相对坐标
     Point2d TrsCmlToNE_Relative(const double& dCml) override;
     
-    double TrsCmlToAngle_Relative(const double& dCml) override { return dCml / m_dArcR; };
+    inline double TrsCmlToAngle_Relative(const double& dCml) override { return dCml / m_dArcR; }
     
 public:
     void InitData() override;

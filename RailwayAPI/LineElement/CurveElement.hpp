@@ -10,13 +10,11 @@
 #include "BaseLineElement.hpp"
 #include "BaseCalFun.hpp"
 
-///原函数
-typedef double (*func)(double, double, double);
-///导函数
-typedef double (*func_d)(double, double, double);
-
 class CurveElement : public BaseLineElement
 {
+    ///函数指针
+    typedef double (CurveElement::*pFunc)(double, const double&, const double&);
+    
 public:
     CurveElement();
     virtual ~CurveElement() {}
@@ -36,8 +34,6 @@ private:
 public:
     bool TrsCmlDistToNE(const double& dCml, const double& dDist, double& dX, double& dY, double& dAngle) override;
     
-    bool TrsNEToCmlDist(const double& dX, const double& dY, double& dCml, double& dDist, double& dAngle) override;
-    
     uint32_t TrsNEToCmlDist(const double& dX, const double& dY, double arrCml[s_nMaxProCount], double arrDist[s_nMaxProCount], double arrAngle[s_nMaxProCount]) override;
     
     bool TrsCmlToHeight(const double& dCml, double& dHeight, double& dAngle) override { return false;};
@@ -48,7 +44,7 @@ protected:
     //相对里程->相对坐标
     Point2d TrsCmlToNE_Relative(const double& dCml) override;
     //相对里程->相对角度
-    double TrsCmlToAngle_Relative(const double& dCml) override;
+    inline double TrsCmlToAngle_Relative(const double& dCml) override { return dCml * dCml / 2.0 / m_dC; }
     
 protected:
     //相对里程->圆心坐标
@@ -61,8 +57,6 @@ public:
     
 private:
     ///预估根
-    bool EstimateRoot(const double& dParamX, const double& dParamY, double& dRoot);
-    ///预估根
     uint32_t EstimateRoot(const double& dParamX, const double& dParamY, double arrEstimateRoot[s_nMaxProCount]);
     ///原函数
     double f_original(double x0, const double& dParamX, const double& dParamY);
@@ -70,8 +64,8 @@ private:
     double f_first_deriv(double x0, const double& dParamX, const double& dParamY);
     ///二阶导函数
     double f_second_deriv(double x0, const double& dParamX, const double& dParamY);
-    ///迭代法
-    bool Newton_Raphson(double (CurveElement::*pf_original)(double, const double&, const double&), double (CurveElement::*pf_first_deriv)(double, const double&, const double&), double dEstimateRoot, const double& dParamX, const double& dParamY, double& dRoot);
+    ///牛顿迭代法
+    bool NewtonIter(pFunc pf_original, pFunc pf_first_deriv, double dEstimateRoot, const double& dParamX, const double& dParamY, double& dRoot);
 };
 
 

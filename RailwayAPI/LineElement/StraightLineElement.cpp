@@ -35,39 +35,24 @@ bool StraightLineElement::TrsCmlDistToNE(const double& dCml, const double& dDist
     return true;
 }
 
-bool StraightLineElement::TrsNEToCmlDist(const double& dX, const double& dY, double& dCml, double& dDist, double& dAngle)
+uint32_t StraightLineElement::TrsNEToCmlDist(const double& dX, const double& dY, double arrCml[s_nMaxProCount], double arrDist[s_nMaxProCount], double arrAngle[s_nMaxProCount])
 {
     double dPecent = 0.0;
     Point2d posBase(dX, dY);
     Point2d posPrj = BaseCalFun::PointToLineProjection(posBase, m_posStart, m_posEnd, dPecent);
     
-    if (dPecent < -s_dCalPrecision || dPecent > 1.0 + s_dCalPrecision) return false;
+    if (dPecent < -s_dCalPrecision || dPecent > 1.0 + s_dCalPrecision) return 0;
     
-    dAngle = m_dStartTanAngle;
-    dCml = m_dStartCml + posPrj.distanceTo(m_posStart);
+    arrAngle[0] = m_dStartTanAngle;
+    arrCml[0] = m_dStartCml + posPrj.distanceTo(m_posStart);
     
     //左右判断
     Vector2d vec1 = m_posEnd - posPrj;
     Vector2d vec2 = posBase - posPrj;
     double dCross = vec1.cross(vec2);
-    dDist = posPrj.distanceTo(posBase) * (dCross > 0.0 ? 1.0 : -1.0);
+    arrDist[0] = posPrj.distanceTo(posBase) * (dCross > 0.0 ? 1.0 : -1.0);
     
-    return true;
-}
-
-uint32_t StraightLineElement::TrsNEToCmlDist(const double& dX, const double& dY, double arrCml[s_nMaxProCount], double arrDist[s_nMaxProCount], double arrAngle[s_nMaxProCount])
-{
-    uint32_t nCount = 0;
-    double dCml = 0.0, dDist = 0.0, dAngle = 0.0;
-    if (TrsNEToCmlDist(dX, dY, dCml, dDist, dAngle))
-    {
-        arrCml[nCount] = dCml;
-        arrDist[nCount] = dDist;
-        arrAngle[nCount] = dAngle;
-        
-        nCount++;
-    }
-    return nCount;
+    return 1;
 }
 
 tagExportLineElement* StraightLineElement::ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep)
