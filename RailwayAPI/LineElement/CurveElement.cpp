@@ -239,38 +239,50 @@ uint32_t CurveElement::EstimateRoot(const double& dParamX, const double& dParamY
     double x1 = 0.0;
     
     uint32_t nCurCount = 0;
-    double f0 = 0.0, f1 = 0.0, f0_d = 0.0, f1_d = 0.0;
+    double f0 = 0.0, f1 = 0.0;
     do {
-        if (nCurCount >= s_nMaxProCount)
-            break;
+        x1 = __min(x0 + dPerLen, dRealLen);
         
         f0 = f_original(x0, dParamX, dParamY);
-        
-        x1 = __min(x0 + dPerLen, dRealLen);
         f1 = f_original(x1, dParamX, dParamY);
 
-        f0_d = f_first_deriv(x0, dParamX, dParamY);
-        f1_d = f_first_deriv(x1, dParamX, dParamY);
-        if (f0_d * f1_d <= 0.0)
+        if (f_first_deriv(x0, dParamX, dParamY) * f_first_deriv(x1, dParamX, dParamY) <= 0.0)
         {
             //存在极值点
             double xLimite = 0.0;
             if (NewtonIter(&CurveElement::f_first_deriv, &CurveElement::f_second_deriv, (x0 + x1) / 2.0, dParamX, dParamY, xLimite))
             {
+                //区间极值
                 double fLimite = f_original(xLimite, dParamX, dParamY);
-                if (nCurCount < s_nMaxProCount && f0 * fLimite <= 0.0)
-                    arrEstimateRoot[nCurCount++] = (x0 + xLimite) / 2.0;
-                if (nCurCount < s_nMaxProCount && fLimite * f1 <= 0.0)
-                    arrEstimateRoot[nCurCount++] = (xLimite + x1) / 2.0;
+                if (abs(fLimite) < s_dCalPrecision)
+                    arrEstimateRoot[nCurCount++] = fLimite;
+                else
+                {
+                    if (f0 * fLimite < 0.0)
+                        arrEstimateRoot[nCurCount++] = (x0 + xLimite) / 2.0;
+                    
+                    if (fLimite * f1 < 0.0)
+                        arrEstimateRoot[nCurCount++] = (xLimite + x1) / 2.0;
+                }
             }
         }
         else
         {
-            if (nCurCount < s_nMaxProCount && f0 * f1 <= 0.0)
+            bool bA = (x0 == m_dHideLen && abs(f0) < s_dCalPrecision);
+            bool bB = (abs(f1) < s_dCalPrecision);
+            bool bC = (f0 * f1 < 0.0);
+            if (bA || bB)
+            {
+                if (bA)
+                    arrEstimateRoot[nCurCount++] = x0;
+                if (bB)
+                    arrEstimateRoot[nCurCount++] = x1;
+            }
+            else if (bC)
                 arrEstimateRoot[nCurCount++] = (x0 + x1) / 2.0;
         }
         
-        if (x1 >= dRealLen)
+        if (x1 >= dRealLen || nCurCount >= s_nMaxProCount)
             break;
         
         x0 = x1;

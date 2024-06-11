@@ -244,7 +244,7 @@ int main(int argc, const char * argv[]) {
     //变量定义
     double dCml = 0.0, dDist = 0.0, dFwj = 0.0, dX = 0.0, dY = 0.0;
     //步长
-    const double dStep = 1.3615;
+    const double dStep = 1.0615;
     
     RailwayAPI* pAPI = new RailwayAPI;
     pAPI->SetData(&vecJD.front(), vecJD.size(), &vecDL.front(), vecDL.size(), &vecSlope.front(), vecSlope.size());
@@ -259,7 +259,7 @@ int main(int argc, const char * argv[]) {
     
 #endif
     
-//#define KEY_POS_TEST //关键点测试
+#define KEY_POS_TEST //关键点测试
     
 #ifdef KEY_POS_TEST
     
@@ -280,7 +280,7 @@ int main(int argc, const char * argv[]) {
 #endif
      
     char buffer[200] = {0};
-    dDist = 200.0;
+    dDist = 203.521;
     double dTotalLen = pAPI->GetLength();
     for (dCml = 0.0; dCml <= dTotalLen; dCml += dStep)
     {
@@ -291,29 +291,6 @@ int main(int argc, const char * argv[]) {
         
         bool bFind = false;
         
-//#define USE_VECTOR
-        
-#ifdef USE_VECTOR
-        
-        std::vector<tagCmlDistAngle> vecRet;
-        if (pAPI->TrsNEToCmlDist(dY, dX, vecRet))
-        {
-            for (auto iter = vecRet.cbegin(); iter != vecRet.cend(); iter++)
-            {
-                if (abs(iter->dCml - dCml) < 1.0e-5)
-                {
-                    snprintf(buffer, sizeof(buffer), "dX: %0.5f, dY: %0.5f =====> dCml: %0.5f, dDist: %0.5f, dAngle: %0.5f", dX, dY, iter->dCml, iter->dDist, iter->dFwj);
-                    cout << buffer << endl;
-                    assert(abs(dDist - iter->dDist) < 0.1);
-                    bFind = true;
-                    break;
-                }
-            }
-        }
-        assert(bFind);
-        
-#else
-      
         uint32_t nCount = 0;
         tagCmlDistAngle* pArr = pAPI->TrsNEToCmlDist(dY, dX, nCount);
         for (int nIndex = 0; nIndex < nCount; nIndex++)
@@ -322,16 +299,13 @@ int main(int argc, const char * argv[]) {
             {
                 snprintf(buffer, sizeof(buffer), "dX: %0.5f, dY: %0.5f =====> dCml: %0.5f, dDist: %0.5f, dAngle: %0.5f", dX, dY, pArr[nIndex].dCml, pArr[nIndex].dDist, pArr[nIndex].dFwj);
                 cout << buffer << endl;
-                assert(abs(dDist - pArr[nIndex].dDist) < 0.1);
+                assert(abs(dDist - pArr[nIndex].dDist) < 0.01);
                 bFind = true;
                 break;
             }
         }
         assert(bFind);
         delete [] pArr;
-        
-#endif
-        
         
         cout << endl;
     }
