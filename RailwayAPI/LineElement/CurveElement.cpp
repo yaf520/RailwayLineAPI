@@ -239,14 +239,27 @@ uint32_t CurveElement::EstimateRoot(const double& dParamX, const double& dParamY
     double x1 = 0.0;
     
     uint32_t nCurCount = 0;
-    double f0 = 0.0, f1 = 0.0;
+    double f0 = 0.0, f1 = 0.0, f0_d = 0.0, f1_d = 0.0;
     do {
         x1 = __min(x0 + dPerLen, dRealLen);
         
         f0 = f_original(x0, dParamX, dParamY);
+        if (abs(f0) < s_dCalPrecision)
+            f0 = 0.0;
+        
         f1 = f_original(x1, dParamX, dParamY);
+        if (abs(f1) < s_dCalPrecision)
+            f1 = 0.0;
+        
+        f0_d = f_first_deriv(x0, dParamX, dParamY);
+        if (abs(f0_d) < s_dCalPrecision)
+            f0_d = 0.0;
+        
+        f1_d = f_first_deriv(x1, dParamX, dParamY);
+        if (abs(f1_d) < s_dCalPrecision)
+            f1_d = 0.0;
 
-        if (f_first_deriv(x0, dParamX, dParamY) * f_first_deriv(x1, dParamX, dParamY) <= 0.0)
+        if (f0_d * f1_d <= 0.0)
         {
             //存在极值点
             double xLimite = 0.0;
@@ -258,27 +271,21 @@ uint32_t CurveElement::EstimateRoot(const double& dParamX, const double& dParamY
                     arrEstimateRoot[nCurCount++] = fLimite;
                 else
                 {
-                    if (f0 * fLimite < 0.0)
+                    if (f0 * fLimite <= 0.0)
                         arrEstimateRoot[nCurCount++] = (x0 + xLimite) / 2.0;
                     
-                    if (fLimite * f1 < 0.0)
+                    if (fLimite * f1 <= 0.0)
                         arrEstimateRoot[nCurCount++] = (xLimite + x1) / 2.0;
                 }
             }
         }
         else
         {
-            bool bA = (x0 == m_dHideLen && abs(f0) < s_dCalPrecision);
-            bool bB = (abs(f1) < s_dCalPrecision);
-            bool bC = (f0 * f1 < 0.0);
-            if (bA || bB)
-            {
-                if (bA)
-                    arrEstimateRoot[nCurCount++] = x0;
-                if (bB)
-                    arrEstimateRoot[nCurCount++] = x1;
-            }
-            else if (bC)
+            if (f0 == 0.0 && x0 == m_dHideLen)
+                arrEstimateRoot[nCurCount++] = x0;
+            else if (f1 == 0)
+                arrEstimateRoot[nCurCount++] = x1;
+            else if (f0 * f1 < 0.0)
                 arrEstimateRoot[nCurCount++] = (x0 + x1) / 2.0;
         }
         
