@@ -139,8 +139,8 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "005EB138-80E8-4CE7-A830-986B291885E6"
-            shouldBeEnabled = "No"
-            condition = "nIndex == 49"
+            shouldBeEnabled = "Yes"
+            condition = "nIndex == 56"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "RailwayAPI/Curve/HorizontalCurve.cpp"
