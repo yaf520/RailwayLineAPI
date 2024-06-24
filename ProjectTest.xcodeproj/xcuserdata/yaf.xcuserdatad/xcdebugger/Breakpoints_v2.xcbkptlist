@@ -112,8 +112,8 @@
             filePath = "RailwayAPI/LineElement/CurveElement.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "385"
-            endingLineNumber = "385"
+            startingLineNumber = "387"
+            endingLineNumber = "387"
             landmarkName = "CurveElement::NewtonIter(pf_original, pf_first_deriv, dEstimateRoot, dParamX, dParamY, dRoot)"
             landmarkType = "7">
          </BreakpointContent>
@@ -139,7 +139,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "005EB138-80E8-4CE7-A830-986B291885E6"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             condition = "nIndex == 56"
             ignoreCount = "0"
             continueAfterRunningActions = "No"

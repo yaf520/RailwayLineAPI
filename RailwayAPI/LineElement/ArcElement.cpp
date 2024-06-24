@@ -45,6 +45,9 @@ uint32_t ArcElement::TrsNEToCmlDist(const double& dX, const double& dY, double a
     Point2d P(dX, dY);
     //向量
     Vector2d vecOP = P - O;
+    if (vecOP.isZeroVec())
+        return 0;
+    
     double dPecent = m_dArcR / vecOP.model();
     dPecent = BaseCalFun::Round(dPecent);
     //两个交点

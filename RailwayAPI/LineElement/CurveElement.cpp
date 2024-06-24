@@ -393,18 +393,7 @@ bool CurveElement::NewtonIter(pFunc pf_original, pFunc pf_first_deriv, double dE
         if (abs(fdx0) < s_dCalPrecision || nIterCount > 50)
             return false;
 
-        //double L = 1.0;
-        double x1 = x0 - /*L * */fx0 / fdx0;
-        /*
-        while (abs((this->*pf_original)(x1, dParamX, dParamY)) >= abs(fx0)) {
-            if (L < s_dValidPrecision)
-                return false;
-            
-            L /= 2.0;
-            x1 = x0 - L * fx0 / fdx0;
-        }
-        */
         nIterCount++;
-        x0 = x1;
+        x0 = x0 - fx0 / fdx0;
     } while (true);
 }
