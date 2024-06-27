@@ -62,8 +62,14 @@ public:
     ///   - dFwj: 方位角
     bool TrsNEToCmlDist(const double& N_Y, const double& E_X, double& dCml, double& dDist, double& dFwj);
     
-    ///获取与直线的交点
-    Point2d* GetCrossPos(const double& dAngle, const double& dX, const double& dY, uint32_t& nArrCount);
+    /// 坐标 -> 计算任意直线与路线的所有交点
+    /// - Parameters:
+    ///   - dAngle: 直线角度
+    ///   - N_Y: 纬距
+    ///   - E_X: 经距
+    ///   - nArrCount: 数组大小
+    ///   - return: 交点数组数组地址
+    Point2d* CalculateCrossNE(const double& dAngle, const double& N_Y, const double& E_X, uint32_t& nArrCount);
     
     /// 坐标 -> 连续里程+投影距离+方位角 集合
     /// - Parameters:

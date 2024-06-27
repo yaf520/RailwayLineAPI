@@ -400,7 +400,7 @@ tagCmlDistAngle* HorizontalCurve::TrsNEToCmlDist(const double& dX, const double&
     return pArrRet;
 }
 
-Point2d* HorizontalCurve::GetCrossPos(const double& dAngle, const double& dX, const double& dY, uint32_t& nArrCount)
+Point2d* HorizontalCurve::CalculateCrossNE(const double& dAngle, const double& dX, const double& dY, uint32_t& nArrCount)
 {
     nArrCount = 0;
     Point2d* arrRet = nullptr;
@@ -408,7 +408,7 @@ Point2d* HorizontalCurve::GetCrossPos(const double& dAngle, const double& dX, co
     for (uint32_t nIndex = 0; nIndex < m_nElementCount; nIndex++)
     {
         Point2d arrPos[s_nMaxProCount];
-        uint32_t nCount = m_arrLineElement[nIndex]->GetCrossPos(dAngle, dX, dY, arrPos);
+        uint32_t nCount = m_arrLineElement[nIndex]->CalculateCrossNE(dAngle, dX, dY, arrPos);
         if (nCount > 0)
         {
             if (!arrRet)

@@ -130,9 +130,59 @@ bool ArcElement::TrsCmlToHeight(const double& dCml, double& dHeight, double& dFy
     return true;
 }
 
-uint32_t ArcElement::GetCrossPos(const double& dAngle, const double& dX, const double& dY, Point2d arrCrossPos[s_nMaxProCount])
+uint32_t ArcElement::CalculateCrossNE(const double& dAngle, const double& dX, const double& dY, Point2d arrCrossPos[s_nMaxProCount])
 {
-    return 0;
+    //直线起点
+    Point2d posOnlineA(dX, dY);
+    //直线方向
+    Vector2d vecDir(cos(dAngle), sin(dAngle));
+    //直线终点
+    Point2d posOnlineB = posOnlineA + vecDir;
+    
+    //计算圆心坐标
+    double dAngleR = m_dStartTanAngle + (m_bTurnLeft ? MATH_PI_2 : -MATH_PI_2);
+    Point2d O = m_posStart + Point2d(cos(dAngleR), sin(dAngleR)) * m_dArcR;
+    
+    //圆心在直线上的投影坐标
+    double dPecent = 0.0;
+    Point2d posProj = BaseCalFun::PointToLineProjection(O, posOnlineA, posOnlineB, dPecent);
+    double dDis = posProj.distanceTo(O);
+    if (dDis > m_dArcR)
+        return 0;
+    
+    double dModel = sqrt(m_dArcR * m_dArcR - dDis * dDis);
+    //两个交点
+    Point2d A = posProj + vecDir * dModel;
+    Point2d B = posProj - vecDir * dModel;
+    
+    Vector2d vecOA = A - O;
+    Vector2d vecOB = B - O;
+    
+    //起点向量
+    Vector2d vecStart = m_posStart - O;
+    //圆心角
+    double dArcAngle = TrsCmlToAngle_Relative(m_dTotalLen);
+    
+    double dAngleA = BaseCalFun::CalAngleBy2Vec(vecStart, vecOA);
+    if (!m_bTurnLeft)
+        dAngleA *= -1.0;
+    BaseCalFun::KeepAngleIn2PI(dAngleA);
+    
+    double dAngleB = BaseCalFun::CalAngleBy2Vec(vecStart, vecOB);
+    if (!m_bTurnLeft)
+        dAngleB *= -1.0;
+    BaseCalFun::KeepAngleIn2PI(dAngleB);
+    
+    //可能会有两个点
+    bool bIsA = (dAngleA <= dArcAngle + s_dCalPrecision);
+    bool bIsB = (dAngleB <= dArcAngle + s_dCalPrecision);
+    uint32_t nCurCount = 0;
+    if (bIsA)
+        arrCrossPos[nCurCount++] = A;
+    if (bIsB)
+        arrCrossPos[nCurCount++] = B;
+    
+    return nCurCount;
 }
 
 tagExportLineElement* ArcElement::ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep)

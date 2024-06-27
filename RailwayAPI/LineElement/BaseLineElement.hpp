@@ -39,8 +39,8 @@ public:
     ///里程->高程+俯仰角
     virtual bool TrsCmlToHeight(const double& dCml, double& dHeight, double& dFyj) = 0;
     
-    ///获取与直线的交点
-    virtual uint32_t GetCrossPos(const double& dAngle, const double& dX, const double& dY, Point2d arrCrossPos[s_nMaxProCount]) = 0;
+    ///计算任意直线的交点
+    virtual uint32_t CalculateCrossNE(const double& dAngle, const double& dX, const double& dY, Point2d arrCrossPos[s_nMaxProCount]) = 0;
     
     ///导出平曲线范围里程内的线元数据
     virtual tagExportLineElement* ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep) = 0;

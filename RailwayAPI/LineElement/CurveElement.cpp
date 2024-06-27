@@ -106,7 +106,7 @@ uint32_t CurveElement::TrsNEToCmlDist(const double& dX, const double& dY, double
     return nRootCount;
 }
 
-uint32_t CurveElement::GetCrossPos(const double& dAngle, const double& dX, const double& dY, Point2d arrCrossPos[s_nMaxProCount])
+uint32_t CurveElement::CalculateCrossNE(const double& dAngle, const double& dX, const double& dY, Point2d arrCrossPos[s_nMaxProCount])
 {
     //转向方向
     bool bTurnDir = ((m_bEnter && m_bTurnLeft) || (!m_bEnter && !m_bTurnLeft));
