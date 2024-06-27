@@ -400,6 +400,37 @@ tagCmlDistAngle* HorizontalCurve::TrsNEToCmlDist(const double& dX, const double&
     return pArrRet;
 }
 
+Point2d* HorizontalCurve::GetCrossPos(const double& dAngle, const double& dX, const double& dY, uint32_t& nArrCount)
+{
+    nArrCount = 0;
+    Point2d* arrRet = nullptr;
+    
+    for (uint32_t nIndex = 0; nIndex < m_nElementCount; nIndex++)
+    {
+        Point2d arrPos[s_nMaxProCount];
+        uint32_t nCount = m_arrLineElement[nIndex]->GetCrossPos(dAngle, dX, dY, arrPos);
+        if (nCount > 0)
+        {
+            if (!arrRet)
+                arrRet = new Point2d[m_nElementCount];
+            
+            for (int nCrossIndex = 0; nCrossIndex < nCount; nCrossIndex++)
+                arrRet[nArrCount++] = arrPos[nCrossIndex];
+        }
+    }
+    
+    //调整内存大小
+    if (arrRet && nArrCount < m_nElementCount)
+    {
+        Point2d* arrNew = new Point2d[nArrCount];
+        memcpy((void*)arrNew, (void*)arrRet, sizeof(Point2d) * nArrCount);
+        delete [] arrRet;
+        arrRet = arrNew;
+    }
+    
+    return arrRet;
+}
+
 double HorizontalCurve::GetLength()
 {
     return m_arrLineElement[m_nElementCount - 1]->m_dStartCml + m_arrLineElement[m_nElementCount - 1]->m_dTotalLen;

@@ -38,6 +38,8 @@ public:
     
     bool TrsCmlToHeight(const double& dCml, double& dHeight, double& dAngle) override { return false;};
     
+    uint32_t GetCrossPos(const double& dAngle, const double& dX, const double& dY, Point2d arrCrossPos[s_nMaxProCount]) override;
+    
     tagExportLineElement* ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep) override;
     
 protected:
@@ -56,14 +58,22 @@ public:
     void AdjustData(const Point2d& pos) override;
     
 private:
-    ///预估根
-    uint32_t EstimateRoot(const double& dParamX, const double& dParamY, double arrEstimateRoot[s_nMaxProCount]);
     ///原函数
-    double f_original(double x0, const double& dParamX, const double& dParamY);
+    double f_original_proj(double x0, const double& dParamX, const double& dParamY);
+    ///原函数
+    double f_original_cross(double x0, const double& k, const double& b);
     ///一阶导函数
-    double f_first_deriv(double x0, const double& dParamX, const double& dParamY);
+    double f_first_deriv_proj(double x0, const double& dParamX, const double& dParamY);
+    ///一阶导函数
+    double f_first_deriv_cross(double x0, const double& k, const double& b);
     ///二阶导函数
-    double f_second_deriv(double x0, const double& dParamX, const double& dParamY);
+    double f_second_deriv_proj(double x0, const double& dParamX, const double& dParamY);
+    ///二阶导函数
+    double f_second_deriv_cross(double x0, const double& k, const double& b);
+    
+private:
+    ///预估根
+    uint32_t EstimateRoot(pFunc pf_original, pFunc pf_first_deriv, pFunc pf_second_deriv, const double& dParamX, const double& dParamY, double arrEstimateRoot[s_nMaxProCount]);
     ///牛顿迭代法
     bool NewtonIter(pFunc pf_original, pFunc pf_first_deriv, double dEstimateRoot, const double& dParamX, const double& dParamY, double& dRoot);
 };

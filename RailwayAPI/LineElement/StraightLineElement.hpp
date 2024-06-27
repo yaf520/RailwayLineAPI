@@ -22,6 +22,8 @@ public:
     
     bool TrsCmlToHeight(const double& dCml, double& dHeight, double& dFyj) override;
     
+    uint32_t GetCrossPos(const double& dAngle, const double& dX, const double& dY, Point2d arrCrossPos[s_nMaxProCount]) override;
+    
     tagExportLineElement* ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep) override;
     
 protected:

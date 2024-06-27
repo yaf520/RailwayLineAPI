@@ -55,6 +55,11 @@ uint32_t StraightLineElement::TrsNEToCmlDist(const double& dX, const double& dY,
     return 1;
 }
 
+uint32_t StraightLineElement::GetCrossPos(const double& dAngle, const double& dX, const double& dY, Point2d arrCrossPos[s_nMaxProCount])
+{
+    return 0;
+}
+
 tagExportLineElement* StraightLineElement::ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep)
 {
     double dDeltaLen = BaseCalFun::Round(dEndCml - dStartCml);

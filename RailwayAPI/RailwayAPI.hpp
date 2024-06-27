@@ -9,6 +9,7 @@
 #define RailwayAPI_
 
 #include "BaseStruct.hpp"
+#include "BasePoint.hpp"
 
 ///平曲线
 class HorizontalCurve;
@@ -60,6 +61,9 @@ public:
     ///   - dDist: 投影距离(左负右正)
     ///   - dFwj: 方位角
     bool TrsNEToCmlDist(const double& N_Y, const double& E_X, double& dCml, double& dDist, double& dFwj);
+    
+    ///获取与直线的交点
+    Point2d* GetCrossPos(const double& dAngle, const double& dX, const double& dY, uint32_t& nArrCount);
     
     /// 坐标 -> 连续里程+投影距离+方位角 集合
     /// - Parameters:

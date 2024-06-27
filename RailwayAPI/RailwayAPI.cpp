@@ -56,6 +56,11 @@ tagCmlDistAngle* RailwayAPI::TrsNEToCmlDist(const double& N_Y, const double& E_X
     return m_pHorCurve->TrsNEToCmlDist(E_X, N_Y, nCount);
 }
 
+Point2d* RailwayAPI::GetCrossPos(const double& dAngle, const double& dX, const double& dY, uint32_t& nArrCount)
+{
+    return m_pHorCurve->GetCrossPos(dAngle, dX, dY, nArrCount);
+}
+
 double RailwayAPI::GetLength()
 {
     return m_pHorCurve->GetLength();

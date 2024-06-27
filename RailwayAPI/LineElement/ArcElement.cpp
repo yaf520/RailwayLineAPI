@@ -130,6 +130,11 @@ bool ArcElement::TrsCmlToHeight(const double& dCml, double& dHeight, double& dFy
     return true;
 }
 
+uint32_t ArcElement::GetCrossPos(const double& dAngle, const double& dX, const double& dY, Point2d arrCrossPos[s_nMaxProCount])
+{
+    return 0;
+}
+
 tagExportLineElement* ArcElement::ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep)
 {
     double dDeltaLen = BaseCalFun::Round(dEndCml - dStartCml);
