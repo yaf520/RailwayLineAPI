@@ -36,7 +36,7 @@ bool ArcElement::TrsCmlDistToNE(const double& dCml, const double& dDist, double&
     return true;
 }
 
-uint32_t ArcElement::TrsNEToCmlDist(const double& dX, const double& dY, double arrCml[s_nMaxProCount], double arrDist[s_nMaxProCount], double arrAngle[s_nMaxProCount])
+uint32_t ArcElement::TrsNEToCmlDist(const double& dX, const double& dY, double arrCml[s_nMaxArrCount], double arrDist[s_nMaxArrCount], double arrAngle[s_nMaxArrCount])
 {
     //计算圆心坐标
     double dAngleR = m_dStartTanAngle + (m_bTurnLeft ? MATH_PI_2 : -MATH_PI_2);
@@ -130,7 +130,7 @@ bool ArcElement::TrsCmlToHeight(const double& dCml, double& dHeight, double& dFy
     return true;
 }
 
-uint32_t ArcElement::CalculateCrossNE(const double& dAngle, const double& dX, const double& dY, Point2d arrCrossPos[s_nMaxProCount])
+uint32_t ArcElement::CalculateCrossNE(const double& dAngle, const double& dX, const double& dY, Point2d arrCrossPos[s_nMaxArrCount])
 {
     //直线起点
     Point2d posOnlineA(dX, dY);

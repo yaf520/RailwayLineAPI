@@ -356,9 +356,9 @@ tagCmlDistAngle* HorizontalCurve::TrsNEToCmlDist(const double& dX, const double&
     
     for (uint32_t nIndex = 0; nIndex < m_nElementCount; nIndex++)
     {
-        double arrCml[s_nMaxProCount] = {0.0};
-        double arrDist[s_nMaxProCount] = {0.0};
-        double arrAngle[s_nMaxProCount] = {0.0};
+        double arrCml[s_nMaxArrCount] = {0.0};
+        double arrDist[s_nMaxArrCount] = {0.0};
+        double arrAngle[s_nMaxArrCount] = {0.0};
         
         uint32_t nCount = m_arrLineElement[nIndex]->TrsNEToCmlDist(dX, dY, arrCml, arrDist, arrAngle);
         if (nCount > 0)
@@ -407,7 +407,7 @@ Point2d* HorizontalCurve::CalculateCrossNE(const double& dAngle, const double& d
     
     for (uint32_t nIndex = 0; nIndex < m_nElementCount; nIndex++)
     {
-        Point2d arrPos[s_nMaxProCount];
+        Point2d arrPos[s_nMaxArrCount];
         uint32_t nCount = m_arrLineElement[nIndex]->CalculateCrossNE(dAngle, dX, dY, arrPos);
         if (nCount > 0)
         {

@@ -280,7 +280,7 @@ int main(int argc, const char * argv[]) {
 #endif
      
     char buffer[200] = {0};
-    dDist = 203.521;
+    dDist = 98.784;
     double dTotalLen = pAPI->GetLength();
     for (dCml = 0.0; dCml <= dTotalLen; dCml += dStep)
     {

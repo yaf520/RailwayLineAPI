@@ -35,7 +35,7 @@ bool StraightLineElement::TrsCmlDistToNE(const double& dCml, const double& dDist
     return true;
 }
 
-uint32_t StraightLineElement::TrsNEToCmlDist(const double& dX, const double& dY, double arrCml[s_nMaxProCount], double arrDist[s_nMaxProCount], double arrAngle[s_nMaxProCount])
+uint32_t StraightLineElement::TrsNEToCmlDist(const double& dX, const double& dY, double arrCml[s_nMaxArrCount], double arrDist[s_nMaxArrCount], double arrAngle[s_nMaxArrCount])
 {
     double dPecent = 0.0;
     Point2d posBase(dX, dY);
@@ -55,7 +55,7 @@ uint32_t StraightLineElement::TrsNEToCmlDist(const double& dX, const double& dY,
     return 1;
 }
 
-uint32_t StraightLineElement::CalculateCrossNE(const double& dAngle, const double& dX, const double& dY, Point2d arrCrossPos[s_nMaxProCount])
+uint32_t StraightLineElement::CalculateCrossNE(const double& dAngle, const double& dX, const double& dY, Point2d arrCrossPos[s_nMaxArrCount])
 {
     if (abs(dAngle - m_dStartTanAngle) < s_dCalPrecision)
         return 0;

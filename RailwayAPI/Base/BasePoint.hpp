@@ -16,8 +16,8 @@ static const double MATH_PI_2 = 1.5707963267948966;
 static const double s_dCalPrecision = 1.0e-10;
 ///有效数字精度
 static const double s_dValidPrecision = 1.0e-15;
-///线元投影点最大数目
-static const int s_nMaxProCount = 2;
+///结果数组最大数目
+static const int s_nMaxArrCount = 2;
 ///预估根计算分段精细度
 static const int s_nEstimateRootSection = 10;
 ///缓和曲线计算积分精度

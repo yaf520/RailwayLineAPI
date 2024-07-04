@@ -34,13 +34,13 @@ public:
     virtual bool TrsCmlDistToNE(const double& dCml, const double& dDist, double& dX, double& dY, double& dAngle) = 0;
     
     ///坐标 -> 连续里程+投影距离+切线角集合
-    virtual uint32_t TrsNEToCmlDist(const double& dX, const double& dY, double arrCml[s_nMaxProCount], double arrDist[s_nMaxProCount], double arrAngle[s_nMaxProCount]) = 0;
+    virtual uint32_t TrsNEToCmlDist(const double& dX, const double& dY, double arrCml[s_nMaxArrCount], double arrDist[s_nMaxArrCount], double arrAngle[s_nMaxArrCount]) = 0;
     
     ///里程->高程+俯仰角
     virtual bool TrsCmlToHeight(const double& dCml, double& dHeight, double& dFyj) = 0;
     
     ///计算任意直线的交点
-    virtual uint32_t CalculateCrossNE(const double& dAngle, const double& dX, const double& dY, Point2d arrCrossPos[s_nMaxProCount]) = 0;
+    virtual uint32_t CalculateCrossNE(const double& dAngle, const double& dX, const double& dY, Point2d arrCrossPos[s_nMaxArrCount]) = 0;
     
     ///导出平曲线范围里程内的线元数据
     virtual tagExportLineElement* ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep) = 0;
