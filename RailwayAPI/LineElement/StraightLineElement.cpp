@@ -55,7 +55,7 @@ uint32_t StraightLineElement::TrsNEToCmlDist(const double& dX, const double& dY,
     return 1;
 }
 
-uint32_t StraightLineElement::CalculateCrossNE(const double& dAngle, const double& dX, const double& dY, Point2d arrCrossPos[s_nMaxArrCount])
+uint32_t StraightLineElement::IntersectWithLine(const double& dAngle, const double& dX, const double& dY, Point2d arrCrossPos[s_nMaxArrCount])
 {
     if (abs(dAngle - m_dStartTanAngle) < s_dCalPrecision)
         return 0;

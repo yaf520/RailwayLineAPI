@@ -170,7 +170,7 @@ void LineElementManager::SetJDData_Highway(const tagJDInfo* pJDInfo, uint32_t nC
                 }
                 
                 //圆曲线
-                if (dArcAngle * dArcR > 0.1)
+                if (abs(dArcAngle) * dArcR > 0.01)
                 {
                     ArcElement* pArcElement = new ArcElement;
                     pArcElement->m_posStart = posCurveStart;
@@ -367,7 +367,7 @@ void LineElementManager::SetJDData_Highway(const tagJDInfo* pJDInfo, uint32_t nC
         //当前阶段起点
         Point2d posStart = (nCurIndex == 0 ? posJD1 : m_arrLineElement[m_nElementCount - 1]->m_posEnd);
         
-        if (/*dEnterR == __DBL_MAX__ && */posStart.distanceTo(posCurveStart) >= 0.1)
+        if (/*dEnterR == __DBL_MAX__ && */posStart.distanceTo(posCurveStart) >= 0.01)
         {
             //入直线
             StraightLineElement* pStraightLineElement = new StraightLineElement;
@@ -395,7 +395,7 @@ void LineElementManager::SetJDData_Highway(const tagJDInfo* pJDInfo, uint32_t nC
         if (dExitR == __DBL_MAX__ || (m_arrJD + nCurIndex + 2)->nJDType == -2)
         {
             BaseLineElement* pPreLineElement = m_arrLineElement[m_nElementCount - 1];
-            if (pPreLineElement->m_posEnd.distanceTo(posJD3) >= 0.1)
+            if (pPreLineElement->m_posEnd.distanceTo(posJD3) >= 0.01)
             {
                 //出直线
                 StraightLineElement* pStraightLineElement = new StraightLineElement;

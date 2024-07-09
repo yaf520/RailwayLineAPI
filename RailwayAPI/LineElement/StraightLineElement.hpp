@@ -22,7 +22,7 @@ public:
     
     bool TrsCmlToHeight(const double& dCml, double& dHeight, double& dFyj) override;
     
-    uint32_t CalculateCrossNE(const double& dAngle, const double& dX, const double& dY, Point2d arrCrossPos[s_nMaxArrCount]) override;
+    uint32_t IntersectWithLine(const double& dAngle, const double& dX, const double& dY, Point2d arrCrossPos[s_nMaxArrCount]) override;
     
     tagExportLineElement* ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep) override;
     

@@ -400,22 +400,36 @@ tagCmlDistAngle* HorizontalCurve::TrsNEToCmlDist(const double& dX, const double&
     return pArrRet;
 }
 
-Point2d* HorizontalCurve::CalculateCrossNE(const double& dAngle, const double& dX, const double& dY, uint32_t& nArrCount)
+Point2d* HorizontalCurve::IntersectWithLine(const double& dAngle, const double& dX, const double& dY, uint32_t& nArrCount)
 {
     nArrCount = 0;
     Point2d* arrRet = nullptr;
     
+    //基准点
+    Point2d posBase(dX, dY);
     for (uint32_t nIndex = 0; nIndex < m_nElementCount; nIndex++)
     {
         Point2d arrPos[s_nMaxArrCount];
-        uint32_t nCount = m_arrLineElement[nIndex]->CalculateCrossNE(dAngle, dX, dY, arrPos);
+        uint32_t nCount = m_arrLineElement[nIndex]->IntersectWithLine(dAngle, dX, dY, arrPos);
         if (nCount > 0)
         {
             if (!arrRet)
                 arrRet = new Point2d[m_nElementCount];
             
             for (int nCrossIndex = 0; nCrossIndex < nCount; nCrossIndex++)
-                arrRet[nArrCount++] = arrPos[nCrossIndex];
+            {
+                //插入排序
+                uint32_t nInsertIndex = 0;
+                for (nInsertIndex = 0; nInsertIndex < nArrCount; nInsertIndex++)
+                    if (posBase.distanceTo(arrPos[nCrossIndex]) < posBase.distanceTo(arrRet[nInsertIndex]))
+                        break;
+                
+                if (nArrCount > 0 && nInsertIndex < nArrCount)
+                    memmove((void*)(arrRet + nInsertIndex + 1), (void*)(arrRet + nInsertIndex), (nArrCount - nInsertIndex) * sizeof(Point2d));
+                
+                arrRet[nInsertIndex] = arrPos[nCrossIndex];
+                nArrCount++;
+            }
         }
     }
     

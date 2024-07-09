@@ -13,7 +13,7 @@
 class CurveElement : public BaseLineElement
 {
     ///函数指针
-    typedef double (CurveElement::*pFunc)(double, const double&, const double&);
+    typedef double (CurveElement::*pFunc)(const double&, const double&, const double&);
     
 public:
     CurveElement();
@@ -38,7 +38,7 @@ public:
     
     bool TrsCmlToHeight(const double& dCml, double& dHeight, double& dAngle) override { return false;};
     
-    uint32_t CalculateCrossNE(const double& dAngle, const double& dX, const double& dY, Point2d arrCrossPos[s_nMaxArrCount]) override;
+    uint32_t IntersectWithLine(const double& dAngle, const double& dX, const double& dY, Point2d arrCrossPos[s_nMaxArrCount]) override;
     
     tagExportLineElement* ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep) override;
     
@@ -59,17 +59,17 @@ public:
     
 private:
     ///原函数
-    double f_original_proj(double x0, const double& dParamX, const double& dParamY);
+    double f_original_proj(const double& x0, const double& dParamX, const double& dParamY);
     ///原函数
-    double f_original_cross(double x0, const double& k, const double& b);
+    double f_original_cross(const double& x0, const double& k, const double& b);
     ///一阶导函数
-    double f_first_deriv_proj(double x0, const double& dParamX, const double& dParamY);
+    double f_first_deriv_proj(const double& x0, const double& dParamX, const double& dParamY);
     ///一阶导函数
-    double f_first_deriv_cross(double x0, const double& k, const double& b);
+    double f_first_deriv_cross(const double& x0, const double& k, const double& b);
     ///二阶导函数
-    double f_second_deriv_proj(double x0, const double& dParamX, const double& dParamY);
+    double f_second_deriv_proj(const double& x0, const double& dParamX, const double& dParamY);
     ///二阶导函数
-    double f_second_deriv_cross(double x0, const double& k, const double& b);
+    double f_second_deriv_cross(const double& x0, const double& k, const double& b);
     
 private:
     ///预估根

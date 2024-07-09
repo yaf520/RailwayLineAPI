@@ -183,6 +183,28 @@ typedef struct BasePoint2d
     {
         return (abs(x) <= s_dCalPrecision && abs(y) <= s_dCalPrecision);
     }
+    
+    virtual double angle()
+    {
+        if (abs(x) < s_dCalPrecision)
+            return (y >= 0.0 ? MATH_PI_2 : MATH_PI * 1.5);
+        
+        double dAngle = atan(y / x);
+        if (y >= 0.0)
+        {
+            if (x < -s_dCalPrecision)
+                dAngle += MATH_PI;
+        }
+        else
+        {
+            if (x < -s_dCalPrecision)
+                dAngle += MATH_PI;
+            else
+                dAngle += MATH_PI * 2.0;
+        }
+        
+        return dAngle;
+    }
 }Point2d, Vector2d;
 
 #endif /* BasePoint_hpp */

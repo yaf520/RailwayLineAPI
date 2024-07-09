@@ -58,7 +58,7 @@ tagCmlDistAngle* RailwayAPI::TrsNEToCmlDist(const double& N_Y, const double& E_X
 
 Point2d* RailwayAPI::CalculateCrossNE(const double& dAngle, const double& N_Y, const double& E_X, uint32_t& nArrCount)
 {
-    return m_pHorCurve->CalculateCrossNE(dAngle, E_X, N_Y , nArrCount);
+    return m_pHorCurve->IntersectWithLine(dAngle, E_X, N_Y , nArrCount);
 }
 
 double RailwayAPI::GetLength()

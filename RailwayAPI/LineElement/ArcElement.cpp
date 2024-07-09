@@ -130,7 +130,7 @@ bool ArcElement::TrsCmlToHeight(const double& dCml, double& dHeight, double& dFy
     return true;
 }
 
-uint32_t ArcElement::CalculateCrossNE(const double& dAngle, const double& dX, const double& dY, Point2d arrCrossPos[s_nMaxArrCount])
+uint32_t ArcElement::IntersectWithLine(const double& dAngle, const double& dX, const double& dY, Point2d arrCrossPos[s_nMaxArrCount])
 {
     //直线起点
     Point2d posOnlineA(dX, dY);

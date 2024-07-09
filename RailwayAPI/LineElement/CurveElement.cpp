@@ -106,7 +106,7 @@ uint32_t CurveElement::TrsNEToCmlDist(const double& dX, const double& dY, double
     return nRootCount;
 }
 
-uint32_t CurveElement::CalculateCrossNE(const double& dAngle, const double& dX, const double& dY, Point2d arrCrossPos[s_nMaxArrCount])
+uint32_t CurveElement::IntersectWithLine(const double& dAngle, const double& dX, const double& dY, Point2d arrCrossPos[s_nMaxArrCount])
 {
     //转向方向
     bool bTurnDir = ((m_bEnter && m_bTurnLeft) || (!m_bEnter && !m_bTurnLeft));
@@ -267,7 +267,7 @@ void CurveElement::AdjustData(const Point2d& pos)
     m_posBase += pos;
 }
 
-double CurveElement::f_original_proj(double dL0, const double& dParamX, const double& dParamY)
+double CurveElement::f_original_proj(const double& dL0, const double& dParamX, const double& dParamY)
 {
     double dTanAngle = dL0 * dL0 / 2.0 / m_dC;
     double x = 0.0, y = 0.0;
@@ -286,7 +286,7 @@ double CurveElement::f_original_proj(double dL0, const double& dParamX, const do
     return cos(dTanAngle) * (x - dParamX) + sin(dTanAngle) * (y - dParamY);
 }
 
-double CurveElement::f_original_cross(double dL0, const double& k, const double& b)
+double CurveElement::f_original_cross(const double& dL0, const double& k, const double& b)
 {
     double x = 0.0, y = 0.0;
     for (int n = 0; n < s_nAddPreCount; n++)
@@ -304,7 +304,7 @@ double CurveElement::f_original_cross(double dL0, const double& k, const double&
     return k * x + b - y;
 }
 
-double CurveElement::f_first_deriv_proj(double dL0, const double& dParamX, const double& dParamY)
+double CurveElement::f_first_deriv_proj(const double& dL0, const double& dParamX, const double& dParamY)
 {
     double dTanAngle = dL0 * dL0 / 2.0 / m_dC;
     double x = 0.0, y = 0.0, dx = 0.0, dy = 0.0;
@@ -328,7 +328,7 @@ double CurveElement::f_first_deriv_proj(double dL0, const double& dParamX, const
     return -sin(dTanAngle) * (dL0 / m_dC) * (x - dParamX) + cos(dTanAngle) * dx + cos(dTanAngle) * (dL0 / m_dC) * (y - dParamY) + sin(dTanAngle) * dy;
 }
 
-double CurveElement::f_first_deriv_cross(double dL0, const double& k, const double& b)
+double CurveElement::f_first_deriv_cross(const double& dL0, const double& k, const double& b)
 {
     double dx = 0.0, dy = 0.0;
     for (int n = 0; n < s_nAddPreCount; n++)
@@ -346,7 +346,7 @@ double CurveElement::f_first_deriv_cross(double dL0, const double& k, const doub
     return k * dx - dy;
 }
 
-double CurveElement::f_second_deriv_proj(double x0, const double& dParamX, const double& dParamY)
+double CurveElement::f_second_deriv_proj(const double& x0, const double& dParamX, const double& dParamY)
 {
     double dTanAngle = x0 * x0 / 2.0 / m_dC;
     double dDTanAngle1 = x0 / m_dC;
@@ -380,7 +380,7 @@ double CurveElement::f_second_deriv_proj(double x0, const double& dParamX, const
     return -cos(dTanAngle) * dDTanAngle1 * dDTanAngle1 * (x - dParamX) - sin(dTanAngle) * dDTanAngle2 * (x - dParamX) - sin(dTanAngle) * dDTanAngle1 * dx1 - sin(dTanAngle) * dDTanAngle1 * dx1 + cos(dTanAngle) * dx2 - sin(dTanAngle) * dDTanAngle1 * dDTanAngle1 * (y - dParamY) + cos(dTanAngle) * dDTanAngle2 * (y - dParamY) + cos(dTanAngle) * dDTanAngle1 * dy1 + cos(dTanAngle) * dDTanAngle1 * dy1 + sin(dTanAngle) * dy2;
 }
 
-double CurveElement::f_second_deriv_cross(double x0, const double& k, const double& b)
+double CurveElement::f_second_deriv_cross(const double& x0, const double& k, const double& b)
 {
     double dx2 = 0.0, dy2 = 0.0;
     for (int n = 0; n < s_nAddPreCount; n++)
@@ -400,7 +400,7 @@ double CurveElement::f_second_deriv_cross(double x0, const double& k, const doub
 
 uint32_t CurveElement::EstimateRoot(pFunc pf_original, pFunc pf_first_deriv, pFunc pf_second_deriv, const double& dParamX, const double& dParamY, double arrEstimateRoot[s_nMaxArrCount])
 {
-#define ESTIMATE_TEST
+//#define ESTIMATE_TEST
     
 #ifdef ESTIMATE_TEST
     
