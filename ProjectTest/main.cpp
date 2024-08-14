@@ -9,7 +9,7 @@
 #include <fstream>
 #include <assert.h>
 #include <vector>
-#include "RailwayAPI.hpp"
+#include "RouteAPI.hpp"
 
 using namespace std;
 
@@ -246,7 +246,7 @@ int main(int argc, const char * argv[]) {
     //步长
     const double dStep = 1.0615;
     
-    RailwayAPI* pAPI = new RailwayAPI;
+    RouteAPI* pAPI = new RouteAPI;
     pAPI->SetData(&vecJD.front(), vecJD.size(), &vecDL.front(), vecDL.size(), &vecSlope.front(), vecSlope.size());
     
 //#define SINGLE_DATA_TEST //单点测试

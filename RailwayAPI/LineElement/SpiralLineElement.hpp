@@ -10,14 +10,14 @@
 #include "BaseLineElement.hpp"
 #include "BaseCalFun.hpp"
 
-class CurveElement : public BaseLineElement
+class SpiralLineElement : public BaseLineElement
 {
     ///函数指针
-    typedef double (CurveElement::*pFunc)(const double&, const double&, const double&);
+    typedef double (SpiralLineElement::*pFunc)(const double&, const double&, const double&);
     
 public:
-    CurveElement();
-    virtual ~CurveElement() {}
+    SpiralLineElement();
+    virtual ~SpiralLineElement() {}
     
 public:
     bool m_bTurnLeft;       //转向方向

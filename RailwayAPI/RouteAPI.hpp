@@ -20,11 +20,11 @@ class VerticalCurve;
 /* The classes below are exported */
 #pragma GCC visibility push(default)
 
-class RailwayAPI
+class RouteAPI
 {
 public:
-    RailwayAPI();
-    virtual ~RailwayAPI();
+    RouteAPI();
+    virtual ~RouteAPI();
     
 private:
     ///平曲线对象指针

@@ -5,7 +5,7 @@
 //
 
 #include <cassert>
-#include "CurveElement.hpp"
+#include "SpiralLineElement.hpp"
 #include "BaseCalFun.hpp"
 
 #define RELATIVE_X(n, x) (pow(-1, n) * pow(1.0 / m_dC, 2 * n) * pow(x, 4 * n + 1) / (BaseCalFun::Factorial(2 * n) * (4 * n + 1) * pow(2, 2 * n)))
@@ -15,13 +15,13 @@
 #define RELATIVE_DX_2(n, x) (n == 0 ? 0 : (pow(-1, n) * pow(1.0 / m_dC, 2 * n) * pow(x, 4 * n - 1) * (4 * n + 1) * 4 * n / (BaseCalFun::Factorial(2 * n) * (4 * n + 1) * pow(2, 2 * n))))
 #define RELATIVE_DY_2(n, x) (pow(-1, n) * pow(1.0 / m_dC, 2 * n + 1) * pow(x, 4 * n + 1) * (4 * n + 3) * (4 * n + 2) / (BaseCalFun::Factorial(2 * n + 1) * (4 * n + 3) * pow(2, 2 * n + 1)))
 
-CurveElement::CurveElement()
+SpiralLineElement::SpiralLineElement()
     : BaseLineElement()
 {
     m_eElementType = ElementType::SpiralCurve;
 }
 
-bool CurveElement::TrsCmlDistToNE(const double& dCml, const double& dDist, double& dX, double& dY, double& dAngle)
+bool SpiralLineElement::TrsCmlDistToNE(const double& dCml, const double& dDist, double& dX, double& dY, double& dAngle)
 {
     assert(dCml >= m_dStartCml);
     if (dCml - m_dStartCml < 0) return false;
@@ -52,7 +52,7 @@ bool CurveElement::TrsCmlDistToNE(const double& dCml, const double& dDist, doubl
     return true;
 }
 
-uint32_t CurveElement::TrsNEToCmlDist(const double& dX, const double& dY, double arrCml[s_nMaxArrCount], double arrDist[s_nMaxArrCount], double arrAngle[s_nMaxArrCount])
+uint32_t SpiralLineElement::TrsNEToCmlDist(const double& dX, const double& dY, double arrCml[s_nMaxArrCount], double arrDist[s_nMaxArrCount], double arrAngle[s_nMaxArrCount])
 {
     //转向方向
     bool bTurnDir = ((m_bEnter && m_bTurnLeft) || (!m_bEnter && !m_bTurnLeft));
@@ -61,7 +61,7 @@ uint32_t CurveElement::TrsNEToCmlDist(const double& dX, const double& dY, double
     
     //预估根
     double arrEstimateRoot[s_nMaxArrCount] = {0.0};
-    uint32_t nEstimateRootCount = EstimateRoot(&CurveElement::f_original_proj, &CurveElement::f_first_deriv_proj, &CurveElement::f_second_deriv_proj, posTrs.x, posTrs.y, arrEstimateRoot);
+    uint32_t nEstimateRootCount = EstimateRoot(&SpiralLineElement::f_original_proj, &SpiralLineElement::f_first_deriv_proj, &SpiralLineElement::f_second_deriv_proj, posTrs.x, posTrs.y, arrEstimateRoot);
     if (nEstimateRootCount == 0)
         return false;
 
@@ -70,7 +70,7 @@ uint32_t CurveElement::TrsNEToCmlDist(const double& dX, const double& dY, double
     {
         //牛顿迭代法
         double dRoot = 0.0;
-        if (NewtonIter(&CurveElement::f_original_proj, &CurveElement::f_first_deriv_proj, arrEstimateRoot[nIndex], posTrs.x, posTrs.y, dRoot))
+        if (NewtonIter(&SpiralLineElement::f_original_proj, &SpiralLineElement::f_first_deriv_proj, arrEstimateRoot[nIndex], posTrs.x, posTrs.y, dRoot))
         {
             if (dRoot < m_dHideLen - s_dCalPrecision || dRoot > m_dTotalLen + m_dHideLen + s_dCalPrecision)
                 continue;
@@ -106,7 +106,7 @@ uint32_t CurveElement::TrsNEToCmlDist(const double& dX, const double& dY, double
     return nRootCount;
 }
 
-uint32_t CurveElement::IntersectWithLine(const double& dAngle, const double& dX, const double& dY, Point2d arrCrossPos[s_nMaxArrCount])
+uint32_t SpiralLineElement::IntersectWithLine(const double& dAngle, const double& dX, const double& dY, Point2d arrCrossPos[s_nMaxArrCount])
 {
     //转向方向
     bool bTurnDir = ((m_bEnter && m_bTurnLeft) || (!m_bEnter && !m_bTurnLeft));
@@ -123,7 +123,7 @@ uint32_t CurveElement::IntersectWithLine(const double& dAngle, const double& dX,
     
     //预估根
     double arrEstimateRoot[s_nMaxArrCount] = {0.0};
-    uint32_t nEstimateRootCount = EstimateRoot(&CurveElement::f_original_cross, &CurveElement::f_first_deriv_cross, &CurveElement::f_second_deriv_cross, k, b, arrEstimateRoot);
+    uint32_t nEstimateRootCount = EstimateRoot(&SpiralLineElement::f_original_cross, &SpiralLineElement::f_first_deriv_cross, &SpiralLineElement::f_second_deriv_cross, k, b, arrEstimateRoot);
     if (nEstimateRootCount == 0)
         return false;
     
@@ -132,7 +132,7 @@ uint32_t CurveElement::IntersectWithLine(const double& dAngle, const double& dX,
     {
         //牛顿迭代法
         double dRoot = 0.0;
-        if (NewtonIter(&CurveElement::f_original_cross, &CurveElement::f_first_deriv_cross, arrEstimateRoot[nIndex], k, b, dRoot))
+        if (NewtonIter(&SpiralLineElement::f_original_cross, &SpiralLineElement::f_first_deriv_cross, arrEstimateRoot[nIndex], k, b, dRoot))
         {
             if (dRoot < m_dHideLen - s_dCalPrecision || dRoot > m_dTotalLen + m_dHideLen + s_dCalPrecision)
                 continue;
@@ -144,7 +144,7 @@ uint32_t CurveElement::IntersectWithLine(const double& dAngle, const double& dX,
     return nRootCount;
 }
 
-tagExportLineElement* CurveElement::ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep)
+tagExportLineElement* SpiralLineElement::ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep)
 {
     double dDeltaLen = BaseCalFun::Round(dEndCml - dStartCml);
     double dTotalLenTmp = BaseCalFun::Round(m_dTotalLen);
@@ -170,7 +170,7 @@ tagExportLineElement* CurveElement::ExportHorCurve(double dStartCml, double dEnd
     return pRet;
 }
 
-Point2d CurveElement::TrsCmlToNE_Relative(const double& dCml)
+Point2d SpiralLineElement::TrsCmlToNE_Relative(const double& dCml)
 {
     double dX = 0.0;
     double dY = 0.0;
@@ -187,7 +187,7 @@ Point2d CurveElement::TrsCmlToNE_Relative(const double& dCml)
     return Point2d(dX, dY);
 }
 
-Point2d CurveElement::TrsCmlToCenter_Relative(const double& dCml)
+Point2d SpiralLineElement::TrsCmlToCenter_Relative(const double& dCml)
 {
     //对应坐标
     Point2d posOnline = TrsCmlToNE_Relative(dCml + m_dHideLen);
@@ -199,7 +199,7 @@ Point2d CurveElement::TrsCmlToCenter_Relative(const double& dCml)
     return posOnline + Vector2d(cos(dNormalAngle), sin(dNormalAngle)) * dR;
 }
 
-void CurveElement::InitData()
+void SpiralLineElement::InitData()
 {
     assert(m_dEnterR != m_dExitR);
     //入or出
@@ -260,14 +260,14 @@ void CurveElement::InitData()
     }
 }
 
-void CurveElement::AdjustData(const Point2d& pos)
+void SpiralLineElement::AdjustData(const Point2d& pos)
 {
     m_posStart += pos;
     m_posEnd += pos;
     m_posBase += pos;
 }
 
-double CurveElement::f_original_proj(const double& dL0, const double& dParamX, const double& dParamY)
+double SpiralLineElement::f_original_proj(const double& dL0, const double& dParamX, const double& dParamY)
 {
     double dTanAngle = dL0 * dL0 / 2.0 / m_dC;
     double x = 0.0, y = 0.0;
@@ -286,7 +286,7 @@ double CurveElement::f_original_proj(const double& dL0, const double& dParamX, c
     return cos(dTanAngle) * (x - dParamX) + sin(dTanAngle) * (y - dParamY);
 }
 
-double CurveElement::f_original_cross(const double& dL0, const double& k, const double& b)
+double SpiralLineElement::f_original_cross(const double& dL0, const double& k, const double& b)
 {
     double x = 0.0, y = 0.0;
     for (int n = 0; n < s_nAddPreCount; n++)
@@ -304,7 +304,7 @@ double CurveElement::f_original_cross(const double& dL0, const double& k, const 
     return k * x + b - y;
 }
 
-double CurveElement::f_first_deriv_proj(const double& dL0, const double& dParamX, const double& dParamY)
+double SpiralLineElement::f_first_deriv_proj(const double& dL0, const double& dParamX, const double& dParamY)
 {
     double dTanAngle = dL0 * dL0 / 2.0 / m_dC;
     double x = 0.0, y = 0.0, dx = 0.0, dy = 0.0;
@@ -328,7 +328,7 @@ double CurveElement::f_first_deriv_proj(const double& dL0, const double& dParamX
     return -sin(dTanAngle) * (dL0 / m_dC) * (x - dParamX) + cos(dTanAngle) * dx + cos(dTanAngle) * (dL0 / m_dC) * (y - dParamY) + sin(dTanAngle) * dy;
 }
 
-double CurveElement::f_first_deriv_cross(const double& dL0, const double& k, const double& b)
+double SpiralLineElement::f_first_deriv_cross(const double& dL0, const double& k, const double& b)
 {
     double dx = 0.0, dy = 0.0;
     for (int n = 0; n < s_nAddPreCount; n++)
@@ -346,7 +346,7 @@ double CurveElement::f_first_deriv_cross(const double& dL0, const double& k, con
     return k * dx - dy;
 }
 
-double CurveElement::f_second_deriv_proj(const double& x0, const double& dParamX, const double& dParamY)
+double SpiralLineElement::f_second_deriv_proj(const double& x0, const double& dParamX, const double& dParamY)
 {
     double dTanAngle = x0 * x0 / 2.0 / m_dC;
     double dDTanAngle1 = x0 / m_dC;
@@ -380,7 +380,7 @@ double CurveElement::f_second_deriv_proj(const double& x0, const double& dParamX
     return -cos(dTanAngle) * dDTanAngle1 * dDTanAngle1 * (x - dParamX) - sin(dTanAngle) * dDTanAngle2 * (x - dParamX) - sin(dTanAngle) * dDTanAngle1 * dx1 - sin(dTanAngle) * dDTanAngle1 * dx1 + cos(dTanAngle) * dx2 - sin(dTanAngle) * dDTanAngle1 * dDTanAngle1 * (y - dParamY) + cos(dTanAngle) * dDTanAngle2 * (y - dParamY) + cos(dTanAngle) * dDTanAngle1 * dy1 + cos(dTanAngle) * dDTanAngle1 * dy1 + sin(dTanAngle) * dy2;
 }
 
-double CurveElement::f_second_deriv_cross(const double& x0, const double& k, const double& b)
+double SpiralLineElement::f_second_deriv_cross(const double& x0, const double& k, const double& b)
 {
     double dx2 = 0.0, dy2 = 0.0;
     for (int n = 0; n < s_nAddPreCount; n++)
@@ -398,7 +398,7 @@ double CurveElement::f_second_deriv_cross(const double& x0, const double& k, con
     return k * dx2 - dy2;
 }
 
-uint32_t CurveElement::EstimateRoot(pFunc pf_original, pFunc pf_first_deriv, pFunc pf_second_deriv, const double& dParamX, const double& dParamY, double arrEstimateRoot[s_nMaxArrCount])
+uint32_t SpiralLineElement::EstimateRoot(pFunc pf_original, pFunc pf_first_deriv, pFunc pf_second_deriv, const double& dParamX, const double& dParamY, double arrEstimateRoot[s_nMaxArrCount])
 {
 //#define ESTIMATE_TEST
     
@@ -521,7 +521,7 @@ uint32_t CurveElement::EstimateRoot(pFunc pf_original, pFunc pf_first_deriv, pFu
     
 }
 
-bool CurveElement::NewtonIter(pFunc pf_original, pFunc pf_first_deriv, double dEstimateRoot, const double& dParamX, const double& dParamY, double& dRoot)
+bool SpiralLineElement::NewtonIter(pFunc pf_original, pFunc pf_first_deriv, double dEstimateRoot, const double& dParamX, const double& dParamY, double& dRoot)
 {
     //初始值
     double x0 = dEstimateRoot;

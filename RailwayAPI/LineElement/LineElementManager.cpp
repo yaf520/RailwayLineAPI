@@ -151,22 +151,22 @@ void LineElementManager::SetJDData_Highway(const tagJDInfo* pJDInfo, uint32_t nC
                 if (dL1 > 0.0)
                 {
                     //前缓和曲线
-                    CurveElement* pCurveElement = new CurveElement;
-                    pCurveElement->m_posStart = posCurveStart;
-                    pCurveElement->m_dStartTanAngle = dTanAngleStart;
-                    pCurveElement->m_dTotalLen = dL1;
-                    pCurveElement->m_bTurnLeft = bTurnLeft;
-                    pCurveElement->m_dEnterR =  dEnterR;
-                    pCurveElement->m_dExitR = dArcR;
-                    pCurveElement->InitData();
+                    SpiralLineElement* pSpiralElement = new SpiralLineElement;
+                    pSpiralElement->m_posStart = posCurveStart;
+                    pSpiralElement->m_dStartTanAngle = dTanAngleStart;
+                    pSpiralElement->m_dTotalLen = dL1;
+                    pSpiralElement->m_bTurnLeft = bTurnLeft;
+                    pSpiralElement->m_dEnterR =  dEnterR;
+                    pSpiralElement->m_dExitR = dArcR;
+                    pSpiralElement->InitData();
                     //保存线元
-                    arrLineElement[nCurveElementCount++] = pCurveElement;
-                    vecWhole += (pCurveElement->m_posEnd - pCurveElement->m_posStart);
+                    arrLineElement[nCurveElementCount++] = pSpiralElement;
+                    vecWhole += (pSpiralElement->m_posEnd - pSpiralElement->m_posStart);
                     
                     //变换起点
-                    posCurveStart = pCurveElement->m_posEnd;
+                    posCurveStart = pSpiralElement->m_posEnd;
                     //变换角度
-                    dTanAngleStart = pCurveElement->m_dEndTanAngle;
+                    dTanAngleStart = pSpiralElement->m_dEndTanAngle;
                 }
                 
                 //圆曲线
@@ -192,17 +192,17 @@ void LineElementManager::SetJDData_Highway(const tagJDInfo* pJDInfo, uint32_t nC
                 if (dL2 > 0.0)
                 {
                     //后缓和曲线
-                    CurveElement* pCurveElement = new CurveElement;
-                    pCurveElement->m_posStart = posCurveStart;
-                    pCurveElement->m_dStartTanAngle = dTanAngleStart;
-                    pCurveElement->m_dTotalLen = dL2;
-                    pCurveElement->m_bTurnLeft = bTurnLeft;
-                    pCurveElement->m_dEnterR = dArcR;
-                    pCurveElement->m_dExitR = dExitR;
-                    pCurveElement->InitData();
+                    SpiralLineElement* pSpiralElement = new SpiralLineElement;
+                    pSpiralElement->m_posStart = posCurveStart;
+                    pSpiralElement->m_dStartTanAngle = dTanAngleStart;
+                    pSpiralElement->m_dTotalLen = dL2;
+                    pSpiralElement->m_bTurnLeft = bTurnLeft;
+                    pSpiralElement->m_dEnterR = dArcR;
+                    pSpiralElement->m_dExitR = dExitR;
+                    pSpiralElement->InitData();
                     //保存线元
-                    arrLineElement[nCurveElementCount++] = pCurveElement;
-                    vecWhole += (pCurveElement->m_posEnd - pCurveElement->m_posStart);
+                    arrLineElement[nCurveElementCount++] = pSpiralElement;
+                    vecWhole += (pSpiralElement->m_posEnd - pSpiralElement->m_posStart);
                 }
                 
                 //计算曲线起点世界坐标
@@ -242,22 +242,22 @@ void LineElementManager::SetJDData_Highway(const tagJDInfo* pJDInfo, uint32_t nC
                 if (dL1 > 0.0)
                 {
                     //第一段缓和曲线
-                    CurveElement* pCurveElement = new CurveElement;
-                    pCurveElement->m_posStart = posCurveStart;
-                    pCurveElement->m_dStartTanAngle = dTanAngleStart;
-                    pCurveElement->m_dTotalLen = dL1;
-                    pCurveElement->m_bTurnLeft = bTurnLeft;
-                    pCurveElement->m_dEnterR = dEnterR;
-                    pCurveElement->m_dExitR = dArcR1;
-                    pCurveElement->InitData();
+                    SpiralLineElement* pSpiralElement = new SpiralLineElement;
+                    pSpiralElement->m_posStart = posCurveStart;
+                    pSpiralElement->m_dStartTanAngle = dTanAngleStart;
+                    pSpiralElement->m_dTotalLen = dL1;
+                    pSpiralElement->m_bTurnLeft = bTurnLeft;
+                    pSpiralElement->m_dEnterR = dEnterR;
+                    pSpiralElement->m_dExitR = dArcR1;
+                    pSpiralElement->InitData();
                     
-                    arrLineElement[nCurveElementCount++] = pCurveElement;
-                    vecWhole += (pCurveElement->m_posEnd - pCurveElement->m_posStart);
+                    arrLineElement[nCurveElementCount++] = pSpiralElement;
+                    vecWhole += (pSpiralElement->m_posEnd - pSpiralElement->m_posStart);
                     
                     //变换起点
-                    posCurveStart = pCurveElement->m_posEnd;
+                    posCurveStart = pSpiralElement->m_posEnd;
                     //变换角度
-                    dTanAngleStart = pCurveElement->m_dEndTanAngle;
+                    dTanAngleStart = pSpiralElement->m_dEndTanAngle;
                 }
                 
                 do {
@@ -281,22 +281,22 @@ void LineElementManager::SetJDData_Highway(const tagJDInfo* pJDInfo, uint32_t nC
                 
                 do {
                     //第二段缓和曲线
-                    CurveElement* pCurveElement = new CurveElement;
-                    pCurveElement->m_posStart = posCurveStart;
-                    pCurveElement->m_dStartTanAngle = dTanAngleStart;
-                    pCurveElement->m_dTotalLen = dL2;
-                    pCurveElement->m_bTurnLeft = bTurnLeft;
-                    pCurveElement->m_dEnterR =  dArcR1;
-                    pCurveElement->m_dExitR = dArcR2;
-                    pCurveElement->InitData();
+                    SpiralLineElement* pSpiralElement = new SpiralLineElement;
+                    pSpiralElement->m_posStart = posCurveStart;
+                    pSpiralElement->m_dStartTanAngle = dTanAngleStart;
+                    pSpiralElement->m_dTotalLen = dL2;
+                    pSpiralElement->m_bTurnLeft = bTurnLeft;
+                    pSpiralElement->m_dEnterR =  dArcR1;
+                    pSpiralElement->m_dExitR = dArcR2;
+                    pSpiralElement->InitData();
                     
-                    arrLineElement[nCurveElementCount++] = pCurveElement;
-                    vecWhole += (pCurveElement->m_posEnd - pCurveElement->m_posStart);
+                    arrLineElement[nCurveElementCount++] = pSpiralElement;
+                    vecWhole += (pSpiralElement->m_posEnd - pSpiralElement->m_posStart);
                     
                     //变换起点
-                    posCurveStart = pCurveElement->m_posEnd;
+                    posCurveStart = pSpiralElement->m_posEnd;
                     //变换角度
-                    dTanAngleStart = pCurveElement->m_dEndTanAngle;
+                    dTanAngleStart = pSpiralElement->m_dEndTanAngle;
                 } while (false);
                 
                 do {
@@ -321,17 +321,17 @@ void LineElementManager::SetJDData_Highway(const tagJDInfo* pJDInfo, uint32_t nC
                 if (dL3 > 0.0)
                 {
                     //第三段缓和曲线
-                    CurveElement* pCurveElement = new CurveElement;
-                    pCurveElement->m_posStart = posCurveStart;
-                    pCurveElement->m_dStartTanAngle = dTanAngleStart;
-                    pCurveElement->m_dTotalLen = dL3;
-                    pCurveElement->m_bTurnLeft = bTurnLeft;
-                    pCurveElement->m_dEnterR = dArcR2;
-                    pCurveElement->m_dExitR = dExitR;
-                    pCurveElement->InitData();
+                    SpiralLineElement* pSpiralElement = new SpiralLineElement;
+                    pSpiralElement->m_posStart = posCurveStart;
+                    pSpiralElement->m_dStartTanAngle = dTanAngleStart;
+                    pSpiralElement->m_dTotalLen = dL3;
+                    pSpiralElement->m_bTurnLeft = bTurnLeft;
+                    pSpiralElement->m_dEnterR = dArcR2;
+                    pSpiralElement->m_dExitR = dExitR;
+                    pSpiralElement->InitData();
                     
-                    arrLineElement[nCurveElementCount++] = pCurveElement;
-                    vecWhole += (pCurveElement->m_posEnd - pCurveElement->m_posStart);
+                    arrLineElement[nCurveElementCount++] = pSpiralElement;
+                    vecWhole += (pSpiralElement->m_posEnd - pSpiralElement->m_posStart);
                 }
                 
                 //计算曲线起点世界坐标

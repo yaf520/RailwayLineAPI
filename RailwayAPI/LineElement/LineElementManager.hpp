@@ -10,7 +10,7 @@
 
 #include "BaseLineElement.hpp"
 #include "StraightLineElement.hpp"
-#include "CurveElement.hpp"
+#include "SpiralLineElement.hpp"
 #include "ArcElement.hpp"
 #include "BaseStruct.hpp"
 

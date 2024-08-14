@@ -8,8 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		0C0885E32AF4C58F00F54B29 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C0885E22AF4C58F00F54B29 /* main.cpp */; };
-		0C0885F02AF4D5FA00F54B29 /* RailwayAPI.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 0C0885EF2AF4D5FA00F54B29 /* RailwayAPI.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
-		0C0885F42AF4D5FA00F54B29 /* RailwayAPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C0885F32AF4D5FA00F54B29 /* RailwayAPI.cpp */; };
+		0C0885F02AF4D5FA00F54B29 /* RouteAPI.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 0C0885EF2AF4D5FA00F54B29 /* RouteAPI.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
+		0C0885F42AF4D5FA00F54B29 /* RouteAPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C0885F32AF4D5FA00F54B29 /* RouteAPI.cpp */; };
 		0C0885F92AF4DEA800F54B29 /* libRailwayAPI.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C0885ED2AF4D5FA00F54B29 /* libRailwayAPI.dylib */; };
 		0C0886022AF4ED0000F54B29 /* BaseCalFun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C0885FE2AF4ED0000F54B29 /* BaseCalFun.cpp */; };
 		0C0886032AF4ED0000F54B29 /* BasePoint.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 0C0885FF2AF4ED0000F54B29 /* BasePoint.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -17,12 +17,12 @@
 		0C0886052AF4ED0100F54B29 /* BaseStruct.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 0C0886012AF4ED0000F54B29 /* BaseStruct.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		0C08860F2AF4EF6500F54B29 /* StraightLineElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C0886062AF4EF6500F54B29 /* StraightLineElement.cpp */; };
 		0C0886102AF4EF6500F54B29 /* StraightLineElement.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 0C0886072AF4EF6500F54B29 /* StraightLineElement.hpp */; };
-		0C0886122AF4EF6500F54B29 /* CurveElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C0886092AF4EF6500F54B29 /* CurveElement.cpp */; };
+		0C0886122AF4EF6500F54B29 /* SpiralLineElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C0886092AF4EF6500F54B29 /* SpiralLineElement.cpp */; };
 		0C0886132AF4EF6500F54B29 /* LineElementManager.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 0C08860A2AF4EF6500F54B29 /* LineElementManager.hpp */; };
 		0C0886142AF4EF6600F54B29 /* ArcElement.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 0C08860B2AF4EF6500F54B29 /* ArcElement.hpp */; };
 		0C0886152AF4EF6600F54B29 /* BaseLineElement.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 0C08860C2AF4EF6500F54B29 /* BaseLineElement.hpp */; };
 		0C0886162AF4EF6600F54B29 /* LineElementManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C08860D2AF4EF6500F54B29 /* LineElementManager.cpp */; };
-		0C0886172AF4EF6600F54B29 /* CurveElement.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 0C08860E2AF4EF6500F54B29 /* CurveElement.hpp */; };
+		0C0886172AF4EF6600F54B29 /* SpiralLineElement.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 0C08860E2AF4EF6500F54B29 /* SpiralLineElement.hpp */; };
 		0C0886192AF4F0EA00F54B29 /* ArcElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C0886182AF4F0EA00F54B29 /* ArcElement.cpp */; };
 		0C11B0872AF8DB5E000BA76F /* HorizontalCurve.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C11B0852AF8DB5E000BA76F /* HorizontalCurve.cpp */; };
 		0C11B0882AF8DB5E000BA76F /* HorizontalCurve.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 0C11B0862AF8DB5E000BA76F /* HorizontalCurve.hpp */; };
@@ -46,20 +46,20 @@
 		0C0885DF2AF4C58F00F54B29 /* ProjectTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ProjectTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0C0885E22AF4C58F00F54B29 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		0C0885ED2AF4D5FA00F54B29 /* libRailwayAPI.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libRailwayAPI.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		0C0885EF2AF4D5FA00F54B29 /* RailwayAPI.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = RailwayAPI.hpp; sourceTree = "<group>"; };
-		0C0885F32AF4D5FA00F54B29 /* RailwayAPI.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RailwayAPI.cpp; sourceTree = "<group>"; };
+		0C0885EF2AF4D5FA00F54B29 /* RouteAPI.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = RouteAPI.hpp; sourceTree = "<group>"; };
+		0C0885F32AF4D5FA00F54B29 /* RouteAPI.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RouteAPI.cpp; sourceTree = "<group>"; };
 		0C0885FE2AF4ED0000F54B29 /* BaseCalFun.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BaseCalFun.cpp; sourceTree = "<group>"; };
 		0C0885FF2AF4ED0000F54B29 /* BasePoint.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = BasePoint.hpp; sourceTree = "<group>"; };
 		0C0886002AF4ED0000F54B29 /* BaseCalFun.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = BaseCalFun.hpp; sourceTree = "<group>"; };
 		0C0886012AF4ED0000F54B29 /* BaseStruct.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = BaseStruct.hpp; sourceTree = "<group>"; };
 		0C0886062AF4EF6500F54B29 /* StraightLineElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StraightLineElement.cpp; sourceTree = "<group>"; };
 		0C0886072AF4EF6500F54B29 /* StraightLineElement.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = StraightLineElement.hpp; sourceTree = "<group>"; };
-		0C0886092AF4EF6500F54B29 /* CurveElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CurveElement.cpp; sourceTree = "<group>"; };
+		0C0886092AF4EF6500F54B29 /* SpiralLineElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpiralLineElement.cpp; sourceTree = "<group>"; };
 		0C08860A2AF4EF6500F54B29 /* LineElementManager.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = LineElementManager.hpp; sourceTree = "<group>"; };
 		0C08860B2AF4EF6500F54B29 /* ArcElement.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ArcElement.hpp; sourceTree = "<group>"; };
 		0C08860C2AF4EF6500F54B29 /* BaseLineElement.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = BaseLineElement.hpp; sourceTree = "<group>"; };
 		0C08860D2AF4EF6500F54B29 /* LineElementManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LineElementManager.cpp; sourceTree = "<group>"; };
-		0C08860E2AF4EF6500F54B29 /* CurveElement.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CurveElement.hpp; sourceTree = "<group>"; };
+		0C08860E2AF4EF6500F54B29 /* SpiralLineElement.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SpiralLineElement.hpp; sourceTree = "<group>"; };
 		0C0886182AF4F0EA00F54B29 /* ArcElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArcElement.cpp; sourceTree = "<group>"; };
 		0C11B0852AF8DB5E000BA76F /* HorizontalCurve.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = HorizontalCurve.cpp; path = RailwayAPI/Curve/HorizontalCurve.cpp; sourceTree = SOURCE_ROOT; };
 		0C11B0862AF8DB5E000BA76F /* HorizontalCurve.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = HorizontalCurve.hpp; path = RailwayAPI/Curve/HorizontalCurve.hpp; sourceTree = SOURCE_ROOT; };
@@ -116,8 +116,8 @@
 		0C0885EE2AF4D5FA00F54B29 /* RailwayAPI */ = {
 			isa = PBXGroup;
 			children = (
-				0C0885F32AF4D5FA00F54B29 /* RailwayAPI.cpp */,
-				0C0885EF2AF4D5FA00F54B29 /* RailwayAPI.hpp */,
+				0C0885F32AF4D5FA00F54B29 /* RouteAPI.cpp */,
+				0C0885EF2AF4D5FA00F54B29 /* RouteAPI.hpp */,
 				0C0885FC2AF4EBDB00F54B29 /* Base */,
 				0CBC50C82B0F3B0E00CBBAD1 /* Curve */,
 				0C0885FD2AF4EBEC00F54B29 /* LineElement */,
@@ -149,8 +149,8 @@
 				0C08860C2AF4EF6500F54B29 /* BaseLineElement.hpp */,
 				0C0886182AF4F0EA00F54B29 /* ArcElement.cpp */,
 				0C08860B2AF4EF6500F54B29 /* ArcElement.hpp */,
-				0C0886092AF4EF6500F54B29 /* CurveElement.cpp */,
-				0C08860E2AF4EF6500F54B29 /* CurveElement.hpp */,
+				0C0886092AF4EF6500F54B29 /* SpiralLineElement.cpp */,
+				0C08860E2AF4EF6500F54B29 /* SpiralLineElement.hpp */,
 				0C0886062AF4EF6500F54B29 /* StraightLineElement.cpp */,
 				0C0886072AF4EF6500F54B29 /* StraightLineElement.hpp */,
 				0C08860D2AF4EF6500F54B29 /* LineElementManager.cpp */,
@@ -177,13 +177,13 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C0885F02AF4D5FA00F54B29 /* RailwayAPI.hpp in Headers */,
+				0C0885F02AF4D5FA00F54B29 /* RouteAPI.hpp in Headers */,
 				0C0886052AF4ED0100F54B29 /* BaseStruct.hpp in Headers */,
 				0C0886032AF4ED0000F54B29 /* BasePoint.hpp in Headers */,
 				0C0886042AF4ED0100F54B29 /* BaseCalFun.hpp in Headers */,
 				0C0886152AF4EF6600F54B29 /* BaseLineElement.hpp in Headers */,
 				0C0886142AF4EF6600F54B29 /* ArcElement.hpp in Headers */,
-				0C0886172AF4EF6600F54B29 /* CurveElement.hpp in Headers */,
+				0C0886172AF4EF6600F54B29 /* SpiralLineElement.hpp in Headers */,
 				0C0886102AF4EF6500F54B29 /* StraightLineElement.hpp in Headers */,
 				0C0886132AF4EF6500F54B29 /* LineElementManager.hpp in Headers */,
 				0C11B0882AF8DB5E000BA76F /* HorizontalCurve.hpp in Headers */,
@@ -285,9 +285,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C0886122AF4EF6500F54B29 /* CurveElement.cpp in Sources */,
+				0C0886122AF4EF6500F54B29 /* SpiralLineElement.cpp in Sources */,
 				0C08860F2AF4EF6500F54B29 /* StraightLineElement.cpp in Sources */,
-				0C0885F42AF4D5FA00F54B29 /* RailwayAPI.cpp in Sources */,
+				0C0885F42AF4D5FA00F54B29 /* RouteAPI.cpp in Sources */,
 				0C0886162AF4EF6600F54B29 /* LineElementManager.cpp in Sources */,
 				0C11B08B2AF8DC3B000BA76F /* VerticalCurve.cpp in Sources */,
 				0C0886022AF4ED0000F54B29 /* BaseCalFun.cpp in Sources */,
