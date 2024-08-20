@@ -9,10 +9,22 @@
 
 #include <string.h>
 
+enum class JDType : int
+{
+    Invaild = -3,           //无效
+    End,                    //终点
+    Start,                  //起点
+    TurnPoint,              //转折点
+    ThreeUnit = 3,          //三单元曲线
+    ThreeUnitBack,          //三单元回头曲线
+    FiveUnit,               //五单元曲线
+    FiveUnitBack            //五单元回头曲线
+};
+
 ///交点信息
 struct tagJDInfo
 {
-    int nJDType;            //交点类型(-1:起点 -2:终点 3:三单元平曲线 4:三单元回头曲线 5:五单元平曲线 6:五单元回头曲线 0:转折点坐标)
+    JDType nJDType;         //交点类型(-1:起点 -2:终点 3:三单元平曲线 4:三单元回头曲线 5:五单元平曲线 6:五单元回头曲线 0:转折点坐标)
     double dX;              //X坐标
     double dY;              //Y坐标
     double dX_End;          //X结束坐标
@@ -30,7 +42,7 @@ struct tagJDInfo
     ///初始化值
     tagJDInfo()
     {
-        nJDType = __INT_MAX__;
+        nJDType = JDType::Invaild;
         dX = 0.0;
         dY = 0.0;
         dL1 = 0.0;
@@ -83,7 +95,7 @@ struct tagSlopeInfo
 };
 
 //线元类型
-enum ElementType : int
+enum class ElementType : int
 {
     Invalid = -1,
     Line,                   //直线

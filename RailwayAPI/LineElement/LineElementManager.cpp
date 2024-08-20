@@ -44,7 +44,7 @@ void LineElementManager::ResetData()
 Point2d LineElementManager::CalUnitStartPos(uint32_t nIndex, const Vector2d& vecWhole)
 {
     //交点坐标
-    Point2d posJD1(((m_arrJD + nIndex)->nJDType != 4 ? Point2d((m_arrJD + nIndex)->dX, (m_arrJD + nIndex)->dY) : Point2d((m_arrJD + nIndex)->dX_End, (m_arrJD + nIndex)->dY_End)));
+    Point2d posJD1(((m_arrJD + nIndex)->nJDType != JDType::ThreeUnitBack ? Point2d((m_arrJD + nIndex)->dX, (m_arrJD + nIndex)->dY) : Point2d((m_arrJD + nIndex)->dX_End, (m_arrJD + nIndex)->dY_End)));
     Point2d posJD2((m_arrJD + nIndex + 1)->dX, (m_arrJD + nIndex + 1)->dY);
     Point2d posJD3((m_arrJD + nIndex + 2)->dX, (m_arrJD + nIndex + 2)->dY);
     
@@ -61,7 +61,7 @@ Point2d LineElementManager::CalUnitStartPos(uint32_t nIndex, const Vector2d& vec
     return Point2d((e * c - b * f) / (a * e - b * d), (d * c - a * f) / (b * d - a * e));
 }
 
-void LineElementManager::SetJDData_Highway(const tagJDInfo* pJDInfo, uint32_t nCount)
+void LineElementManager::SetJDData(const tagJDInfo* pJDInfo, uint32_t nCount)
 {
     if (!pJDInfo || nCount < 2) return;
     
@@ -104,12 +104,12 @@ void LineElementManager::SetJDData_Highway(const tagJDInfo* pJDInfo, uint32_t nC
     for (uint32_t nCurIndex = 0; nCurIndex + 2 < nCount; nCurIndex++)
     {
         //交点坐标
-        posJD1 = ((m_arrJD + nCurIndex)->nJDType != 4 ? Point2d((m_arrJD + nCurIndex)->dX, (m_arrJD + nCurIndex)->dY) : Point2d((m_arrJD + nCurIndex)->dX_End, (m_arrJD + nCurIndex)->dY_End));
+        posJD1 = ((m_arrJD + nCurIndex)->nJDType != JDType::ThreeUnitBack ? Point2d((m_arrJD + nCurIndex)->dX, (m_arrJD + nCurIndex)->dY) : Point2d((m_arrJD + nCurIndex)->dX_End, (m_arrJD + nCurIndex)->dY_End));
         posJD2.Set((m_arrJD + nCurIndex + 1)->dX, (m_arrJD + nCurIndex + 1)->dY);
         posJD3.Set((m_arrJD + nCurIndex + 2)->dX, (m_arrJD + nCurIndex + 2)->dY);
         posJDRef.Set((m_arrJD + nCurIndex + 1)->dX_End, (m_arrJD + nCurIndex + 1)->dY_End);
         //交点类型
-        int nJDType = (m_arrJD + nCurIndex + 1)->nJDType;
+        JDType nJDType = (m_arrJD + nCurIndex + 1)->nJDType;
         //起始半径
         double dEnterR = (m_arrJD + nCurIndex + 1)->dEnterR;
         double dExitR = (m_arrJD + nCurIndex + 1)->dExitR;
@@ -121,8 +121,8 @@ void LineElementManager::SetJDData_Highway(const tagJDInfo* pJDInfo, uint32_t nC
         uint8_t nCurveElementCount = 0;
         
         switch (nJDType) {
-            case 3:     //三单元曲线
-            case 4:
+            case JDType::ThreeUnit:     //三单元曲线
+            case JDType::ThreeUnitBack:
             {
                 //缓和曲线长度
                 double dL1 = (m_arrJD + nCurIndex + 1)->dL1;
@@ -130,10 +130,10 @@ void LineElementManager::SetJDData_Highway(const tagJDInfo* pJDInfo, uint32_t nC
                 //圆曲线半径
                 double dArcR = (m_arrJD + nCurIndex + 1)->dArcR1;
                 //转向角
-                double dTurnAngle = (nJDType == 3 ? BaseCalFun::CalTurnAngle(posJD1, posJD2, posJD3) : BaseCalFun::CalTurnAngle(posJD1, posJD2, posJDRef, posJD3));
+                double dTurnAngle = (nJDType == JDType::ThreeUnit ? BaseCalFun::CalTurnAngle(posJD1, posJD2, posJD3) : BaseCalFun::CalTurnAngle(posJD1, posJD2, posJDRef, posJD3));
                 //转向方向
-                bool bTurnLeft = ((nJDType == 3 && dTurnAngle > 0.0) || (nJDType == 4 && dTurnAngle < 0.0));
-                if (nJDType == 4)
+                bool bTurnLeft = ((nJDType == JDType::ThreeUnit && dTurnAngle > 0.0) || (nJDType == JDType::ThreeUnitBack && dTurnAngle < 0.0));
+                if (nJDType == JDType::ThreeUnitBack)
                     dTurnAngle = MATH_PI * 2.0 - abs(dTurnAngle);
                 
                 //缓和曲线角
@@ -146,7 +146,7 @@ void LineElementManager::SetJDData_Highway(const tagJDInfo* pJDInfo, uint32_t nC
                 //向量定义
                 Vector2d vecWhole;
                 
-                posCurveStart = (nJDType == 3 ? Point2d(0.0, 0.0) : posJD2);
+                posCurveStart = (nJDType == JDType::ThreeUnit ? Point2d(0.0, 0.0) : posJD2);
                 
                 if (dL1 > 0.0)
                 {
@@ -206,11 +206,11 @@ void LineElementManager::SetJDData_Highway(const tagJDInfo* pJDInfo, uint32_t nC
                 }
                 
                 //计算曲线起点世界坐标
-                posCurveStart = (nJDType == 3 ? CalUnitStartPos(nCurIndex, vecWhole) : posJD2);
+                posCurveStart = (nJDType == JDType::ThreeUnit ? CalUnitStartPos(nCurIndex, vecWhole) : posJD2);
                 
                 break;
             }
-            case 5:     //五单元曲线
+            case JDType::FiveUnit:     //五单元曲线
             {
                 //起点角度
                 double dTanAngleStart = BaseCalFun::CalAngleX(posJD1, posJD2);
@@ -339,7 +339,7 @@ void LineElementManager::SetJDData_Highway(const tagJDInfo* pJDInfo, uint32_t nC
                 
                 break;
             }
-            case 6:     //五单元回头曲线
+            case JDType::FiveUnitBack:     //五单元回头曲线
             {
                 break;
             }
@@ -383,7 +383,7 @@ void LineElementManager::SetJDData_Highway(const tagJDInfo* pJDInfo, uint32_t nC
         
         for (uint8_t j = 0; j < nCurveElementCount; j++)
         {
-            if (nJDType == 3 || nJDType == 5)
+            if (nJDType == JDType::ThreeUnit || nJDType == JDType::FiveUnit)
                 arrLineElement[j]->AdjustData(posCurveStart);
             arrLineElement[j]->m_dStartCml = dCurrentCml;
             arrLineElement[j]->m_nIndex = m_nElementCount;
@@ -392,7 +392,7 @@ void LineElementManager::SetJDData_Highway(const tagJDInfo* pJDInfo, uint32_t nC
             dCurrentCml += arrLineElement[j]->m_dTotalLen;
         }
         
-        if (dExitR == __DBL_MAX__ || (m_arrJD + nCurIndex + 2)->nJDType == -2)
+        if (dExitR == __DBL_MAX__ || (m_arrJD + nCurIndex + 2)->nJDType == JDType::End)
         {
             BaseLineElement* pPreLineElement = m_arrLineElement[m_nElementCount - 1];
             if (pPreLineElement->m_posEnd.distanceTo(posJD3) >= 0.01)

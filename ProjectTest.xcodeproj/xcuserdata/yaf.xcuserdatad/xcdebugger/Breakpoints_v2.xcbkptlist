@@ -33,7 +33,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "414"
             endingLineNumber = "414"
-            landmarkName = "LineElementManager::SetJDData_Highway(pJDInfo, nCount)"
+            landmarkName = "LineElementManager::SetJDData(pJDInfo, nCount)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

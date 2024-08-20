@@ -54,7 +54,7 @@ public:
     /// - Parameters:
     ///   - pJDInfo: 交点数组
     ///   - iCount: 数组大小
-    void SetJDData_Highway(const tagJDInfo* pJDInfo, uint32_t nCount);
+    void SetJDData(const tagJDInfo* pJDInfo, uint32_t nCount);
     
     /// 导出指定里程范围内平曲线数据
     /// - Parameters:

@@ -36,13 +36,13 @@ bool LoadEIFile(std::string strDir, std::vector<tagJDInfo>& vecJD)
                 if (nEndIndex == std::string::npos)
                 {
                     strSub = buffer.substr(nStartIndex);
-                    if (JDInfo.nJDType == -2)
+                    if (JDInfo.nJDType == JDType::End)
                         JDInfo.dX = std::stod(strSub);
-                    else if (JDInfo.nJDType == -1)
+                    else if (JDInfo.nJDType == JDType::Start)
                     {
                         //起点桩号
                     }
-                    else if (JDInfo.nJDType == 5)
+                    else if (JDInfo.nJDType == JDType::FiveUnit)
                         JDInfo.dID = std::stod(strSub);
                     else
                     {
@@ -54,14 +54,14 @@ bool LoadEIFile(std::string strDir, std::vector<tagJDInfo>& vecJD)
                 
                 strSub = buffer.substr(nStartIndex, nEndIndex - nStartIndex);
                 if (nDataIndex == 0)
-                    JDInfo.nJDType = std::stoi(strSub);
+                    JDInfo.nJDType = (JDType)std::stoi(strSub);
                 else if (nDataIndex == 1)
                     JDInfo.dY = std::stod(strSub);
                 else if (nDataIndex == 2)
                     JDInfo.dX = std::stod(strSub);
-                else if (JDInfo.nJDType != -1 && JDInfo.nJDType != -2)
+                else if (JDInfo.nJDType != JDType::Start && JDInfo.nJDType != JDType::End)
                 {
-                    if (JDInfo.nJDType == 3)
+                    if (JDInfo.nJDType == JDType::ThreeUnit)
                     {
                         if (nDataIndex == 3)
                         {
@@ -91,7 +91,7 @@ bool LoadEIFile(std::string strDir, std::vector<tagJDInfo>& vecJD)
                                 JDInfo.dL2 = std::stod(strSub.substr(nType + 1));
                         }
                     }
-                    else if (JDInfo.nJDType == 4)
+                    else if (JDInfo.nJDType == JDType::ThreeUnitBack)
                     {
                         if (nDataIndex == 3)
                             JDInfo.dY_End = std::stod(strSub);
@@ -125,7 +125,7 @@ bool LoadEIFile(std::string strDir, std::vector<tagJDInfo>& vecJD)
                                 JDInfo.dL2 = std::stod(strSub.substr(nType + 1));
                         }
                     }
-                    else if (JDInfo.nJDType == 5)
+                    else if (JDInfo.nJDType == JDType::FiveUnit)
                     {
                         if (nDataIndex == 3)
                         {
@@ -172,7 +172,7 @@ bool LoadEIFile(std::string strDir, std::vector<tagJDInfo>& vecJD)
                             JDInfo.dExitR = (dExitR == 10000000000.0 ? __DBL_MAX__ : dExitR);
                         }
                     }
-                    else if (JDInfo.nJDType == 6)
+                    else if (JDInfo.nJDType == JDType::FiveUnitBack)
                     {
                         
                     }

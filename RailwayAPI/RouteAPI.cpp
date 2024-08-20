@@ -29,7 +29,7 @@ RouteAPI::~RouteAPI()
 
 void RouteAPI::SetData(const tagJDInfo* pJDInfo, uint32_t jdCount, const tagDLInfo* pDLCount, uint32_t dlCount, const tagSlopeInfo* pSlopeInfo, uint32_t slopeCount)
 {
-    m_pHorCurve->SetJDData_Highway(pJDInfo, jdCount);
+    m_pHorCurve->SetJDData(pJDInfo, jdCount);
     m_pHorCurve->SetDLData(pDLCount, dlCount);
     m_pVerCurve->SetSlopeData(pSlopeInfo, slopeCount);
 }
