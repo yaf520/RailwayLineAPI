@@ -118,8 +118,9 @@ uint32_t SpiralLineElement::IntersectWithLine(const double& dAngle, const double
     Point2d posOnLineRelative = BaseCalFun::TransferPosReversal(m_posBase, Point2d(dX, dY), bTurnDir, m_dBaseTanAngle);
     
     //斜率与截距
-    double k = vecRelativeDir.y / vecRelativeDir.x;
-    double b = posOnLineRelative.y - k * posOnLineRelative.x;
+    bool bExistSlope = (abs(vecRelativeDir.x) > s_dCalPrecision);
+    double k = (bExistSlope ? vecRelativeDir.y / vecRelativeDir.x : __DBL_MAX__);
+    double b = (bExistSlope ? posOnLineRelative.y - k * posOnLineRelative.x : posOnLineRelative.x);
     
     //预估根
     double arrEstimateRoot[s_nMaxArrCount] = {0.0};
@@ -301,7 +302,7 @@ double SpiralLineElement::f_original_cross(const double& dL0, const double& k, c
         y += yAdd;
     }
     
-    return k * x + b - y;
+    return (k == __DBL_MAX__ ? x - b : k * x + b - y);
 }
 
 double SpiralLineElement::f_first_deriv_proj(const double& dL0, const double& dParamX, const double& dParamY)
@@ -343,7 +344,7 @@ double SpiralLineElement::f_first_deriv_cross(const double& dL0, const double& k
         dy += dyAdd;
     }
     
-    return k * dx - dy;
+    return (k == __DBL_MAX__ ? dx : k * dx - dy);
 }
 
 double SpiralLineElement::f_second_deriv_proj(const double& x0, const double& dParamX, const double& dParamY)
@@ -395,7 +396,7 @@ double SpiralLineElement::f_second_deriv_cross(const double& x0, const double& k
         dy2 += d_second_yAdd;
     }
     
-    return k * dx2 - dy2;
+    return (k == __DBL_MAX__ ? dx2 : k * dx2 - dy2);
 }
 
 uint32_t SpiralLineElement::EstimateRoot(pFunc pf_original, pFunc pf_first_deriv, pFunc pf_second_deriv, const double& dParamX, const double& dParamY, double arrEstimateRoot[s_nMaxArrCount])
