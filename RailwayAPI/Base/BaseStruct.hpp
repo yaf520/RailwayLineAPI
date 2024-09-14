@@ -150,7 +150,9 @@ struct tagExportLineElement
         this->eLineType = data.eLineType;
         this->nPosCount = data.nPosCount;
         this->pArrPos = new PointExport[this->nPosCount];
-        memcpy(this->pArrPos, data.pArrPos, sizeof(PointExport) * this->nPosCount);
+        for (int i = 0; i < nPosCount; i++)
+            *(pArrPos + i) = data.pArrPos[i];
+        
         return *this;
     }
 };

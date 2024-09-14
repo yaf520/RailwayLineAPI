@@ -422,14 +422,20 @@ void LineElementManager::SetJDData(const tagJDInfo* pJDInfo, uint32_t nCount)
 
 tagExportLineElement* LineElementManager::ExportHorCurve(int& nArrCount, double dStartCml, double dEndCml, double dDist, double dCurveStep)
 {
+    nArrCount = 0;
     if (dEndCml - dStartCml < 0.0)
-    {
-        nArrCount = 0;
         return nullptr;
-    }
     
-    int nStartIndex = CmlBelongTo(dStartCml)->m_nIndex;
-    int nEndIndex = CmlBelongTo(dEndCml)->m_nIndex;
+    BaseLineElement* pStartElement = CmlBelongTo(dStartCml);
+    if (!pStartElement)
+        return nullptr;
+    
+    BaseLineElement* pEndElement = CmlBelongTo(dEndCml);
+    if (!pEndElement)
+        return nullptr;
+    
+    int nStartIndex = pStartElement->m_nIndex;
+    int nEndIndex = pEndElement->m_nIndex;
     
     nArrCount = nEndIndex - nStartIndex + 1;
     tagExportLineElement* pRet = new tagExportLineElement[nArrCount];
@@ -447,7 +453,7 @@ tagExportLineElement* LineElementManager::ExportHorCurve(int& nArrCount, double 
             delete[] pRet;
             return nullptr;
         }
-        pRet[nExportIndex++] = *pExportInfo;
+        *(pRet + nExportIndex++) = *pExportInfo;
         delete pExportInfo;
     }
     

@@ -377,11 +377,10 @@ tagCmlDistAngle* HorizontalCurve::TrsNEToCmlDist(const double& dX, const double&
                 if (nArrCount > 0 && nInsertIndex < nArrCount)
                     memmove(pArrRet + nInsertIndex + 1, pArrRet + nInsertIndex, (nArrCount - nInsertIndex) * sizeof(tagCmlDistAngle));
                 
-                pArrRet[nInsertIndex].dCml = arrCml[nProIndex];
-                pArrRet[nInsertIndex].dDist = -arrDist[nProIndex];
-                double dAngleTmp = MATH_PI_2 - arrAngle[nProIndex];
-                BaseCalFun::KeepAngleIn2PI(dAngleTmp);
-                pArrRet[nInsertIndex].dFwj = dAngleTmp;
+                (pArrRet + nInsertIndex)->dCml = arrCml[nProIndex];
+                (pArrRet + nInsertIndex)->dDist = -arrDist[nProIndex];
+                (pArrRet + nInsertIndex)->dFwj = MATH_PI_2 - arrAngle[nProIndex];
+                BaseCalFun::KeepAngleIn2PI((pArrRet+ nInsertIndex)->dFwj);
                     
                 nArrCount++;
             }
@@ -425,9 +424,16 @@ Point2d* HorizontalCurve::IntersectWithLine(const double& dAngle, const double& 
                         break;
                 
                 if (nArrCount > 0 && nInsertIndex < nArrCount)
-                    memmove((void*)(arrRet + nInsertIndex + 1), (void*)(arrRet + nInsertIndex), (nArrCount - nInsertIndex) * sizeof(Point2d));
+                {
+                    int nIndex = nArrCount;
+                    while (nIndex > nInsertIndex) {
+                        *(arrRet + nIndex) = *(arrRet + nIndex - 1);
+                        nIndex--;
+                    }
+                }
+                //memmove((void*)(arrRet + nInsertIndex + 1), (void*)(arrRet + nInsertIndex), (nArrCount - nInsertIndex) * sizeof(Point2d));
                 
-                arrRet[nInsertIndex] = arrPos[nCrossIndex];
+                *(arrRet + nInsertIndex) = *(arrPos + nCrossIndex);
                 nArrCount++;
             }
         }
@@ -437,7 +443,10 @@ Point2d* HorizontalCurve::IntersectWithLine(const double& dAngle, const double& 
     if (arrRet && nArrCount < m_nElementCount)
     {
         Point2d* arrNew = new Point2d[nArrCount];
-        memcpy((void*)arrNew, (void*)arrRet, sizeof(Point2d) * nArrCount);
+        for (int i = 0; i < nArrCount; i++)
+            *(arrNew + i) = *(arrRet + i);
+        
+        //memcpy((void*)arrNew, (void*)arrRet, sizeof(Point2d) * nArrCount);
         delete [] arrRet;
         arrRet = arrNew;
     }
