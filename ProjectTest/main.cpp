@@ -25,7 +25,7 @@ bool LoadEIFile(std::string strDir, std::vector<tagJDInfo>& vecJD)
         const std::string strBlank = " ";
         
         while (getline(infile, buffer)) {
-            int nDataIndex = 0;
+            size_t nDataIndex = 0;
             
             size_t nStartIndex = 0;
             size_t nEndIndex = 0;
@@ -42,8 +42,6 @@ bool LoadEIFile(std::string strDir, std::vector<tagJDInfo>& vecJD)
                     {
                         //起点桩号
                     }
-                    else if (JDInfo.nJDType == JDType::FiveUnit)
-                        JDInfo.dID = std::stod(strSub);
                     else
                     {
                         double dExitR = std::stod(strSub);
@@ -72,9 +70,7 @@ bool LoadEIFile(std::string strDir, std::vector<tagJDInfo>& vecJD)
                         {
                             size_t nType = strSub.find("L");
                             if (nType == std::string::npos)
-                            {
-                                
-                            }
+                                JDInfo.dA1 = std::stod(strSub.substr(nType + 1));
                             else
                                 JDInfo.dL1 = std::stod(strSub.substr(nType + 1));
                         }
@@ -84,9 +80,7 @@ bool LoadEIFile(std::string strDir, std::vector<tagJDInfo>& vecJD)
                         {
                             size_t nType = strSub.find("L");
                             if (nType == std::string::npos)
-                            {
-                                
-                            }
+                                JDInfo.dA2 = std::stod(strSub.substr(nType + 1));
                             else
                                 JDInfo.dL2 = std::stod(strSub.substr(nType + 1));
                         }
@@ -106,9 +100,7 @@ bool LoadEIFile(std::string strDir, std::vector<tagJDInfo>& vecJD)
                         {
                             size_t nType = strSub.find("L");
                             if (nType == std::string::npos)
-                            {
-                                
-                            }
+                                JDInfo.dA1 = std::stod(strSub.substr(nType + 1));
                             else
                                 JDInfo.dL1 = std::stod(strSub.substr(nType + 1));
                         }
@@ -118,66 +110,20 @@ bool LoadEIFile(std::string strDir, std::vector<tagJDInfo>& vecJD)
                         {
                             size_t nType = strSub.find("L");
                             if (nType == std::string::npos)
-                            {
-                                
-                            }
+                                JDInfo.dA2 = std::stod(strSub.substr(nType + 1));
                             else
                                 JDInfo.dL2 = std::stod(strSub.substr(nType + 1));
                         }
                     }
                     else if (JDInfo.nJDType == JDType::FiveUnit)
                     {
-                        if (nDataIndex == 3)
-                        {
-                            double dEnterR = std::stod(strSub);
-                            JDInfo.dEnterR = (dEnterR == 10000000000.0 ? __DBL_MAX__ : dEnterR);
-                        }
-                        else if (nDataIndex == 4)
-                        {
-                            size_t nType = strSub.find("L");
-                            if (nType == std::string::npos)
-                            {
-                                
-                            }
-                            else
-                                JDInfo.dL1 = std::stod(strSub.substr(nType + 1));
-                        }
-                        else if (nDataIndex == 5)
-                            JDInfo.dArcR1 = std::stod(strSub);
-                        else if (nDataIndex == 6)
-                        {
-                            size_t nType = strSub.find("L");
-                            if (nType == std::string::npos)
-                            {
-                                
-                            }
-                            else
-                                JDInfo.dL2 = std::stod(strSub.substr(nType + 1));
-                        }
-                        else if (nDataIndex == 7)
-                            JDInfo.dArcR2 = std::stod(strSub);
-                        else if (nDataIndex == 8)
-                        {
-                            size_t nType = strSub.find("L");
-                            if (nType == std::string::npos)
-                            {
-                                
-                            }
-                            else
-                                JDInfo.dL3 = std::stod(strSub.substr(nType + 1));
-                        }
-                        else if (nDataIndex == 9)
-                        {
-                            double dExitR = std::stod(strSub);
-                            JDInfo.dExitR = (dExitR == 10000000000.0 ? __DBL_MAX__ : dExitR);
-                        }
+                        
                     }
                     else if (JDInfo.nJDType == JDType::FiveUnitBack)
                     {
                         
                     }
                 }
-                
                 
                 nStartIndex = nEndIndex + strBlank.length();
                 nDataIndex++;
@@ -237,7 +183,7 @@ int main(int argc, const char * argv[]) {
     
 #else
 
-    LoadEIFile("/Users/yaf/Downloads/公路平曲线/1.JD", vecJD);
+    LoadEIFile("/Users/yaf/Downloads/公路平曲线/2.JD", vecJD);
     
 #endif
     
@@ -247,7 +193,7 @@ int main(int argc, const char * argv[]) {
     const double dStep = 1.0615;
     
     RouteAPI* pAPI = new RouteAPI;
-    pAPI->SetData(&vecJD.front(), vecJD.size(), &vecDL.front(), vecDL.size(), &vecSlope.front(), vecSlope.size());
+    pAPI->SetData(&vecJD.front(), vecJD.size(), vecDL.size() > 0 ? &vecDL.front() : nullptr, vecDL.size(), vecSlope.size() > 0 ? &vecSlope.front() : nullptr, vecSlope.size());
     
 //#define SINGLE_DATA_TEST //单点测试
     

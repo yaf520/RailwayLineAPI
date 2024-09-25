@@ -30,8 +30,11 @@ struct tagJDInfo
     double dX_End;          //X结束坐标
     double dY_End;          //Y结束坐标
     double dL1;             //第一缓和曲线长度
+    double dA1;             //第一缓和曲线参数
     double dL2;             //第二缓和曲线长度
+    double dA2;             //第二缓和曲线参数
     double dL3;             //第三缓和曲线长度
+    double dA3;             //第三缓和曲线参数
     double dEnterR;         //入缓和曲线半径(__DBL_MAX__代表无穷大,即直线)
     double dExitR;          //出缓和曲线半径(__DBL_MAX__代表无穷大,即直线)
     double dArcR1;          //第一圆曲线半径
@@ -45,9 +48,12 @@ struct tagJDInfo
         nJDType = JDType::Invaild;
         dX = 0.0;
         dY = 0.0;
-        dL1 = 0.0;
-        dL2 = 0.0;
-        dL3 = 0.0;
+        dL1 = -1.0;
+        dA1 = -1.0;
+        dL2 = -1.0;
+        dA2 = -1.0;
+        dL3 = -1.0;
+        dA3 = -1.0;
         dX_End = 0.0;
         dY_End = 0.0;
         dArcR1 = 0.0;

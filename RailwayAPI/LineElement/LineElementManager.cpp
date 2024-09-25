@@ -122,11 +122,8 @@ void LineElementManager::SetJDData(const tagJDInfo* pJDInfo, uint32_t nCount)
         
         switch (nJDType) {
             case JDType::ThreeUnit:     //三单元曲线
-            case JDType::ThreeUnitBack:
+            case JDType::ThreeUnitBack: //三单元回头
             {
-                //缓和曲线长度
-                double dL1 = (m_arrJD + nCurIndex + 1)->dL1;
-                double dL2 = (m_arrJD + nCurIndex + 1)->dL2;
                 //圆曲线半径
                 double dArcR = (m_arrJD + nCurIndex + 1)->dArcR1;
                 //转向角
@@ -136,9 +133,23 @@ void LineElementManager::SetJDData(const tagJDInfo* pJDInfo, uint32_t nCount)
                 if (nJDType == JDType::ThreeUnitBack)
                     dTurnAngle = MATH_PI * 2.0 - abs(dTurnAngle);
                 
+                //缓和曲线长度
+                double dL1 = (m_arrJD + nCurIndex + 1)->dL1;
+                double dL2 = (m_arrJD + nCurIndex + 1)->dL2;
+                if (dL1 < 0.0)
+                {
+                    double dC1 = pow((m_arrJD + nCurIndex + 1)->dA1, 2);
+                    dL1 = (dEnterR == __DBL_MAX__ ? dC1 / dArcR : dC1 * abs(dEnterR - dArcR) / dEnterR / dArcR);
+                }
+                if (dL2 < 0.0)
+                {
+                    double dC2 = pow((m_arrJD + nCurIndex + 1)->dA2, 2);
+                    dL2 = (dExitR == __DBL_MAX__ ? dC2 / dArcR : dC2 * abs(dExitR - dArcR) / dExitR / dArcR);
+                }
+                
                 //缓和曲线角
-                double dEnterCurveAngle = (dL1 == 0.0 ? 0.0 : ((dEnterR == __DBL_MAX__) ? dL1 / (dArcR * 2.0) : dL1 * (dEnterR + dArcR) / 2.0 / dEnterR / dArcR));
-                double dExitCurveAngle = (dL2 == 0.0 ? 0.0 : ((dExitR == __DBL_MAX__) ? dL2 / (dArcR * 2.0) : dL2 * (dExitR + dArcR) / 2.0 / dExitR / dArcR));
+                double dEnterCurveAngle = (abs(dL1) < s_dCalPrecision ? 0.0 : ((dEnterR == __DBL_MAX__) ? dL1 / (dArcR * 2.0) : dL1 * (dEnterR + dArcR) / 2.0 / dEnterR / dArcR));
+                double dExitCurveAngle = (abs(dL2) < s_dCalPrecision ? 0.0 : ((dExitR == __DBL_MAX__) ? dL2 / (dArcR * 2.0) : dL2 * (dExitR + dArcR) / 2.0 / dExitR / dArcR));
                 //圆弧角度
                 double dArcAngle = abs(dTurnAngle) - dEnterCurveAngle - dExitCurveAngle;
                 //起点角度
@@ -146,7 +157,8 @@ void LineElementManager::SetJDData(const tagJDInfo* pJDInfo, uint32_t nCount)
                 //向量定义
                 Vector2d vecWhole;
                 
-                posCurveStart = (nJDType == JDType::ThreeUnit ? Point2d(0.0, 0.0) : posJD2);
+                if (nJDType == JDType::ThreeUnitBack)
+                    posCurveStart = posJD2;
                 
                 if (dL1 > 0.0)
                 {
@@ -220,17 +232,32 @@ void LineElementManager::SetJDData(const tagJDInfo* pJDInfo, uint32_t nCount)
                 bool bTurnLeft = (dTurnAngle > 0.0);
                 //弧长控制参数
                 double dID = (m_arrJD + nCurIndex + 1)->dID;
+                //圆弧半径
+                double dArcR1 = (m_arrJD + nCurIndex + 1)->dArcR1;
+                double dArcR2 = (m_arrJD + nCurIndex + 1)->dArcR2;
                 //缓和曲线长度
                 double dL1 = (m_arrJD + nCurIndex + 1)->dL1;
                 double dL2 = (m_arrJD + nCurIndex + 1)->dL2;
                 double dL3 = (m_arrJD + nCurIndex + 1)->dL3;
-                //圆弧半径
-                double dArcR1 = (m_arrJD + nCurIndex + 1)->dArcR1;
-                double dArcR2 = (m_arrJD + nCurIndex + 1)->dArcR2;
+                if (dL1 < 0.0)
+                {
+                    double dC1 = pow((m_arrJD + nCurIndex + 1)->dA1, 2);
+                    dL1 = (dEnterR == __DBL_MAX__ ? dC1 / dArcR1 : dC1 * abs(dEnterR - dArcR1) / dEnterR / dArcR1);
+                }
+                if (dL2 < 0.0)
+                {
+                    double dC2 = pow((m_arrJD + nCurIndex + 1)->dA2, 2);
+                    dL2 = dC2 * abs(dArcR2 - dArcR1) / dArcR2 / dArcR1;
+                }
+                if (dL3 < 0.0)
+                {
+                    double dC3 = pow((m_arrJD + nCurIndex + 1)->dA3, 2);
+                    dL3 = (dExitR == __DBL_MAX__ ? dC3 / dArcR2 : dC3 * abs(dExitR - dArcR2) / dExitR / dArcR2);
+                }
                 //缓和曲线角度
-                double dCurveAngle1 = (dL1 == 0.0 ? 0.0 : (dEnterR == __DBL_MAX__ ? dL1 / dArcR1 / 2.0 : dL1 * (dEnterR + dArcR1) / 2.0 / dEnterR / dArcR1));
+                double dCurveAngle1 = (abs(dL1) < s_dCalPrecision ? 0.0 : (dEnterR == __DBL_MAX__ ? dL1 / dArcR1 / 2.0 : dL1 * (dEnterR + dArcR1) / 2.0 / dEnterR / dArcR1));
                 double dCurveAngle2 = dL2 * (dArcR1 + dArcR2) / 2.0 / dArcR1 / dArcR2;
-                double dCurveAngle3 = (dL3 == 0.0 ? 0.0 : (dExitR == __DBL_MAX__ ? dL3 / dArcR2 / 2.0 : dL3 * (dExitR + dArcR2) / 2.0 / dExitR / dArcR2));
+                double dCurveAngle3 = (abs(dL3) < s_dCalPrecision ? 0.0 : (dExitR == __DBL_MAX__ ? dL3 / dArcR2 / 2.0 : dL3 * (dExitR + dArcR2) / 2.0 / dExitR / dArcR2));
                 //圆曲线角度之和
                 double dArcAngleTotal = abs(dTurnAngle) - dCurveAngle1 - dCurveAngle2 - dCurveAngle3;
                 //圆弧角度
