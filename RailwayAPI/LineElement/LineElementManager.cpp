@@ -45,6 +45,7 @@ void LineElementManager::ResetData()
     if (m_arrCurveElement)
     {
         delete [] m_arrCurveElement;
+        m_arrCurveElement = nullptr;
         m_nCurveElementCount = 0;
     }
 }
@@ -67,6 +68,360 @@ Point2d LineElementManager::CalUnitStartPos(uint32_t nIndex, const Vector2d& vec
     double f = vecJD2_JD3.x * (vecWhole.y - posJD2.y) - vecJD2_JD3.y * (vecWhole.x - posJD2.x);
     //世界坐标
     return Point2d((e * c - b * f) / (a * e - b * d), (d * c - a * f) / (b * d - a * e));
+}
+
+Point2d LineElementManager::CurveUnit(uint32_t nCurIndex, BaseLineElement** arrLineElement, uint8_t& nCurveElementCount)
+{
+    //交点坐标
+    Point2d posJD1 = ((m_arrJD + nCurIndex)->nJDType != JDType::ThreeUnitBack ? Point2d((m_arrJD + nCurIndex)->dX, (m_arrJD + nCurIndex)->dY) : Point2d((m_arrJD + nCurIndex)->dX_End, (m_arrJD + nCurIndex)->dY_End));
+    Point2d posJD2((m_arrJD + nCurIndex + 1)->dX, (m_arrJD + nCurIndex + 1)->dY);
+    Point2d posJD3((m_arrJD + nCurIndex + 2)->dX, (m_arrJD + nCurIndex + 2)->dY);
+    Point2d posJDRef((m_arrJD + nCurIndex + 1)->dX_End, (m_arrJD + nCurIndex + 1)->dY_End);
+    //交点类型
+    JDType nJDType = (m_arrJD + nCurIndex + 1)->nJDType;
+    //起始半径
+    double dEnterR = (m_arrJD + nCurIndex + 1)->dEnterR;
+    double dExitR = (m_arrJD + nCurIndex + 1)->dExitR;
+    //单元起点(相对)
+    Point2d posCurveStart;
+    
+    switch (nJDType) {
+        case JDType::ThreeUnit:
+        case JDType::ThreeUnitBack:
+        {
+            //圆曲线半径
+            double dArcR = (m_arrJD + nCurIndex + 1)->dArcR1;
+            //转向角
+            double dTurnAngle = (nJDType == JDType::ThreeUnit ? BaseCalFun::CalTurnAngle(posJD1, posJD2, posJD3) : BaseCalFun::CalTurnAngle(posJD1, posJD2, posJDRef, posJD3));
+            //转向方向
+            bool bTurnLeft = ((nJDType == JDType::ThreeUnit && dTurnAngle > 0.0) || (nJDType == JDType::ThreeUnitBack && dTurnAngle < 0.0));
+            if (nJDType == JDType::ThreeUnitBack)
+                dTurnAngle = MATH_PI * 2.0 - abs(dTurnAngle);
+            
+            //缓和曲线长度
+            double dL1 = (m_arrJD + nCurIndex + 1)->dL1;
+            double dL2 = (m_arrJD + nCurIndex + 1)->dL2;
+            if (dL1 < 0.0)
+            {
+                double dC1 = pow((m_arrJD + nCurIndex + 1)->dA1, 2);
+                dL1 = (dEnterR == __DBL_MAX__ ? dC1 / dArcR : dC1 * abs(dEnterR - dArcR) / dEnterR / dArcR);
+            }
+
+            if (dL2 < 0.0)
+            {
+                double dC2 = pow((m_arrJD + nCurIndex + 1)->dA2, 2);
+                dL2 = (dExitR == __DBL_MAX__ ? dC2 / dArcR : dC2 * abs(dExitR - dArcR) / dExitR / dArcR);
+            }
+            
+            //缓和曲线角
+            double dEnterCurveAngle = (abs(dL1) < s_dCalPrecision ? 0.0 : ((dEnterR == __DBL_MAX__) ? dL1 / (dArcR * 2.0) : dL1 * (dEnterR + dArcR) / 2.0 / dEnterR / dArcR));
+            double dExitCurveAngle = (abs(dL2) < s_dCalPrecision ? 0.0 : ((dExitR == __DBL_MAX__) ? dL2 / (dArcR * 2.0) : dL2 * (dExitR + dArcR) / 2.0 / dExitR / dArcR));
+            //圆弧角度
+            double dArcAngle = abs(dTurnAngle) - dEnterCurveAngle - dExitCurveAngle;
+            //起点角度
+            double dTanAngleStart = BaseCalFun::CalAngleX(posJD1, posJD2);
+            //向量定义
+            Vector2d vecWhole;
+            
+            if (nJDType == JDType::ThreeUnitBack)
+                posCurveStart = posJD2;
+            
+            if (abs(dL1) > s_dCalPrecision)
+            {
+                //前缓和曲线
+                SpiralLineElement* pSpiralElement = new SpiralLineElement();
+                pSpiralElement->m_posStart = posCurveStart;
+                pSpiralElement->m_dStartTanAngle = dTanAngleStart;
+                pSpiralElement->m_dTotalLen = dL1;
+                pSpiralElement->m_bTurnLeft = bTurnLeft;
+                pSpiralElement->m_dEnterR =  dEnterR;
+                pSpiralElement->m_dExitR = dArcR;
+                pSpiralElement->InitData();
+                //保存线元
+                arrLineElement[nCurveElementCount++] = pSpiralElement;
+                vecWhole += (pSpiralElement->m_posEnd - pSpiralElement->m_posStart);
+                
+                //变换起点
+                posCurveStart = pSpiralElement->m_posEnd;
+                //变换角度
+                dTanAngleStart = pSpiralElement->m_dEndTanAngle;
+            }
+            
+            //圆曲线
+            if (abs(dArcAngle) * dArcR > 0.01)
+            {
+                ArcElement* pArcElement = new ArcElement();
+                pArcElement->m_posStart = posCurveStart;
+                pArcElement->m_dStartTanAngle = dTanAngleStart;
+                pArcElement->m_dArcR = dArcR;
+                pArcElement->m_bTurnLeft = bTurnLeft;
+                pArcElement->m_dTotalLen = dArcR * abs(dArcAngle);
+                pArcElement->InitData();
+                //保存线元
+                arrLineElement[nCurveElementCount++] = pArcElement;
+                vecWhole += (pArcElement->m_posEnd - pArcElement->m_posStart);
+                
+                //变换起点
+                posCurveStart = pArcElement->m_posEnd;
+                //变换角度
+                dTanAngleStart = pArcElement->m_dEndTanAngle;
+            }
+            
+            if (abs(dL2) > s_dCalPrecision)
+            {
+                //后缓和曲线
+                SpiralLineElement* pSpiralElement = new SpiralLineElement();
+                pSpiralElement->m_posStart = posCurveStart;
+                pSpiralElement->m_dStartTanAngle = dTanAngleStart;
+                pSpiralElement->m_dTotalLen = dL2;
+                pSpiralElement->m_bTurnLeft = bTurnLeft;
+                pSpiralElement->m_dEnterR = dArcR;
+                pSpiralElement->m_dExitR = dExitR;
+                pSpiralElement->InitData();
+                //保存线元
+                arrLineElement[nCurveElementCount++] = pSpiralElement;
+                vecWhole += (pSpiralElement->m_posEnd - pSpiralElement->m_posStart);
+            }
+            
+            //计算曲线起点世界坐标
+            posCurveStart = (nJDType == JDType::ThreeUnit ? CalUnitStartPos(nCurIndex, vecWhole) : posJD2);
+            
+            break;
+        }
+        case JDType::FiveUnit:
+        {
+            //起点角度
+            double dTanAngleStart = BaseCalFun::CalAngleX(posJD1, posJD2);
+            //转向角
+            double dTurnAngle = BaseCalFun::CalTurnAngle(posJD1, posJD2, posJD3);
+            //转向方向
+            bool bTurnLeft = (dTurnAngle > 0.0);
+            //弧长控制参数
+            double dID = (m_arrJD + nCurIndex + 1)->dID;
+            //圆弧半径
+            double dArcR1 = (m_arrJD + nCurIndex + 1)->dArcR1;
+            double dArcR2 = (m_arrJD + nCurIndex + 1)->dArcR2;
+            //缓和曲线长度
+            double dL1 = (m_arrJD + nCurIndex + 1)->dL1;
+            double dL2 = (m_arrJD + nCurIndex + 1)->dL2;
+            double dL3 = (m_arrJD + nCurIndex + 1)->dL3;
+            if (dL1 < 0.0)
+            {
+                double dC1 = pow((m_arrJD + nCurIndex + 1)->dA1, 2);
+                dL1 = (dEnterR == __DBL_MAX__ ? dC1 / dArcR1 : dC1 * abs(dEnterR - dArcR1) / dEnterR / dArcR1);
+            }
+            if (dL2 < 0.0)
+            {
+                double dC2 = pow((m_arrJD + nCurIndex + 1)->dA2, 2);
+                dL2 = dC2 * abs(dArcR2 - dArcR1) / dArcR2 / dArcR1;
+            }
+            if (dL3 < 0.0)
+            {
+                double dC3 = pow((m_arrJD + nCurIndex + 1)->dA3, 2);
+                dL3 = (dExitR == __DBL_MAX__ ? dC3 / dArcR2 : dC3 * abs(dExitR - dArcR2) / dExitR / dArcR2);
+            }
+            //缓和曲线角度
+            double dCurveAngle1 = (abs(dL1) < s_dCalPrecision ? 0.0 : (dEnterR == __DBL_MAX__ ? dL1 / dArcR1 / 2.0 : dL1 * (dEnterR + dArcR1) / 2.0 / dEnterR / dArcR1));
+            double dCurveAngle2 = dL2 * (dArcR1 + dArcR2) / 2.0 / dArcR1 / dArcR2;
+            double dCurveAngle3 = (abs(dL3) < s_dCalPrecision ? 0.0 : (dExitR == __DBL_MAX__ ? dL3 / dArcR2 / 2.0 : dL3 * (dExitR + dArcR2) / 2.0 / dExitR / dArcR2));
+            //圆曲线角度之和
+            double dArcAngleTotal = abs(dTurnAngle) - dCurveAngle1 - dCurveAngle2 - dCurveAngle3;
+            //圆弧角度
+            double dArcAngle1 = (dID == 0.0 ? dArcR2 * dArcAngleTotal / (dArcR1 + dArcR2) : dID / dArcR1);
+            double dArcAngle2 = dArcAngleTotal - dArcAngle1;
+            //变量定义
+            Vector2d vecWhole;
+            
+            if (dL1 > 0.0)
+            {
+                //第一段缓和曲线
+                SpiralLineElement* pSpiralElement = new SpiralLineElement();
+                pSpiralElement->m_posStart = posCurveStart;
+                pSpiralElement->m_dStartTanAngle = dTanAngleStart;
+                pSpiralElement->m_dTotalLen = dL1;
+                pSpiralElement->m_bTurnLeft = bTurnLeft;
+                pSpiralElement->m_dEnterR = dEnterR;
+                pSpiralElement->m_dExitR = dArcR1;
+                pSpiralElement->InitData();
+                
+                arrLineElement[nCurveElementCount++] = pSpiralElement;
+                vecWhole += (pSpiralElement->m_posEnd - pSpiralElement->m_posStart);
+                
+                //变换起点
+                posCurveStart = pSpiralElement->m_posEnd;
+                //变换角度
+                dTanAngleStart = pSpiralElement->m_dEndTanAngle;
+            }
+            
+            do {
+                //第一段圆曲线
+                ArcElement* pArcElement = new ArcElement();
+                pArcElement->m_posStart = posCurveStart;
+                pArcElement->m_dStartTanAngle = dTanAngleStart;
+                pArcElement->m_dArcR = dArcR1;
+                pArcElement->m_bTurnLeft = bTurnLeft;
+                pArcElement->m_dTotalLen = dArcR1 * abs(dArcAngle1);
+                pArcElement->InitData();
+                
+                arrLineElement[nCurveElementCount++] = pArcElement;
+                vecWhole += (pArcElement->m_posEnd - pArcElement->m_posStart);
+                
+                //变换起点
+                posCurveStart = pArcElement->m_posEnd;
+                //变换角度
+                dTanAngleStart = pArcElement->m_dEndTanAngle;
+            } while (false);
+            
+            do {
+                //第二段缓和曲线
+                SpiralLineElement* pSpiralElement = new SpiralLineElement();
+                pSpiralElement->m_posStart = posCurveStart;
+                pSpiralElement->m_dStartTanAngle = dTanAngleStart;
+                pSpiralElement->m_dTotalLen = dL2;
+                pSpiralElement->m_bTurnLeft = bTurnLeft;
+                pSpiralElement->m_dEnterR =  dArcR1;
+                pSpiralElement->m_dExitR = dArcR2;
+                pSpiralElement->InitData();
+                
+                arrLineElement[nCurveElementCount++] = pSpiralElement;
+                vecWhole += (pSpiralElement->m_posEnd - pSpiralElement->m_posStart);
+                
+                //变换起点
+                posCurveStart = pSpiralElement->m_posEnd;
+                //变换角度
+                dTanAngleStart = pSpiralElement->m_dEndTanAngle;
+            } while (false);
+            
+            do {
+                //第二段圆曲线
+                ArcElement* pArcElement = new ArcElement();
+                pArcElement->m_posStart = posCurveStart;
+                pArcElement->m_dStartTanAngle = dTanAngleStart;
+                pArcElement->m_dArcR = dArcR2;
+                pArcElement->m_bTurnLeft = bTurnLeft;
+                pArcElement->m_dTotalLen = dArcR2 * abs(dArcAngle2);
+                pArcElement->InitData();
+                
+                arrLineElement[nCurveElementCount++] = pArcElement;
+                vecWhole += (pArcElement->m_posEnd - pArcElement->m_posStart);
+                
+                //变换起点
+                posCurveStart = pArcElement->m_posEnd;
+                //变换角度
+                dTanAngleStart = pArcElement->m_dEndTanAngle;
+            } while (false);
+            
+            if (dL3 > 0.0)
+            {
+                //第三段缓和曲线
+                SpiralLineElement* pSpiralElement = new SpiralLineElement();
+                pSpiralElement->m_posStart = posCurveStart;
+                pSpiralElement->m_dStartTanAngle = dTanAngleStart;
+                pSpiralElement->m_dTotalLen = dL3;
+                pSpiralElement->m_bTurnLeft = bTurnLeft;
+                pSpiralElement->m_dEnterR = dArcR2;
+                pSpiralElement->m_dExitR = dExitR;
+                pSpiralElement->InitData();
+                
+                arrLineElement[nCurveElementCount++] = pSpiralElement;
+                vecWhole += (pSpiralElement->m_posEnd - pSpiralElement->m_posStart);
+            }
+            
+            //计算曲线起点世界坐标
+            posCurveStart = CalUnitStartPos(nCurIndex, vecWhole);
+            
+            break;
+        }
+        case JDType::FiveUnitBack:
+        {
+            break;
+        }
+            
+        default:
+            break;
+    }
+    
+    return posCurveStart;
+}
+
+void LineElementManager::CurveElement(uint32_t nCurIndex, BaseLineElement** arrLineElement, uint8_t nCurveElementCount)
+{
+    //交点坐标
+    Point2d posJD1 = ((m_arrJD + nCurIndex)->nJDType != JDType::ThreeUnitBack ? Point2d((m_arrJD + nCurIndex)->dX, (m_arrJD + nCurIndex)->dY) : Point2d((m_arrJD + nCurIndex)->dX_End, (m_arrJD + nCurIndex)->dY_End));
+    Point2d posJD2((m_arrJD + nCurIndex + 1)->dX, (m_arrJD + nCurIndex + 1)->dY);
+    Point2d posJD3((m_arrJD + nCurIndex + 2)->dX, (m_arrJD + nCurIndex + 2)->dY);
+    Point2d posJDRef((m_arrJD + nCurIndex + 1)->dX_End, (m_arrJD + nCurIndex + 1)->dY_End);
+    //交点类型
+    JDType nJDType = (m_arrJD + nCurIndex + 1)->nJDType;
+    
+    if (nCurIndex == 0)
+    {
+        //起点
+        m_arrCurveElement[nCurIndex].nJDIndex = nCurIndex;
+        m_arrCurveElement[nCurIndex].dN_Y = posJD1.y;
+        m_arrCurveElement[nCurIndex].dE_X = posJD1.x;
+    }
+    else if (nCurIndex + 2 == m_nJDCount - 1)
+    {
+        //终点
+        m_arrCurveElement[nCurIndex + 2].nJDIndex = nCurIndex + 2;
+        m_arrCurveElement[nCurIndex + 2].dN_Y = posJD3.y;
+        m_arrCurveElement[nCurIndex + 2].dE_X = posJD3.x;
+    }
+
+    ///这里暂时只处理三单元曲线
+    tagCurveElementItem& item = m_arrCurveElement[nCurIndex + 1];
+    item.nJDIndex = nCurIndex + 1;
+    item.dN_Y = posJD2.y;
+    item.dE_X = posJD2.x;
+    item.dTurnAngle = (nJDType == JDType::ThreeUnit || nJDType == JDType::FiveUnitBack ? BaseCalFun::CalTurnAngle(posJD1, posJD2, posJD3) : BaseCalFun::CalTurnAngle(posJD1, posJD2, posJDRef, posJD3));
+    if (nJDType == JDType::ThreeUnitBack || nJDType == JDType::FiveUnitBack)
+        item.dTurnAngle = MATH_PI * 2.0 - abs(item.dTurnAngle);
+
+    if (nCurveElementCount > 0)
+    {
+        //切线长
+        item.dT1 = arrLineElement[0]->m_posStart.distanceTo(posJD2);
+        item.dT2 = arrLineElement[nCurveElementCount - 1]->m_posEnd.distanceTo(posJD2);
+        
+        for (int i = 0; i < nCurveElementCount; i++)
+        {
+            //总计长度
+            item.dCurveLen += arrLineElement[i]->m_dTotalLen;
+            
+            if (arrLineElement[i]->m_eElementType == ElementType::Arc)
+            {
+                //圆曲线
+                ArcElement* pArcElement = (ArcElement*)arrLineElement[i];
+                //半径
+                item.dArcR = pArcElement->m_dArcR;
+                
+                if (i > 0)
+                {
+                    item.dL1 = arrLineElement[i - 1]->m_dTotalLen;
+                    item.dA1 = pow(((SpiralLineElement*)arrLineElement[i - 1])->m_dC, 0.5);
+                }
+                if (i + 1 < nCurveElementCount)
+                {
+                    item.dL2 = arrLineElement[i + 1]->m_dTotalLen;
+                    item.dA2 = pow(((SpiralLineElement*)arrLineElement[i + 1])->m_dC, 0.5);
+                }
+                
+                //属性点里程
+                item.dHYCml = pArcElement->m_dStartCml;
+                item.dYHCml = pArcElement->m_dStartCml + pArcElement->m_dTotalLen;
+                item.dQZCml = pArcElement->m_dStartCml + pArcElement->m_dTotalLen / 2.0;
+                item.dZHCml = (i > 0 ? arrLineElement[i - 1]->m_dStartCml : item.dHYCml);
+                item.dHZCml = (i + 1 < nCurveElementCount ? arrLineElement[i + 1]->m_dStartCml + arrLineElement[i + 1]->m_dTotalLen : item.dYHCml);
+                
+                //外矢距
+                Point2d posQZ;
+                double dAngle = 0.0;
+                pArcElement->TrsCmlDistToNE(item.dQZCml, 0.0, posQZ.x, posQZ.y, dAngle);
+                item.dE = posQZ.distanceTo(posJD2);
+            }
+        }
+    }
 }
 
 void LineElementManager::SetJDData(const tagJDInfo* pJDInfo, uint32_t nCount)
@@ -115,9 +470,6 @@ void LineElementManager::SetJDData(const tagJDInfo* pJDInfo, uint32_t nCount)
     Point2d posJD1, posJD2, posJD3, posJDRef;
     for (uint32_t nCurIndex = 0; nCurIndex + 2 < nCount; nCurIndex++)
     {
-        ///转向角
-        double dTurnAngle = 0.0;
-        
         //交点坐标
         posJD1 = ((m_arrJD + nCurIndex)->nJDType != JDType::ThreeUnitBack ? Point2d((m_arrJD + nCurIndex)->dX, (m_arrJD + nCurIndex)->dY) : Point2d((m_arrJD + nCurIndex)->dX_End, (m_arrJD + nCurIndex)->dY_End));
         posJD2.Set((m_arrJD + nCurIndex + 1)->dX, (m_arrJD + nCurIndex + 1)->dY);
@@ -125,270 +477,14 @@ void LineElementManager::SetJDData(const tagJDInfo* pJDInfo, uint32_t nCount)
         posJDRef.Set((m_arrJD + nCurIndex + 1)->dX_End, (m_arrJD + nCurIndex + 1)->dY_End);
         //交点类型
         JDType nJDType = (m_arrJD + nCurIndex + 1)->nJDType;
-        //起始半径
-        double dEnterR = (m_arrJD + nCurIndex + 1)->dEnterR;
-        double dExitR = (m_arrJD + nCurIndex + 1)->dExitR;
-        //单元起点(相对)
-        Point2d posCurveStart;
+        
         //变量定义
         BaseLineElement* arrLineElement[5];
         memset(arrLineElement, 0, sizeof(BaseLineElement*) * 5);
         uint8_t nCurveElementCount = 0;
         
-        switch (nJDType) {
-            case JDType::ThreeUnit:     //三单元曲线
-            case JDType::ThreeUnitBack: //三单元回头
-            {
-                //圆曲线半径
-                double dArcR = (m_arrJD + nCurIndex + 1)->dArcR1;
-                //转向角
-                dTurnAngle = (nJDType == JDType::ThreeUnit ? BaseCalFun::CalTurnAngle(posJD1, posJD2, posJD3) : BaseCalFun::CalTurnAngle(posJD1, posJD2, posJDRef, posJD3));
-                //转向方向
-                bool bTurnLeft = ((nJDType == JDType::ThreeUnit && dTurnAngle > 0.0) || (nJDType == JDType::ThreeUnitBack && dTurnAngle < 0.0));
-                if (nJDType == JDType::ThreeUnitBack)
-                    dTurnAngle = MATH_PI * 2.0 - abs(dTurnAngle);
-                
-                //缓和曲线长度
-                double dL1 = (m_arrJD + nCurIndex + 1)->dL1;
-                double dL2 = (m_arrJD + nCurIndex + 1)->dL2;
-                if (dL1 < 0.0)
-                {
-                    double dC1 = pow((m_arrJD + nCurIndex + 1)->dA1, 2);
-                    dL1 = (dEnterR == __DBL_MAX__ ? dC1 / dArcR : dC1 * abs(dEnterR - dArcR) / dEnterR / dArcR);
-                }
-
-                if (dL2 < 0.0)
-                {
-                    double dC2 = pow((m_arrJD + nCurIndex + 1)->dA2, 2);
-                    dL2 = (dExitR == __DBL_MAX__ ? dC2 / dArcR : dC2 * abs(dExitR - dArcR) / dExitR / dArcR);
-                }
-                
-                //缓和曲线角
-                double dEnterCurveAngle = (abs(dL1) < s_dCalPrecision ? 0.0 : ((dEnterR == __DBL_MAX__) ? dL1 / (dArcR * 2.0) : dL1 * (dEnterR + dArcR) / 2.0 / dEnterR / dArcR));
-                double dExitCurveAngle = (abs(dL2) < s_dCalPrecision ? 0.0 : ((dExitR == __DBL_MAX__) ? dL2 / (dArcR * 2.0) : dL2 * (dExitR + dArcR) / 2.0 / dExitR / dArcR));
-                //圆弧角度
-                double dArcAngle = abs(dTurnAngle) - dEnterCurveAngle - dExitCurveAngle;
-                //起点角度
-                double dTanAngleStart = BaseCalFun::CalAngleX(posJD1, posJD2);
-                //向量定义
-                Vector2d vecWhole;
-                
-                if (nJDType == JDType::ThreeUnitBack)
-                    posCurveStart = posJD2;
-                
-                if (abs(dL1) > s_dCalPrecision)
-                {
-                    //前缓和曲线
-                    SpiralLineElement* pSpiralElement = new SpiralLineElement();
-                    pSpiralElement->m_posStart = posCurveStart;
-                    pSpiralElement->m_dStartTanAngle = dTanAngleStart;
-                    pSpiralElement->m_dTotalLen = dL1;
-                    pSpiralElement->m_bTurnLeft = bTurnLeft;
-                    pSpiralElement->m_dEnterR =  dEnterR;
-                    pSpiralElement->m_dExitR = dArcR;
-                    pSpiralElement->InitData();
-                    //保存线元
-                    arrLineElement[nCurveElementCount++] = pSpiralElement;
-                    vecWhole += (pSpiralElement->m_posEnd - pSpiralElement->m_posStart);
-                    
-                    //变换起点
-                    posCurveStart = pSpiralElement->m_posEnd;
-                    //变换角度
-                    dTanAngleStart = pSpiralElement->m_dEndTanAngle;
-                }
-                
-                //圆曲线
-                if (abs(dArcAngle) * dArcR > 0.01)
-                {
-                    ArcElement* pArcElement = new ArcElement();
-                    pArcElement->m_posStart = posCurveStart;
-                    pArcElement->m_dStartTanAngle = dTanAngleStart;
-                    pArcElement->m_dArcR = dArcR;
-                    pArcElement->m_bTurnLeft = bTurnLeft;
-                    pArcElement->m_dTotalLen = dArcR * abs(dArcAngle);
-                    pArcElement->InitData();
-                    //保存线元
-                    arrLineElement[nCurveElementCount++] = pArcElement;
-                    vecWhole += (pArcElement->m_posEnd - pArcElement->m_posStart);
-                    
-                    //变换起点
-                    posCurveStart = pArcElement->m_posEnd;
-                    //变换角度
-                    dTanAngleStart = pArcElement->m_dEndTanAngle;
-                }
-                
-                if (abs(dL2) > s_dCalPrecision)
-                {
-                    //后缓和曲线
-                    SpiralLineElement* pSpiralElement = new SpiralLineElement();
-                    pSpiralElement->m_posStart = posCurveStart;
-                    pSpiralElement->m_dStartTanAngle = dTanAngleStart;
-                    pSpiralElement->m_dTotalLen = dL2;
-                    pSpiralElement->m_bTurnLeft = bTurnLeft;
-                    pSpiralElement->m_dEnterR = dArcR;
-                    pSpiralElement->m_dExitR = dExitR;
-                    pSpiralElement->InitData();
-                    //保存线元
-                    arrLineElement[nCurveElementCount++] = pSpiralElement;
-                    vecWhole += (pSpiralElement->m_posEnd - pSpiralElement->m_posStart);
-                }
-                
-                //计算曲线起点世界坐标
-                posCurveStart = (nJDType == JDType::ThreeUnit ? CalUnitStartPos(nCurIndex, vecWhole) : posJD2);
-                
-                break;
-            }
-            case JDType::FiveUnit:     //五单元曲线
-            {
-                //起点角度
-                double dTanAngleStart = BaseCalFun::CalAngleX(posJD1, posJD2);
-                //转向角
-                dTurnAngle = BaseCalFun::CalTurnAngle(posJD1, posJD2, posJD3);
-                //转向方向
-                bool bTurnLeft = (dTurnAngle > 0.0);
-                //弧长控制参数
-                double dID = (m_arrJD + nCurIndex + 1)->dID;
-                //圆弧半径
-                double dArcR1 = (m_arrJD + nCurIndex + 1)->dArcR1;
-                double dArcR2 = (m_arrJD + nCurIndex + 1)->dArcR2;
-                //缓和曲线长度
-                double dL1 = (m_arrJD + nCurIndex + 1)->dL1;
-                double dL2 = (m_arrJD + nCurIndex + 1)->dL2;
-                double dL3 = (m_arrJD + nCurIndex + 1)->dL3;
-                if (dL1 < 0.0)
-                {
-                    double dC1 = pow((m_arrJD + nCurIndex + 1)->dA1, 2);
-                    dL1 = (dEnterR == __DBL_MAX__ ? dC1 / dArcR1 : dC1 * abs(dEnterR - dArcR1) / dEnterR / dArcR1);
-                }
-                if (dL2 < 0.0)
-                {
-                    double dC2 = pow((m_arrJD + nCurIndex + 1)->dA2, 2);
-                    dL2 = dC2 * abs(dArcR2 - dArcR1) / dArcR2 / dArcR1;
-                }
-                if (dL3 < 0.0)
-                {
-                    double dC3 = pow((m_arrJD + nCurIndex + 1)->dA3, 2);
-                    dL3 = (dExitR == __DBL_MAX__ ? dC3 / dArcR2 : dC3 * abs(dExitR - dArcR2) / dExitR / dArcR2);
-                }
-                //缓和曲线角度
-                double dCurveAngle1 = (abs(dL1) < s_dCalPrecision ? 0.0 : (dEnterR == __DBL_MAX__ ? dL1 / dArcR1 / 2.0 : dL1 * (dEnterR + dArcR1) / 2.0 / dEnterR / dArcR1));
-                double dCurveAngle2 = dL2 * (dArcR1 + dArcR2) / 2.0 / dArcR1 / dArcR2;
-                double dCurveAngle3 = (abs(dL3) < s_dCalPrecision ? 0.0 : (dExitR == __DBL_MAX__ ? dL3 / dArcR2 / 2.0 : dL3 * (dExitR + dArcR2) / 2.0 / dExitR / dArcR2));
-                //圆曲线角度之和
-                double dArcAngleTotal = abs(dTurnAngle) - dCurveAngle1 - dCurveAngle2 - dCurveAngle3;
-                //圆弧角度
-                double dArcAngle1 = (dID == 0.0 ? dArcR2 * dArcAngleTotal / (dArcR1 + dArcR2) : dID / dArcR1);
-                double dArcAngle2 = dArcAngleTotal - dArcAngle1;
-                //变量定义
-                Vector2d vecWhole;
-                
-                if (dL1 > 0.0)
-                {
-                    //第一段缓和曲线
-                    SpiralLineElement* pSpiralElement = new SpiralLineElement();
-                    pSpiralElement->m_posStart = posCurveStart;
-                    pSpiralElement->m_dStartTanAngle = dTanAngleStart;
-                    pSpiralElement->m_dTotalLen = dL1;
-                    pSpiralElement->m_bTurnLeft = bTurnLeft;
-                    pSpiralElement->m_dEnterR = dEnterR;
-                    pSpiralElement->m_dExitR = dArcR1;
-                    pSpiralElement->InitData();
-                    
-                    arrLineElement[nCurveElementCount++] = pSpiralElement;
-                    vecWhole += (pSpiralElement->m_posEnd - pSpiralElement->m_posStart);
-                    
-                    //变换起点
-                    posCurveStart = pSpiralElement->m_posEnd;
-                    //变换角度
-                    dTanAngleStart = pSpiralElement->m_dEndTanAngle;
-                }
-                
-                do {
-                    //第一段圆曲线
-                    ArcElement* pArcElement = new ArcElement();
-                    pArcElement->m_posStart = posCurveStart;
-                    pArcElement->m_dStartTanAngle = dTanAngleStart;
-                    pArcElement->m_dArcR = dArcR1;
-                    pArcElement->m_bTurnLeft = bTurnLeft;
-                    pArcElement->m_dTotalLen = dArcR1 * abs(dArcAngle1);
-                    pArcElement->InitData();
-                    
-                    arrLineElement[nCurveElementCount++] = pArcElement;
-                    vecWhole += (pArcElement->m_posEnd - pArcElement->m_posStart);
-                    
-                    //变换起点
-                    posCurveStart = pArcElement->m_posEnd;
-                    //变换角度
-                    dTanAngleStart = pArcElement->m_dEndTanAngle;
-                } while (false);
-                
-                do {
-                    //第二段缓和曲线
-                    SpiralLineElement* pSpiralElement = new SpiralLineElement();
-                    pSpiralElement->m_posStart = posCurveStart;
-                    pSpiralElement->m_dStartTanAngle = dTanAngleStart;
-                    pSpiralElement->m_dTotalLen = dL2;
-                    pSpiralElement->m_bTurnLeft = bTurnLeft;
-                    pSpiralElement->m_dEnterR =  dArcR1;
-                    pSpiralElement->m_dExitR = dArcR2;
-                    pSpiralElement->InitData();
-                    
-                    arrLineElement[nCurveElementCount++] = pSpiralElement;
-                    vecWhole += (pSpiralElement->m_posEnd - pSpiralElement->m_posStart);
-                    
-                    //变换起点
-                    posCurveStart = pSpiralElement->m_posEnd;
-                    //变换角度
-                    dTanAngleStart = pSpiralElement->m_dEndTanAngle;
-                } while (false);
-                
-                do {
-                    //第二段圆曲线
-                    ArcElement* pArcElement = new ArcElement();
-                    pArcElement->m_posStart = posCurveStart;
-                    pArcElement->m_dStartTanAngle = dTanAngleStart;
-                    pArcElement->m_dArcR = dArcR2;
-                    pArcElement->m_bTurnLeft = bTurnLeft;
-                    pArcElement->m_dTotalLen = dArcR2 * abs(dArcAngle2);
-                    pArcElement->InitData();
-                    
-                    arrLineElement[nCurveElementCount++] = pArcElement;
-                    vecWhole += (pArcElement->m_posEnd - pArcElement->m_posStart);
-                    
-                    //变换起点
-                    posCurveStart = pArcElement->m_posEnd;
-                    //变换角度
-                    dTanAngleStart = pArcElement->m_dEndTanAngle;
-                } while (false);
-                
-                if (dL3 > 0.0)
-                {
-                    //第三段缓和曲线
-                    SpiralLineElement* pSpiralElement = new SpiralLineElement();
-                    pSpiralElement->m_posStart = posCurveStart;
-                    pSpiralElement->m_dStartTanAngle = dTanAngleStart;
-                    pSpiralElement->m_dTotalLen = dL3;
-                    pSpiralElement->m_bTurnLeft = bTurnLeft;
-                    pSpiralElement->m_dEnterR = dArcR2;
-                    pSpiralElement->m_dExitR = dExitR;
-                    pSpiralElement->InitData();
-                    
-                    arrLineElement[nCurveElementCount++] = pSpiralElement;
-                    vecWhole += (pSpiralElement->m_posEnd - pSpiralElement->m_posStart);
-                }
-                
-                //计算曲线起点世界坐标
-                posCurveStart = CalUnitStartPos(nCurIndex, vecWhole);
-                
-                break;
-            }
-            case JDType::FiveUnitBack:     //五单元回头曲线
-            {
-                break;
-            }
-            default:
-                return;
-        }
+        //单元起点
+        Point2d posCurveStart = CurveUnit(nCurIndex, arrLineElement, nCurveElementCount);
         
         //拼接线元
         if (nCurIndex != 0 && m_arrLineElement[m_nElementCount - 1]->m_eElementType == ElementType::Line)
@@ -409,8 +505,7 @@ void LineElementManager::SetJDData(const tagJDInfo* pJDInfo, uint32_t nCount)
         
         //当前阶段起点
         Point2d posStart = (nCurIndex == 0 ? posJD1 : m_arrLineElement[m_nElementCount - 1]->m_posEnd);
-        
-        if (/*dEnterR == __DBL_MAX__ && */posStart.distanceTo(posCurveStart) >= 0.01)
+        if (posStart.distanceTo(posCurveStart) >= 0.01)
         {
             //入直线
             StraightLineElement* pStraightLineElement = new StraightLineElement;
@@ -435,7 +530,7 @@ void LineElementManager::SetJDData(const tagJDInfo* pJDInfo, uint32_t nCount)
             dCurrentCml += arrLineElement[j]->m_dTotalLen;
         }
         
-        if (dExitR == __DBL_MAX__ || (m_arrJD + nCurIndex + 2)->nJDType == JDType::End)
+        if ((m_arrJD + nCurIndex + 1)->dExitR == __DBL_MAX__ || (m_arrJD + nCurIndex + 2)->nJDType == JDType::End)
         {
             BaseLineElement* pPreLineElement = m_arrLineElement[m_nElementCount - 1];
             if (pPreLineElement->m_posEnd.distanceTo(posJD3) >= 0.01)
@@ -452,73 +547,8 @@ void LineElementManager::SetJDData(const tagJDInfo* pJDInfo, uint32_t nCount)
             }
         }
         
-        //曲线要素计算
-        if (nCurIndex == 0)
-        {
-            //起点
-            m_arrCurveElement[nCurIndex].nJDIndex = nCurIndex;
-            m_arrCurveElement[nCurIndex].dN_Y = posJD1.y;
-            m_arrCurveElement[nCurIndex].dE_X = posJD1.x;
-        }
-        else if (nCurIndex + 2 == m_nJDCount - 1)
-        {
-            //终点
-            m_arrCurveElement[nCurIndex + 2].nJDIndex = nCurIndex + 2;
-            m_arrCurveElement[nCurIndex + 2].dN_Y = posJD3.y;
-            m_arrCurveElement[nCurIndex + 2].dE_X = posJD3.x;
-        }
-
-        ///这里暂时只处理三单元曲线
-        tagCurveElementItem& item = m_arrCurveElement[nCurIndex + 1];
-        item.nJDIndex = nCurIndex + 1;
-        item.dN_Y = posJD2.y;
-        item.dE_X = posJD2.x;
-        item.dTurnAngle = dTurnAngle;
-
-        if (nCurveElementCount > 0)
-        {
-            //切线长
-            item.dT1 = arrLineElement[0]->m_posStart.distanceTo(posJD2);
-            item.dT2 = arrLineElement[nCurveElementCount - 1]->m_posEnd.distanceTo(posJD2);
-            
-            for (int i = 0; i < nCurveElementCount; i++)
-            {
-                //总计长度
-                item.dCurveLen += arrLineElement[i]->m_dTotalLen;
-                
-                if (arrLineElement[i]->m_eElementType == ElementType::Arc)
-                {
-                    //圆曲线
-                    ArcElement* pArcElement = (ArcElement*)arrLineElement[i];
-                    //半径
-                    item.dArcR = pArcElement->m_dArcR;
-                    
-                    if (i > 0)
-                    {
-                        item.dL1 = arrLineElement[i - 1]->m_dTotalLen;
-                        item.dA1 = pow(((SpiralLineElement*)arrLineElement[i - 1])->m_dC, 0.5);
-                    }
-                    if (i + 1 < nCurveElementCount)
-                    {
-                        item.dL2 = arrLineElement[i + 1]->m_dTotalLen;
-                        item.dA2 = pow(((SpiralLineElement*)arrLineElement[i + 1])->m_dC, 0.5);
-                    }
-                    
-                    //属性点里程
-                    item.dHYCml = pArcElement->m_dStartCml;
-                    item.dYHCml = pArcElement->m_dStartCml + pArcElement->m_dTotalLen;
-                    item.dQZCml = pArcElement->m_dStartCml + pArcElement->m_dTotalLen / 2.0;
-                    item.dZHCml = (i > 0 ? arrLineElement[i - 1]->m_dStartCml : item.dHYCml);
-                    item.dHZCml = (i + 1 < nCurveElementCount ? arrLineElement[i + 1]->m_dStartCml + arrLineElement[i + 1]->m_dTotalLen : item.dYHCml);
-                    
-                    //外矢距
-                    Point2d posQZ;
-                    double dAngle = 0.0;
-                    pArcElement->TrsCmlDistToNE(item.dQZCml, 0.0, posQZ.x, posQZ.y, dAngle);
-                    item.dE = posQZ.distanceTo(posJD2);
-                }
-            }
-        }
+        ///计算曲线要素
+        CurveElement(nCurIndex, arrLineElement, nCurveElementCount);
     }
     
     //调整线元数组大小

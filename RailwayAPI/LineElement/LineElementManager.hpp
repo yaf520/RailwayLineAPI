@@ -46,6 +46,21 @@ private:
     ///   - vecWhole: 曲线起始向量
     Point2d CalUnitStartPos(uint32_t nIndex, const Vector2d& vecWhole);
     
+    /// 计算线元单元
+    /// - Parameters:
+    ///   - nCurIndex: 当前交点索引
+    ///   - arrLineElement: 线元单元数组
+    ///   - nCurveElementCount： 线元数组大小
+    ///   - return: 单元起点坐标
+    Point2d CurveUnit(uint32_t nCurIndex, BaseLineElement** arrLineElement, uint8_t& nCurveElementCount);
+    
+    /// 计算曲线要素
+    /// - Parameters:
+    ///   - nCurIndex: 当前交点索引
+    ///   - arrLineElement: 线元单元数组
+    ///   - nCurveElementCount： 线元数组大小
+    void CurveElement(uint32_t nCurIndex, BaseLineElement** arrLineElement, uint8_t nCurveElementCount);
+    
 private:
     ///计算点的投影属于哪一线元
     virtual BaseLineElement* PosBelongTo(Point2d pos) = 0;
