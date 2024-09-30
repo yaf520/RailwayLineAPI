@@ -40,7 +40,7 @@ struct tagJDInfo
     double dArcR1;          //第一圆曲线半径
     double dArcR2;          //第二圆曲线半径
     double dID;             //弧长控制参数(0为两段圆弧相等，非0则为第一段圆弧长度)
-    int nBelongTo;          //所属线元索引
+    //int nBelongTo;          //所属线元索引
     
     ///初始化值
     tagJDInfo()
@@ -61,7 +61,7 @@ struct tagJDInfo
         dID = 0.0;
         dEnterR = __DBL_MAX__;
         dExitR = __DBL_MAX__;
-        nBelongTo = -1;
+        //nBelongTo = -1;
     }
 };
 
@@ -175,6 +175,55 @@ struct tagCmlDistAngle
         dCml = 0.0;
         dDist = 0.0;
         dFwj = 0.0;
+    }
+};
+
+///曲线要素子项
+struct tagCurveElementItem
+{
+    uint32_t nJDIndex;
+    double dN_Y;
+    double dE_X;
+    double dTurnAngle;
+    double dArcR;
+    double dL1;
+    double dL2;
+    double dT1;
+    double dT2;
+    double dA1;
+    double dA2;
+    double dE;
+    double dCurveLen;
+    
+    //属性点里程
+    double dJDCml;
+    double dZHCml;
+    double dHYCml;
+    double dQZCml;
+    double dYHCml;
+    double dHZCml;
+    
+    tagCurveElementItem()
+    {
+        nJDIndex = 0;
+        dN_Y = 0.0;
+        dE_X = 0.0;
+        dTurnAngle = 0.0;
+        dArcR = 0.0;
+        dL1 = 0.0;
+        dL2 = 0.0;
+        dT1 = 0.0;
+        dT2 = 0.0;
+        dA1 = 0.0;
+        dA2 = 0.0;
+        dE = 0.0;
+        dCurveLen = 0.0;
+        dJDCml = 0.0;
+        dZHCml = 0.0;
+        dHYCml = 0.0;
+        dQZCml = 0.0;
+        dYHCml = 0.0;
+        dHZCml = 0.0;
     }
 };
 

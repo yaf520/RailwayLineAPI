@@ -31,6 +31,10 @@ protected:
     tagJDInfo* m_arrJD;
     //交点数目
     uint32_t m_nJDCount;
+    ///曲线要素数组
+    tagCurveElementItem* m_arrCurveElement;
+    ///曲线要素数组大小
+    uint32_t m_nCurveElementCount;
     
 private:
     /// 重置数据
