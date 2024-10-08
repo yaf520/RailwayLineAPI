@@ -70,7 +70,7 @@ Point2d LineElementManager::CalUnitStartPos(uint32_t nIndex, const Vector2d& vec
     return Point2d((e * c - b * f) / (a * e - b * d), (d * c - a * f) / (b * d - a * e));
 }
 
-Point2d LineElementManager::CurveUnit(uint32_t nCurIndex, BaseLineElement** arrLineElement, uint8_t& nCurveElementCount)
+Point2d LineElementManager::CalculateLineElement(uint32_t nCurIndex, BaseLineElement** arrLineElement, uint8_t& nCurveElementCount)
 {
     //交点坐标
     Point2d posJD1 = ((m_arrJD + nCurIndex)->nJDType != JDType::ThreeUnitBack ? Point2d((m_arrJD + nCurIndex)->dX, (m_arrJD + nCurIndex)->dY) : Point2d((m_arrJD + nCurIndex)->dX_End, (m_arrJD + nCurIndex)->dY_End));
@@ -344,6 +344,77 @@ Point2d LineElementManager::CurveUnit(uint32_t nCurIndex, BaseLineElement** arrL
     return posCurveStart;
 }
 
+void LineElementManager::JointLineElement(uint32_t nCurIndex, BaseLineElement** arrLineElement, uint8_t& nCurveElementCount, Point2d posCurveStart, double& dCurrentCml)
+{
+    //交点坐标
+    Point2d posJD1 = ((m_arrJD + nCurIndex)->nJDType != JDType::ThreeUnitBack ? Point2d((m_arrJD + nCurIndex)->dX, (m_arrJD + nCurIndex)->dY) : Point2d((m_arrJD + nCurIndex)->dX_End, (m_arrJD + nCurIndex)->dY_End));
+    Point2d posJD2((m_arrJD + nCurIndex + 1)->dX, (m_arrJD + nCurIndex + 1)->dY);
+    Point2d posJD3((m_arrJD + nCurIndex + 2)->dX, (m_arrJD + nCurIndex + 2)->dY);
+    //交点类型
+    JDType nJDType = (m_arrJD + nCurIndex + 1)->nJDType;
+    
+    //拼接线元
+    if (nCurIndex != 0 && m_arrLineElement[m_nElementCount - 1]->m_eElementType == ElementType::Line)
+    {
+        BaseLineElement* pPreLineElement = m_arrLineElement[m_nElementCount - 1];
+        //调整前一段直线
+        pPreLineElement->m_posEnd = posCurveStart;
+        pPreLineElement->m_dTotalLen = pPreLineElement->m_posStart.distanceTo(posCurveStart);
+        
+        if (pPreLineElement->m_dTotalLen < 0.1)
+        {
+            delete pPreLineElement;
+            m_nElementCount--;
+        }
+        else
+            dCurrentCml += pPreLineElement->m_dTotalLen;
+    }
+    
+    //当前阶段起点
+    Point2d posStart = (nCurIndex == 0 ? posJD1 : m_arrLineElement[m_nElementCount - 1]->m_posEnd);
+    if (posStart.distanceTo(posCurveStart) >= 0.01)
+    {
+        //入直线
+        StraightLineElement* pStraightLineElement = new StraightLineElement;
+        pStraightLineElement->m_posStart = posStart;
+        pStraightLineElement->m_posEnd = posCurveStart;
+        pStraightLineElement->m_dStartTanAngle = pStraightLineElement->m_dEndTanAngle = BaseCalFun::CalAngleX(posJD1, posJD2);
+        pStraightLineElement->m_dTotalLen = pStraightLineElement->m_posStart.distanceTo(pStraightLineElement->m_posEnd);
+        pStraightLineElement->m_dStartCml = dCurrentCml;
+        pStraightLineElement->m_nIndex = m_nElementCount;
+        dCurrentCml += pStraightLineElement->m_dTotalLen;
+        m_arrLineElement[m_nElementCount++] = pStraightLineElement;
+    }
+    
+    for (uint8_t j = 0; j < nCurveElementCount; j++)
+    {
+        if (nJDType == JDType::ThreeUnit || nJDType == JDType::FiveUnit)
+            arrLineElement[j]->AdjustData(posCurveStart);
+        arrLineElement[j]->m_dStartCml = dCurrentCml;
+        arrLineElement[j]->m_nIndex = m_nElementCount;
+        m_arrLineElement[m_nElementCount++] = arrLineElement[j];
+        
+        dCurrentCml += arrLineElement[j]->m_dTotalLen;
+    }
+    
+    if ((m_arrJD + nCurIndex + 1)->dExitR == __DBL_MAX__ || (m_arrJD + nCurIndex + 2)->nJDType == JDType::End)
+    {
+        BaseLineElement* pPreLineElement = m_arrLineElement[m_nElementCount - 1];
+        if (pPreLineElement->m_posEnd.distanceTo(posJD3) >= 0.01)
+        {
+            //出直线
+            StraightLineElement* pStraightLineElement = new StraightLineElement;
+            pStraightLineElement->m_posStart = pPreLineElement->m_posEnd;
+            pStraightLineElement->m_posEnd = posJD3;
+            pStraightLineElement->m_dStartTanAngle = pStraightLineElement->m_dEndTanAngle = pPreLineElement->m_dEndTanAngle;
+            pStraightLineElement->m_dStartCml = dCurrentCml;
+            pStraightLineElement->m_nIndex = m_nElementCount;
+            pStraightLineElement->m_dTotalLen = pStraightLineElement->m_posStart.distanceTo(pStraightLineElement->m_posEnd);
+            m_arrLineElement[m_nElementCount++] = pStraightLineElement;
+        }
+    }
+}
+
 void LineElementManager::CurveElement(uint32_t nCurIndex, BaseLineElement** arrLineElement, uint8_t nCurveElementCount)
 {
     //交点坐标
@@ -467,92 +538,25 @@ void LineElementManager::SetJDData(const tagJDInfo* pJDInfo, uint32_t nCount)
     
     //变量定义
     double dCurrentCml = 0.0;
-    Point2d posJD1, posJD2, posJD3, posJDRef;
     for (uint32_t nCurIndex = 0; nCurIndex + 2 < nCount; nCurIndex++)
     {
-        //交点坐标
-        posJD1 = ((m_arrJD + nCurIndex)->nJDType != JDType::ThreeUnitBack ? Point2d((m_arrJD + nCurIndex)->dX, (m_arrJD + nCurIndex)->dY) : Point2d((m_arrJD + nCurIndex)->dX_End, (m_arrJD + nCurIndex)->dY_End));
-        posJD2.Set((m_arrJD + nCurIndex + 1)->dX, (m_arrJD + nCurIndex + 1)->dY);
-        posJD3.Set((m_arrJD + nCurIndex + 2)->dX, (m_arrJD + nCurIndex + 2)->dY);
-        posJDRef.Set((m_arrJD + nCurIndex + 1)->dX_End, (m_arrJD + nCurIndex + 1)->dY_End);
-        //交点类型
-        JDType nJDType = (m_arrJD + nCurIndex + 1)->nJDType;
-        
         //变量定义
         BaseLineElement* arrLineElement[5];
         memset(arrLineElement, 0, sizeof(BaseLineElement*) * 5);
         uint8_t nCurveElementCount = 0;
         
-        //单元起点
-        Point2d posCurveStart = CurveUnit(nCurIndex, arrLineElement, nCurveElementCount);
+        //计算线元
+        Point2d posCurveStart = CalculateLineElement(nCurIndex, arrLineElement, nCurveElementCount);
         
         //拼接线元
-        if (nCurIndex != 0 && m_arrLineElement[m_nElementCount - 1]->m_eElementType == ElementType::Line)
-        {
-            BaseLineElement* pPreLineElement = m_arrLineElement[m_nElementCount - 1];
-            //调整前一段直线
-            pPreLineElement->m_posEnd = posCurveStart;
-            pPreLineElement->m_dTotalLen = pPreLineElement->m_posStart.distanceTo(posCurveStart);
-            
-            if (pPreLineElement->m_dTotalLen < 0.1)
-            {
-                delete pPreLineElement;
-                m_nElementCount--;
-            }
-            else
-                dCurrentCml += pPreLineElement->m_dTotalLen;
-        }
+        JointLineElement(nCurIndex, arrLineElement, nCurveElementCount, posCurveStart, dCurrentCml);
         
-        //当前阶段起点
-        Point2d posStart = (nCurIndex == 0 ? posJD1 : m_arrLineElement[m_nElementCount - 1]->m_posEnd);
-        if (posStart.distanceTo(posCurveStart) >= 0.01)
-        {
-            //入直线
-            StraightLineElement* pStraightLineElement = new StraightLineElement;
-            pStraightLineElement->m_posStart = posStart;
-            pStraightLineElement->m_posEnd = posCurveStart;
-            pStraightLineElement->m_dStartTanAngle = pStraightLineElement->m_dEndTanAngle = BaseCalFun::CalAngleX(posJD1, posJD2);
-            pStraightLineElement->m_dTotalLen = pStraightLineElement->m_posStart.distanceTo(pStraightLineElement->m_posEnd);
-            pStraightLineElement->m_dStartCml = dCurrentCml;
-            pStraightLineElement->m_nIndex = m_nElementCount;
-            dCurrentCml += pStraightLineElement->m_dTotalLen;
-            m_arrLineElement[m_nElementCount++] = pStraightLineElement;
-        }
-        
-        for (uint8_t j = 0; j < nCurveElementCount; j++)
-        {
-            if (nJDType == JDType::ThreeUnit || nJDType == JDType::FiveUnit)
-                arrLineElement[j]->AdjustData(posCurveStart);
-            arrLineElement[j]->m_dStartCml = dCurrentCml;
-            arrLineElement[j]->m_nIndex = m_nElementCount;
-            m_arrLineElement[m_nElementCount++] = arrLineElement[j];
-            
-            dCurrentCml += arrLineElement[j]->m_dTotalLen;
-        }
-        
-        if ((m_arrJD + nCurIndex + 1)->dExitR == __DBL_MAX__ || (m_arrJD + nCurIndex + 2)->nJDType == JDType::End)
-        {
-            BaseLineElement* pPreLineElement = m_arrLineElement[m_nElementCount - 1];
-            if (pPreLineElement->m_posEnd.distanceTo(posJD3) >= 0.01)
-            {
-                //出直线
-                StraightLineElement* pStraightLineElement = new StraightLineElement;
-                pStraightLineElement->m_posStart = pPreLineElement->m_posEnd;
-                pStraightLineElement->m_posEnd = posJD3;
-                pStraightLineElement->m_dStartTanAngle = pStraightLineElement->m_dEndTanAngle = pPreLineElement->m_dEndTanAngle;
-                pStraightLineElement->m_dStartCml = dCurrentCml;
-                pStraightLineElement->m_nIndex = m_nElementCount;
-                pStraightLineElement->m_dTotalLen = pStraightLineElement->m_posStart.distanceTo(pStraightLineElement->m_posEnd);
-                m_arrLineElement[m_nElementCount++] = pStraightLineElement;
-            }
-        }
-        
-        ///计算曲线要素
+        //计算曲线要素
         CurveElement(nCurIndex, arrLineElement, nCurveElementCount);
     }
     
     //调整线元数组大小
-    if (m_nElementCount != nMaxCount)
+    if (m_nElementCount < nMaxCount)
     {
         BaseLineElement** arrLineElement = new BaseLineElement*[m_nElementCount];
         memcpy(arrLineElement, m_arrLineElement, sizeof(BaseLineElement*) * m_nElementCount);
