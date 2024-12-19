@@ -350,6 +350,7 @@ void LineElementManager::JointLineElement(uint32_t nCurIndex, BaseLineElement** 
     Point2d posJD1 = ((m_arrJD + nCurIndex)->nJDType != JDType::ThreeUnitBack ? Point2d((m_arrJD + nCurIndex)->dX, (m_arrJD + nCurIndex)->dY) : Point2d((m_arrJD + nCurIndex)->dX_End, (m_arrJD + nCurIndex)->dY_End));
     Point2d posJD2((m_arrJD + nCurIndex + 1)->dX, (m_arrJD + nCurIndex + 1)->dY);
     Point2d posJD3((m_arrJD + nCurIndex + 2)->dX, (m_arrJD + nCurIndex + 2)->dY);
+    Point2d posJDRef((m_arrJD + nCurIndex + 1)->dX_End, (m_arrJD + nCurIndex + 1)->dY_End);
     //交点类型
     JDType nJDType = (m_arrJD + nCurIndex + 1)->nJDType;
     
@@ -406,7 +407,9 @@ void LineElementManager::JointLineElement(uint32_t nCurIndex, BaseLineElement** 
             StraightLineElement* pStraightLineElement = new StraightLineElement;
             pStraightLineElement->m_posStart = pPreLineElement->m_posEnd;
             pStraightLineElement->m_posEnd = posJD3;
-            pStraightLineElement->m_dStartTanAngle = pStraightLineElement->m_dEndTanAngle = pPreLineElement->m_dEndTanAngle;
+            pStraightLineElement->m_dStartTanAngle = pStraightLineElement->m_dEndTanAngle
+                = BaseCalFun::CalAngleX((nJDType == JDType::ThreeUnitBack ? posJDRef : posJD2), posJD3);
+            //pPreLineElement->m_dEndTanAngle;
             pStraightLineElement->m_dStartCml = dCurrentCml;
             pStraightLineElement->m_nIndex = m_nElementCount;
             pStraightLineElement->m_dTotalLen = pStraightLineElement->m_posStart.distanceTo(pStraightLineElement->m_posEnd);

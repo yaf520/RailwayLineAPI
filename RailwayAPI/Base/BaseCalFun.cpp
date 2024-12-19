@@ -36,6 +36,16 @@ Point2d BaseCalFun::PointToLineProjection(Point2d A, Point2d O, Point2d B, doubl
 {
     Vector2d OA = A - O;
     Vector2d OB = B - O;
+    if (OA.isZeroVec())
+    {
+        dPecent = 0.0;
+        return A;
+    }
+    if (OB.isZeroVec())
+    {
+        dPecent = 1.0;
+        return B;
+    }
     
     dPecent = OA.dot(OB) / OB.dot(OB);
     
