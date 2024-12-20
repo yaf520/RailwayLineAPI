@@ -14,11 +14,17 @@
 #include "ArcElement.hpp"
 #include "BaseStruct.hpp"
 
+enum class CurveType
+{
+    HorizontalCurve = 0,
+    VerticalCurve
+};
+
 /// 线元管理类
 class LineElementManager
 {
 public:
-    LineElementManager();
+    LineElementManager(CurveType eCurveType);
     
     virtual ~LineElementManager();
     
@@ -35,6 +41,8 @@ protected:
     tagCurveElementItem* m_arrCurveElement;
     ///曲线要素数组大小
     uint32_t m_nCurveElementCount;
+    ///曲线类别
+    CurveType m_eCurveType;
     
 private:
     /// 重置数据
@@ -97,6 +105,9 @@ public:
     /// 导出交点信息
     /// - Parameter nCount: 交点数目
     const tagJDInfo* ExportJDInfo(int& nCount);
+    
+    /// 获取总长度
+    double GetLength();
 };
 
 #endif /* LineElementManager_hpp */

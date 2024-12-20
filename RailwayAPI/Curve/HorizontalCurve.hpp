@@ -46,8 +46,6 @@ public:
     tagCmlDistAngle* TrsNEToCmlDist(const double& dX, const double& dY, uint32_t& nArrCount);
     ///获取与直线的交点
     Point2d* IntersectWithLine(const double& dAngle, const double& dX, const double& dY, uint32_t& nArrCount);
-    ///获取线路长度
-    double GetLength();
     ///连续里程->现场里程
     bool TrsCmltoCkml(const double& cml, char ckml[64], int nPrec);
     ///现场里程->连续里程

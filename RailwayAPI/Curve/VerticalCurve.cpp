@@ -7,6 +7,12 @@
 
 #include "VerticalCurve.hpp"
 
+VerticalCurve::VerticalCurve(HorizontalCurve* pHorizontal)
+    : LineElementManager(CurveType::VerticalCurve)
+{
+    m_pHorizontalCurve = pHorizontal;
+}
+
 void VerticalCurve::SetSlopeData(const tagSlopeInfo* pSlopeInfo, uint32_t iSlopeCount)
 {
     if (m_pHorizontalCurve == nullptr)
@@ -32,6 +38,9 @@ void VerticalCurve::SetSlopeData(const tagSlopeInfo* pSlopeInfo, uint32_t iSlope
 
 BaseLineElement* VerticalCurve::CmlBelongTo(double dCml)
 {
+    if (dCml > GetLength())
+        return nullptr;
+    
     //通过里程查询在哪一线元范围内(二分查找法)
     int left = 0;
     int right = m_nElementCount - 1;
@@ -50,7 +59,9 @@ BaseLineElement* VerticalCurve::CmlBelongTo(double dCml)
 
 bool VerticalCurve::TrsCmlToHeight(const double& dCml, double& dHeight, double& dAngle)
 {
-    BaseLineElement* pLineElement = CmlBelongTo(dCml);
-    if (!pLineElement) return false;
-    return pLineElement->TrsCmlToHeight(dCml, dHeight, dAngle);
+    double dCmlRound = BaseCalFun::Round(dCml);
+    BaseLineElement* pLineElement = CmlBelongTo(dCmlRound);
+    if (!pLineElement)
+        return false;
+    return pLineElement->TrsCmlToHeight(dCmlRound, dHeight, dAngle);
 }

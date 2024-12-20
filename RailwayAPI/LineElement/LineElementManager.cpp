@@ -7,10 +7,11 @@
 #include "LineElementManager.hpp"
 #include "BaseCalFun.hpp"
 
-LineElementManager::LineElementManager()
+LineElementManager::LineElementManager(CurveType eCurveType)
 {
     m_arrLineElement = nullptr;
     m_nElementCount = 0;
+    m_eCurveType = eCurveType;
     m_arrJD = nullptr;
     m_nJDCount = 0;
     m_arrCurveElement = nullptr;
@@ -409,7 +410,6 @@ void LineElementManager::JointLineElement(uint32_t nCurIndex, BaseLineElement** 
             pStraightLineElement->m_posEnd = posJD3;
             pStraightLineElement->m_dStartTanAngle = pStraightLineElement->m_dEndTanAngle
                 = BaseCalFun::CalAngleX((nJDType == JDType::ThreeUnitBack ? posJDRef : posJD2), posJD3);
-            //pPreLineElement->m_dEndTanAngle;
             pStraightLineElement->m_dStartCml = dCurrentCml;
             pStraightLineElement->m_nIndex = m_nElementCount;
             pStraightLineElement->m_dTotalLen = pStraightLineElement->m_posStart.distanceTo(pStraightLineElement->m_posEnd);
@@ -612,4 +612,27 @@ const tagJDInfo* LineElementManager::ExportJDInfo(int& nCount)
 {
     nCount = m_nJDCount;
     return m_arrJD;
+}
+
+double LineElementManager::GetLength()
+{
+    if (m_nElementCount == 0 || !m_arrLineElement || m_nJDCount < 2 || !m_arrJD)
+        return 0.0;
+    
+    switch (m_eCurveType) {
+        case CurveType::HorizontalCurve:
+        {
+            double dTotalLen = m_arrLineElement[m_nElementCount - 1]->m_dStartCml + m_arrLineElement[m_nElementCount - 1]->m_dTotalLen;
+            return BaseCalFun::Round(dTotalLen);
+        }
+        case CurveType::VerticalCurve:
+        {
+            double dTotalLen = m_arrJD[m_nJDCount - 1].dX;
+            return BaseCalFun::Round(dTotalLen);
+        }
+        default:
+        {
+            return 0.0;
+        }
+    }
 }

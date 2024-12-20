@@ -11,6 +11,7 @@
 #include <ctype.h>
 
 HorizontalCurve::HorizontalCurve()
+    : LineElementManager(CurveType::HorizontalCurve)
 {
     m_pDLArr = nullptr;
     m_nDLCount = 0;
@@ -85,8 +86,8 @@ BaseLineElement* HorizontalCurve::PosBelongTo(Point2d pos)
 
 BaseLineElement* HorizontalCurve::CmlBelongTo(double dCml)
 {
-    dCml = __min(GetLength(), dCml);
-    dCml = __max(0.0, dCml);
+    if (dCml < 0.0 || dCml > GetLength())
+        return nullptr;
     
     //通过里程查询在哪一线元范围内(二分查找法)
     int left = 0;
@@ -325,9 +326,11 @@ void HorizontalCurve::SetDLData(const tagDLInfo* pDLInfo, uint32_t count)
 //里程+投影计算坐标+切线角
 bool HorizontalCurve::TrsCmlDistToNE(const double& dCml, const double& dDist, double& dX, double& dY, double& dAngle)
 {
-    BaseLineElement* pLineElement = CmlBelongTo(dCml);
-    if (!pLineElement) return false;
-    return pLineElement->TrsCmlDistToNE(dCml, dDist, dX, dY, dAngle);
+    double dCmlRound = BaseCalFun::Round(dCml);
+    BaseLineElement* pLineElement = CmlBelongTo(dCmlRound);
+    if (!pLineElement)
+        return false;
+    return pLineElement->TrsCmlDistToNE(dCmlRound, dDist, dX, dY, dAngle);
 }
 
 //坐标计算投影点里程+投影距离+切线角
@@ -452,11 +455,6 @@ Point2d* HorizontalCurve::IntersectWithLine(const double& dAngle, const double& 
     }
     
     return arrRet;
-}
-
-double HorizontalCurve::GetLength()
-{
-    return m_arrLineElement[m_nElementCount - 1]->m_dStartCml + m_arrLineElement[m_nElementCount - 1]->m_dTotalLen;
 }
 
 bool HorizontalCurve::TrsCmltoCkml(const double& cml, char ckml[64], int nPrec)
