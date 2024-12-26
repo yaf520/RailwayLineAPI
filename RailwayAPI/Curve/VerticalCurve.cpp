@@ -7,15 +7,15 @@
 
 #include "VerticalCurve.hpp"
 
-VerticalCurve::VerticalCurve(HorizontalCurve* pHorizontal)
+VerticalCurve::VerticalCurve(MileConvert* pMileconvert)
     : LineElementManager(CurveType::VerticalCurve)
 {
-    m_pHorizontalCurve = pHorizontal;
+    m_pMileConvert = pMileconvert;
 }
 
 void VerticalCurve::SetSlopeData(const tagSlopeInfo* pSlopeInfo, uint32_t iSlopeCount)
 {
-    if (m_pHorizontalCurve == nullptr)
+    if (m_pMileConvert == nullptr)
         return;
     
     tagJDInfo* pJDArr = new tagJDInfo[iSlopeCount];
@@ -24,7 +24,7 @@ void VerticalCurve::SetSlopeData(const tagSlopeInfo* pSlopeInfo, uint32_t iSlope
     for (uint32_t i = 0; i < iSlopeCount; i++)
     {
         auto dataItem = *(pSlopeInfo + i);
-        double dCml = m_pHorizontalCurve->GetSumLengthOfMile(dataItem.strNo, dataItem.dCml, iReliability, strErr);
+        double dCml = m_pMileConvert->GetSumLengthOfMile(dataItem.strNo, dataItem.dCml, iReliability, strErr);
         pJDArr[i].dX = dCml;
         pJDArr[i].dY = dataItem.dHeight;
         pJDArr[i].dArcR1 = dataItem.dArcR;

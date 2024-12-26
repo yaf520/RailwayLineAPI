@@ -627,7 +627,7 @@ double LineElementManager::GetLength()
         }
         case CurveType::VerticalCurve:
         {
-            double dTotalLen = m_arrJD[m_nJDCount - 1].dX;
+            double dTotalLen = m_arrJD[m_nJDCount - 1].dX - m_arrJD[0].dX;
             return BaseCalFun::Round(dTotalLen);
         }
         default:

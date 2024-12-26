@@ -9,17 +9,17 @@
 #define VerticalObject_hpp
 
 #include "LineElementManager.hpp"
-#include "HorizontalCurve.hpp"
+#include "MileConvert.hpp"
 
 class VerticalCurve : public LineElementManager
 {
 public:
-    VerticalCurve(HorizontalCurve* pHorizontal);
+    VerticalCurve(MileConvert* pMileConvert);
     virtual ~VerticalCurve() { }
     
 private:
     ///平面计算指针
-    HorizontalCurve* m_pHorizontalCurve;
+    MileConvert* m_pMileConvert;
     
 public:
     void SetSlopeData(const tagSlopeInfo* pSlopeInfo, uint32_t iSlopeCount);

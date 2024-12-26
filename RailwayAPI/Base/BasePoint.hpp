@@ -7,7 +7,7 @@
 #ifndef BasePoint_hpp
 #define BasePoint_hpp
 
-#include "math.h"
+#include <math.h>
 
 static const double MATH_PI = 3.1415926535897931;
 static const double MATH_PI_2 = 1.5707963267948966;

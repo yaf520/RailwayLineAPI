@@ -181,7 +181,7 @@ struct tagCmlDistAngle
 ///曲线要素子项
 struct tagCurveElementItem
 {
-    uint32_t nJDIndex;
+    int nJDIndex;
     double dN_Y;
     double dE_X;
     double dTurnAngle;

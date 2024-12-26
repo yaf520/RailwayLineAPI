@@ -28,14 +28,6 @@ private:
     BaseLineElement* PosBelongTo(Point2d pos) override;
     ///计算里程属于哪一线元
     BaseLineElement* CmlBelongTo(double dCml) override;
-    ///计算外业测量里程
-    double GetMilepost(double dConitinueMile, char strMark[16], int& iReliability, char strErr[64]);
-    
-public:
-    ///计算累计曲线长度
-    double GetSumLengthOfMile(char strMark[16], double dMileValue, int& iReliability, char strErr[64]);
-    ///设置断链数据
-    void SetDLData(const tagDLInfo* pDLInfo, uint32_t count);
     
 public:
     ///里程+投影计算坐标+切线角
@@ -46,10 +38,6 @@ public:
     tagCmlDistAngle* TrsNEToCmlDist(const double& dX, const double& dY, uint32_t& nArrCount);
     ///获取与直线的交点
     Point2d* IntersectWithLine(const double& dAngle, const double& dX, const double& dY, uint32_t& nArrCount);
-    ///连续里程->现场里程
-    bool TrsCmltoCkml(const double& cml, char ckml[64], int nPrec);
-    ///现场里程->连续里程
-    bool TrsCkmlToCml(char ckml[64], double& cml, char strErr[64]);
 };
 
 #endif /* HorizontalObject_hpp */

@@ -140,7 +140,7 @@ int main(int argc, const char * argv[]) {
     // insert code here...
     //std::cout << "Hello, World!\n";
     cout << fixed;
-    cout.precision(5);
+    cout.precision(7);
     
     //交点信息
     std::vector<tagJDInfo> vecJD;
@@ -164,7 +164,7 @@ int main(int argc, const char * argv[]) {
     JDInfo.dX = 22307.7869113941;
     vecJD.emplace_back(JDInfo);
     
-    JDInfo.nJDType = 5;
+    JDInfo.nJDType = JDType::FiveUnit;
     JDInfo.dY = 6336.4158;
     JDInfo.dX = 19285.7296;
     JDInfo.dArcR1 = 2000.0;
@@ -217,9 +217,9 @@ int main(int argc, const char * argv[]) {
         int nEndIndex = (pArrLineElement[i].eLineType == ElementType::Arc ? 1 : pArrLineElement[i].nPosCount - 1);
         
         assert(pAPI->TrsNEToCmlDist(pArrLineElement[i].pArrPos[nStartIndex].dY, pArrLineElement[i].pArrPos[nStartIndex].dX, dCml, dDist, dFwj));
-        assert(abs(dDist) < 1.0e-5);
+        assert(abs(dDist) < 1.0e-6);
         assert(pAPI->TrsNEToCmlDist(pArrLineElement[i].pArrPos[nEndIndex].dY, pArrLineElement[i].pArrPos[nEndIndex].dX, dCml, dDist, dFwj));
-        assert(abs(dDist) < 1.0e-5);
+        assert(abs(dDist) < 1.0e-6);
     }
     delete[] pArrLineElement;
     

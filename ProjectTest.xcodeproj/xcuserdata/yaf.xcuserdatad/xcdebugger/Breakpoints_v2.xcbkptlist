@@ -31,8 +31,8 @@
             filePath = "RailwayAPI/Curve/HorizontalCurve.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "394"
-            endingLineNumber = "394"
+            startingLineNumber = "176"
+            endingLineNumber = "176"
             landmarkName = "HorizontalCurve::TrsNEToCmlDist(dX, dY, nArrCount)"
             landmarkType = "7">
          </BreakpointContent>
@@ -130,8 +130,8 @@
             filePath = "RailwayAPI/Curve/HorizontalCurve.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "366"
-            endingLineNumber = "366"
+            startingLineNumber = "148"
+            endingLineNumber = "148"
             landmarkName = "HorizontalCurve::TrsNEToCmlDist(dX, dY, nArrCount)"
             landmarkType = "7">
          </BreakpointContent>

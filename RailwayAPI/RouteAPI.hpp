@@ -17,6 +17,9 @@ class HorizontalCurve;
 ///竖曲线
 class VerticalCurve;
 
+///里程转换
+class MileConvert;
+
 /* The classes below are exported */
 #pragma GCC visibility push(default)
 
@@ -32,6 +35,9 @@ private:
     
     ///竖曲线对象指针
     VerticalCurve* m_pVerCurve;
+    
+    ///里程转换指针
+    MileConvert* m_pMileConvert;
     
 public:
     /// 设置数据
@@ -69,7 +75,7 @@ public:
     ///   - E_X: 经距
     ///   - nArrCount: 数组大小
     ///   - return: 交点数组数组地址
-    Point2d* CalculateCrossNE(const double& dAngle, const double& N_Y, const double& E_X, uint32_t& nArrCount);
+    Point2d* IntersectWithLine(const double& dAngle, const double& N_Y, const double& E_X, uint32_t& nArrCount);
     
     /// 坐标 -> 连续里程+投影距离+方位角 集合
     /// - Parameters:
