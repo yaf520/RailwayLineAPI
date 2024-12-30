@@ -22,6 +22,9 @@ private:
     tagDLInfo* m_pDLArr;
     ///断链数组长度
     uint32_t m_nDLCount;
+    ///缓存数组
+    //unsigned char* m_Buffer;
+    
     
 private:
     ///计算点的投影属于哪一线元

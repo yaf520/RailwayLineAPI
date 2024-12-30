@@ -15,12 +15,16 @@ HorizontalCurve::HorizontalCurve()
 {
     m_pDLArr = nullptr;
     m_nDLCount = 0;
+    //m_Buffer = new unsigned char[1024];
 }
 
 HorizontalCurve::~HorizontalCurve()
 {
     if (m_pDLArr)
         delete [] m_pDLArr;
+    
+//    if (m_Buffer)
+//        delete [] m_Buffer;
 }
 
 //计算点的投影属于哪一线元
@@ -139,6 +143,7 @@ tagCmlDistAngle* HorizontalCurve::TrsNEToCmlDist(const double& dX, const double&
     nArrCount = 0;
     tagCmlDistAngle* pArrRet = nullptr;
     
+    uint32_t nMaxCount = 8;
     for (uint32_t nIndex = 0; nIndex < m_nElementCount; nIndex++)
     {
         double arrCml[s_nMaxArrCount] = {0.0};
@@ -150,6 +155,15 @@ tagCmlDistAngle* HorizontalCurve::TrsNEToCmlDist(const double& dX, const double&
         {
             if (!pArrRet)
                 pArrRet = new tagCmlDistAngle[m_nElementCount];
+            
+            if (nArrCount >= nMaxCount)
+            {
+                nMaxCount += __max(nCount, nMaxCount);
+                tagCmlDistAngle* pNewArr = new tagCmlDistAngle[nMaxCount];
+                memcpy(pNewArr, pArrRet, sizeof(tagCmlDistAngle) * nArrCount);
+                delete [] pArrRet;
+                pArrRet = pNewArr;
+            }
             
             for (int nProIndex = 0; nProIndex < nCount; nProIndex++)
             {
@@ -172,6 +186,7 @@ tagCmlDistAngle* HorizontalCurve::TrsNEToCmlDist(const double& dX, const double&
         }
     }
     
+    /*
     //调整内存大小
     if (pArrRet && nArrCount < m_nElementCount)
     {
@@ -180,6 +195,7 @@ tagCmlDistAngle* HorizontalCurve::TrsNEToCmlDist(const double& dX, const double&
         delete [] pArrRet;
         pArrRet = pNewArr;
     }
+     */
     
     return pArrRet;
 }
@@ -189,6 +205,7 @@ Point2d* HorizontalCurve::IntersectWithLine(const double& dAngle, const double& 
     nArrCount = 0;
     Point2d* arrRet = nullptr;
     
+    uint32_t nMaxCount = 8;
     //基准点
     Point2d posBase(dX, dY);
     for (uint32_t nIndex = 0; nIndex < m_nElementCount; nIndex++)
@@ -199,6 +216,15 @@ Point2d* HorizontalCurve::IntersectWithLine(const double& dAngle, const double& 
         {
             if (!arrRet)
                 arrRet = new Point2d[m_nElementCount];
+            
+            if (nArrCount >= nMaxCount)
+            {
+                nMaxCount += __max(nCount, nMaxCount);
+                Point2d* pNewArr = new Point2d[nMaxCount];
+                memcpy((void*)pNewArr, (void*)arrRet, sizeof(Point2d) * nArrCount);
+                delete [] arrRet;
+                arrRet = pNewArr;
+            }
             
             for (int nCrossIndex = 0; nCrossIndex < nCount; nCrossIndex++)
             {
@@ -224,6 +250,7 @@ Point2d* HorizontalCurve::IntersectWithLine(const double& dAngle, const double& 
         }
     }
     
+    /*
     //调整内存大小
     if (arrRet && nArrCount < m_nElementCount)
     {
@@ -235,6 +262,7 @@ Point2d* HorizontalCurve::IntersectWithLine(const double& dAngle, const double& 
         delete [] arrRet;
         arrRet = arrNew;
     }
+     */
     
     return arrRet;
 }
