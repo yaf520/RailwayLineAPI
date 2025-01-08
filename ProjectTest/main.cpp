@@ -237,6 +237,20 @@ int main(int argc, const char * argv[]) {
         
         bool bFind = false;
         
+        DyArray<tagCmlDistAngle> arrRet = pAPI->TrsNEToCmlDist(dY, dX);
+        for (int nIndex = 0; nIndex < arrRet.GetCount(); nIndex++)
+        {
+            if (abs(arrRet[nIndex].dCml - dCml) < 1.0e-5)
+            {
+                snprintf(buffer, sizeof(buffer), "dX: %0.5f, dY: %0.5f =====> dCml: %0.5f, dDist: %0.5f, dAngle: %0.5f", dX, dY, arrRet[nIndex].dCml, arrRet[nIndex].dDist, arrRet[nIndex].dFwj);
+                cout << buffer << endl;
+                assert(abs(dDist - arrRet[nIndex].dDist) < 0.01);
+                bFind = true;
+                break;
+            }
+        }
+        assert(bFind);
+        /*
         uint32_t nCount = 0;
         tagCmlDistAngle* pArr = pAPI->TrsNEToCmlDist(dY, dX, nCount);
         for (int nIndex = 0; nIndex < nCount; nIndex++)
@@ -252,7 +266,7 @@ int main(int argc, const char * argv[]) {
         }
         assert(bFind);
         delete [] pArr;
-        
+        */
         cout << endl;
     }
     

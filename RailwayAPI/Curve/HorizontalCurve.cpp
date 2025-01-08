@@ -13,18 +13,12 @@
 HorizontalCurve::HorizontalCurve()
     : LineElementManager(CurveType::HorizontalCurve)
 {
-    m_pDLArr = nullptr;
-    m_nDLCount = 0;
-    //m_Buffer = new unsigned char[1024];
+
 }
 
 HorizontalCurve::~HorizontalCurve()
 {
-    if (m_pDLArr)
-        delete [] m_pDLArr;
-    
-//    if (m_Buffer)
-//        delete [] m_Buffer;
+
 }
 
 //计算点的投影属于哪一线元
@@ -122,19 +116,16 @@ bool HorizontalCurve::TrsCmlDistToNE(const double& dCml, const double& dDist, do
 //坐标计算投影点里程+投影距离+切线角
 bool HorizontalCurve::TrsNEToCmlDist(const double& dX, const double& dY, double& dCml, double& dDist, double& dAngle)
 {
-    uint32_t nCount = 0;
-    const tagCmlDistAngle* pArr = TrsNEToCmlDist(dX, dY, nCount);
-    if (nCount > 0 && pArr)
+    DyArray<tagCmlDistAngle> arrPos = TrsNEToCmlDist(dX, dY);
+    if (arrPos.GetCount() > 0)
     {
-        dCml = pArr->dCml;
-        dDist = pArr->dDist;
-        dAngle = pArr->dFwj;
-        
-        delete [] pArr;
+        dCml = arrPos.begin()->dCml;
+        dDist = arrPos.begin()->dDist;
+        dAngle = arrPos.begin()->dFwj;
         
         return true;
     }
-    
+
     return false;
 }
 
@@ -200,6 +191,41 @@ tagCmlDistAngle* HorizontalCurve::TrsNEToCmlDist(const double& dX, const double&
     return pArrRet;
 }
 
+DyArray<tagCmlDistAngle> HorizontalCurve::TrsNEToCmlDist(const double& dX, const double& dY)
+{
+    DyArray<tagCmlDistAngle> arrRet;
+    
+    for (uint32_t nIndex = 0; nIndex < m_nElementCount; nIndex++)
+    {
+        double arrCml[s_nMaxArrCount] = {0.0};
+        double arrDist[s_nMaxArrCount] = {0.0};
+        double arrAngle[s_nMaxArrCount] = {0.0};
+        
+        uint32_t nCount = m_arrLineElement[nIndex]->TrsNEToCmlDist(dX, dY, arrCml, arrDist, arrAngle);
+        if (nCount > 0)
+        {
+            for (int nProIndex = 0; nProIndex < nCount; nProIndex++)
+            {
+                //插入排序
+                uint32_t nInsertIndex = 0;
+                for (nInsertIndex = 0; nInsertIndex < arrRet.GetCount(); nInsertIndex++)
+                    if (abs(arrDist[nProIndex]) < abs(arrRet[nInsertIndex].dDist))
+                        break;
+                
+                tagCmlDistAngle item;
+                item.dCml = arrCml[nProIndex];
+                item.dDist = -arrDist[nProIndex];
+                item.dFwj = MATH_PI_2 - arrAngle[nProIndex];
+                BaseCalFun::KeepAngleIn2PI(item.dFwj);
+
+                arrRet.InsertAt(nInsertIndex, item);
+            }
+        }
+    }
+    
+    return arrRet;
+}
+
 Point2d* HorizontalCurve::IntersectWithLine(const double& dAngle, const double& dX, const double& dY, uint32_t& nArrCount)
 {
     nArrCount = 0;
@@ -263,6 +289,34 @@ Point2d* HorizontalCurve::IntersectWithLine(const double& dAngle, const double& 
         arrRet = arrNew;
     }
      */
+    
+    return arrRet;
+}
+
+DyArray<Point2d> HorizontalCurve::IntersectWithLine(const double& dAngle, const double& dX, const double& dY)
+{
+    DyArray<Point2d> arrRet;
+    
+    //基准点
+    Point2d posBase(dX, dY);
+    for (uint32_t nIndex = 0; nIndex < m_nElementCount; nIndex++)
+    {
+        Point2d arrPos[s_nMaxArrCount];
+        uint32_t nCount = m_arrLineElement[nIndex]->IntersectWithLine(dAngle, dX, dY, arrPos);
+        if (nCount > 0)
+        {
+            for (int nCrossIndex = 0; nCrossIndex < nCount; nCrossIndex++)
+            {
+                //插入排序
+                uint32_t nInsertIndex = 0;
+                for (nInsertIndex = 0; nInsertIndex < arrRet.GetCount(); nInsertIndex++)
+                    if (posBase.distanceTo(arrPos[nCrossIndex]) < posBase.distanceTo(arrRet[nInsertIndex]))
+                        break;
+
+                arrRet.InsertAt(nInsertIndex, arrPos[nCrossIndex]);
+            }
+        }
+    }
     
     return arrRet;
 }

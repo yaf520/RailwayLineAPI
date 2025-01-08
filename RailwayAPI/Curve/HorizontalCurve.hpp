@@ -9,6 +9,7 @@
 #define HorizontalObject_hpp
 
 #include "LineElementManager.hpp"
+#include "DyArray.hpp"
 
 class HorizontalCurve : public LineElementManager
 {
@@ -16,15 +17,6 @@ public:
     HorizontalCurve();
     
     virtual ~HorizontalCurve();
-    
-private:
-    ///断链数组
-    tagDLInfo* m_pDLArr;
-    ///断链数组长度
-    uint32_t m_nDLCount;
-    ///缓存数组
-    //unsigned char* m_Buffer;
-    
     
 private:
     ///计算点的投影属于哪一线元
@@ -39,8 +31,12 @@ public:
     bool TrsNEToCmlDist(const double& dX, const double& dY, double& dCml, double& dDist, double& dAngle);
     ///坐标计算投影点里程+投影距离+切线角集合
     tagCmlDistAngle* TrsNEToCmlDist(const double& dX, const double& dY, uint32_t& nArrCount);
+    ///坐标计算投影点里程+投影距离+切线角集合
+    DyArray<tagCmlDistAngle> TrsNEToCmlDist(const double& dX, const double& dY);
     ///获取与直线的交点
     Point2d* IntersectWithLine(const double& dAngle, const double& dX, const double& dY, uint32_t& nArrCount);
+    ///获取与直线的交点
+    DyArray<Point2d> IntersectWithLine(const double& dAngle, const double& dX, const double& dY);
 };
 
 #endif /* HorizontalObject_hpp */

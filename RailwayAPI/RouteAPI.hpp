@@ -10,6 +10,7 @@
 
 #include "BaseStruct.hpp"
 #include "BasePoint.hpp"
+#include "DyArray.hpp"
 
 ///平曲线
 class HorizontalCurve;
@@ -77,6 +78,13 @@ public:
     ///   - return: 交点数组数组地址
     Point2d* IntersectWithLine(const double& dAngle, const double& N_Y, const double& E_X, uint32_t& nArrCount);
     
+    /// 坐标 -> 计算任意直线与路线的所有交点
+    /// - Parameters:
+    ///   - dAngle: 直线角度
+    ///   - N_Y: 纬距
+    ///   - E_X: 经距
+    DyArray<Point2d> IntersectWithLine(const double& dAngle, const double& N_Y, const double& E_X);
+    
     /// 坐标 -> 连续里程+投影距离+方位角 集合
     /// - Parameters:
     ///   - N_Y: 纬距
@@ -84,6 +92,12 @@ public:
     ///   - nCount: 数组大小
     ///   - return: 数组地址
     tagCmlDistAngle* TrsNEToCmlDist(const double& N_Y, const double& E_X, uint32_t& nCount);
+    
+    /// 坐标 -> 连续里程+投影距离+方位角 集合
+    /// - Parameters:
+    ///   - N_Y: 纬距
+    ///   - E_X: 经距
+    DyArray<tagCmlDistAngle> TrsNEToCmlDist(const double& N_Y, const double& E_X);
     
     /// 线路总长度
     double GetLength();

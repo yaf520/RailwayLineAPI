@@ -61,9 +61,19 @@ tagCmlDistAngle* RouteAPI::TrsNEToCmlDist(const double& N_Y, const double& E_X, 
     return m_pHorCurve->TrsNEToCmlDist(E_X, N_Y, nCount);
 }
 
+DyArray<tagCmlDistAngle> RouteAPI::TrsNEToCmlDist(const double& N_Y, const double& E_X)
+{
+    return m_pHorCurve->TrsNEToCmlDist(E_X, N_Y);
+}
+
 Point2d* RouteAPI::IntersectWithLine(const double& dAngle, const double& N_Y, const double& E_X, uint32_t& nArrCount)
 {
     return m_pHorCurve->IntersectWithLine(dAngle, E_X, N_Y , nArrCount);
+}
+
+DyArray<Point2d> RouteAPI::IntersectWithLine(const double& dAngle, const double& N_Y, const double& E_X)
+{
+    return m_pHorCurve->IntersectWithLine(dAngle, E_X, N_Y);
 }
 
 double RouteAPI::GetLength()
