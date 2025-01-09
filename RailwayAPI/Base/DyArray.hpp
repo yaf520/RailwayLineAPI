@@ -13,19 +13,32 @@
 
 #define ARRAY_GROWTH_THRESHOLD 0x10000
 
-template <class T>
+template <class Type>
 class DyArray
 {
 private:
-    int m_nMaxCount;            //最大数目
-    int m_nElementCount;        //当前数目
+    int m_nMaxCount;            //缓冲数目
+    int m_nElementCount;        //元素数目
     int m_nGrowCount;           //增长数目
-    T* m_pData;                 //缓存指针
+    Type* m_pData;              //缓存指针
     
 public:
-    DyArray();
-    DyArray(const DyArray<T>& src);
-    virtual ~DyArray();
+    /// 构造函数
+    DyArray(int nCount = 0, int nGrowCount = 8);
+    /// 拷贝构造函数
+    DyArray(const DyArray<Type>&);
+    /// 移动构造函数
+    DyArray(DyArray<Type>&&);
+    /// 析构函数
+    ~DyArray();
+    
+    /// 移动赋值符
+    DyArray<Type>& operator = (DyArray<Type>&&);
+    /// 拷贝赋值符
+    DyArray<Type>& operator = (const DyArray<Type>&);
+    
+    Type& operator[] (int);
+    const Type& operator[] (int) const;
     
 public:
     /// 获取当前元素数目
@@ -34,19 +47,16 @@ public:
     }
     
 public:
+    /// 重置
+    void Reset();
+    
     /// 添加元素
     /// - Parameter item: 新元素
-    int Add(const T& item);
+    int Add(const Type& item);
     
-    /// 设置大小
-    /// - Parameter nNewSize: 数组大小
-    void SetSize(int nNewSize);
-    
-    /// 设置新元素位置
-    /// - Parameters:
-    ///   - nIndex: 索引
-    ///   - item: 新元素
-    void SetAtGrow(int nIndex, const T& item);
+    /// 设置元素数目
+    /// - Parameter nNewSize: 元素数目
+    void SetElementCount(int nNewSize);
     
     /// 移除所有元素
     void RemoveAll();
@@ -59,29 +69,22 @@ public:
     /// - Parameters:
     ///   - nIndex: 插入索引
     ///   - item: 新元素
-    void InsertAt(int nIndex, const T& item, int nCount = 1);
-    
-    void Copy(const DyArray<T>& src);
+    void InsertAt(int nIndex, const Type& item, int nCount = 1);
     
     /// 获取指定位置元素
     /// - Parameter nIndex: 索引
-    T& GetAt(int nIndex);
+    Type& GetAt(int nIndex);
     
     /// 获取指定位置元素
     /// - Parameter nIndex: 索引
-    const T& GetAt(int nIndex) const;
+    const Type& GetAt(int nIndex) const;
     
-    T* begin() { return m_pData;}
-    T* end() { return m_pData + m_nElementCount;}
+    Type* begin() { return m_pData;}
+    Type* end() { return m_pData + m_nElementCount;}
     
-    const T* begin() const { return m_pData;}
-    const T* end() const { return m_pData + m_nElementCount;}
-    
-public:
-    virtual T& operator[] (int nIndex);
-    virtual const T& operator[] (int nIndex) const;
-    virtual DyArray<T>& operator = (const DyArray<T>& src);
-    
+    const Type* begin() const { return m_pData;}
+    const Type* end() const { return m_pData + m_nElementCount;}
+
 public:
     /// 申请内存
     /// - Parameter nNewCount: 元素数目
@@ -89,22 +92,54 @@ public:
 };
 
 template <class T>
-DyArray<T>::DyArray()
+DyArray<T>::DyArray(int nCount, int nGrowCount)
+    :m_pData(nullptr),
+    m_nMaxCount(0),
+    m_nGrowCount(nGrowCount),
+    m_nElementCount(0)
 {
-    m_pData = nullptr;
-    m_nMaxCount = 0;
-    m_nElementCount = 0;
-    m_nGrowCount = 8;
+    if (nCount > 0)
+        AllocMemory(nCount);
 }
 
 template <class T>
 DyArray<T>::DyArray(const DyArray<T>& src)
+    :m_pData(nullptr),
+    m_nMaxCount(0),
+    m_nGrowCount(src.m_nGrowCount),
+    m_nElementCount(0)
 {
-    Copy(src);
+    AllocMemory(src.m_nMaxCount);
+    SetElementCount(src.m_nElementCount);
+    for (int i = 0; i < m_nElementCount; i++)
+        m_pData[i] = src[i];
+}
+
+template <class T>
+DyArray<T>::DyArray(DyArray<T>&& src)
+    :m_pData(nullptr),
+    m_nMaxCount(0),
+    m_nGrowCount(src.m_nGrowCount),
+    m_nElementCount(0)
+{
+    m_pData = src.m_pData;
+    m_nMaxCount = src.m_nMaxCount;
+    m_nElementCount = src.m_nElementCount;
+        
+    src.m_pData = nullptr;
+    src.m_nMaxCount = 0;
+    src.m_nElementCount = 0;
+    src.m_nGrowCount = 0;
 }
 
 template <class T>
 DyArray<T>::~DyArray()
+{
+    Reset();
+}
+
+template <class T>
+void DyArray<T>::Reset()
 {
     if (m_pData)
     {
@@ -113,6 +148,10 @@ DyArray<T>::~DyArray()
         
         delete [] (char*)m_pData;
         m_pData = nullptr;
+        
+        m_nMaxCount = 0;
+        m_nElementCount = 0;
+        m_nGrowCount = 0;
     }
 }
 
@@ -120,24 +159,12 @@ template <class T>
 int DyArray<T>::Add(const T &item)
 {
     int nIndex = m_nElementCount;
-    SetAtGrow(nIndex, item);
+    InsertAt(nIndex, item);
     return nIndex;
 }
 
 template <class T>
-void DyArray<T>::SetAtGrow(int nIndex, const T &item)
-{
-    assert(nIndex >= 0);
-    if (nIndex < 0)
-        return;
-    
-    if (nIndex >= m_nElementCount)
-        SetSize(m_nElementCount + 1);
-    m_pData[nIndex] = item;
-}
-
-template <class T>
-void DyArray<T>::SetSize(int nNewSize)
+void DyArray<T>::SetElementCount(int nNewSize)
 {
     assert(nNewSize >= 0);
     if (nNewSize < 0)
@@ -165,7 +192,7 @@ void DyArray<T>::InsertAt(int nIndex, const T& item, int nCount)
     if (nIndex < m_nElementCount)
     {
         int nOldCount = m_nElementCount;
-        SetSize(nCount + m_nElementCount);
+        SetElementCount(nCount + m_nElementCount);
         for (int i = 0; i < nCount; i++)
             (m_pData + nOldCount + i)->~T();
         
@@ -175,25 +202,10 @@ void DyArray<T>::InsertAt(int nIndex, const T& item, int nCount)
             new ((void*)(m_pData + nIndex + i)) T();
     }
     else
-        SetSize(nIndex + nCount);
+        SetElementCount(nIndex + nCount);
     
     for (int i = 0; i < nCount; i++)
         m_pData[nIndex + i] = item;
-}
-
-template <class T>
-void DyArray<T>::Copy(const DyArray<T>& src)
-{
-    assert(this != &src);
-    if (this == &src)
-        return;
-    
-    if (m_nElementCount > 0)
-        RemoveAll();
-    
-    SetSize(src.m_nElementCount);
-    for (int i = 0; i < m_nElementCount; i++)
-        m_pData[i] = src[i];
 }
 
 template <class T>
@@ -258,9 +270,39 @@ const T& DyArray<T>::operator[](int nIndex) const
 }
 
 template <class T>
+DyArray<T>& DyArray<T>::operator = (DyArray<T>&& src)
+{
+    if (this != &src)
+    {
+        Reset();
+        
+        m_nGrowCount = src.m_nGrowCount;
+        m_pData = src.m_pData;
+        m_nMaxCount = src.m_nMaxCount;
+        m_nElementCount = src.m_nElementCount;
+        
+        src.m_pData = nullptr;
+        src.m_nMaxCount = 0;
+        src.m_nElementCount = 0;
+        src.m_nGrowCount = 0;
+    }
+    
+    return *this;
+}
+
+template <class T>
 DyArray<T>& DyArray<T>::operator = (const DyArray<T>& src)
 {
-    Copy(src);
+    if (this != &src)
+    {
+        RemoveAll();
+        
+        AllocMemory(src.m_nMaxCount);
+        SetElementCount(src.m_nElementCount);
+        
+        for (int i = 0; i < m_nElementCount; i++)
+            m_pData[i] = src[i];
+    }
     return *this;
 }
 
@@ -283,7 +325,7 @@ void DyArray<T>::AllocMemory(int nNewCount)
         memcpy((void*)pNewData, (void*)m_pData, sizeof(T) * m_nElementCount);
         memset((void*)(pNewData + m_nElementCount), 0, sizeof(T) * (m_nMaxCount - m_nElementCount));
         
-        delete [] m_pData;
+        delete [] (char*)m_pData;
         m_pData = pNewData;
     }
 }
