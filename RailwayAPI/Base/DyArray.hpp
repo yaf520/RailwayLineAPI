@@ -11,6 +11,12 @@
 #include <assert.h>
 #include <new>
 
+#pragma pack (push, 8)
+#pragma push_macro("new")
+#pragma push_macro("delete")
+#undef new
+#undef delete
+
 #define ARRAY_GROWTH_THRESHOLD 0x10000
 
 template <class Type>
@@ -330,4 +336,7 @@ void DyArray<T>::AllocMemory(int nNewCount)
     }
 }
 
+#pragma pop_macro("new")
+#pragma pop_macro("delete")
+#pragma pack (pop)
 #endif /* Array_hpp */

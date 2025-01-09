@@ -53,7 +53,7 @@ typedef struct BasePoint2d
         this->y = y;
     }
     
-    virtual BasePoint2d operator = (const BasePoint2d& pos)
+    virtual BasePoint2d& operator = (const BasePoint2d& pos)
     {
         this->x = pos.x;
         this->y = pos.y;
