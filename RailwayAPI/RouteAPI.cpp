@@ -11,13 +11,11 @@
 #include "VerticalCurve.hpp"
 #include "MileConvert.hpp"
 
-using namespace std;
-
 RouteAPI::RouteAPI()
 {
-    m_pHorCurve = new (nothrow) HorizontalCurve();
-    m_pMileConvert = new (nothrow) MileConvert();
-    m_pVerCurve = new (nothrow) VerticalCurve(m_pMileConvert);
+    m_pHorCurve = new (std::nothrow) HorizontalCurve();
+    m_pMileConvert = new (std::nothrow) MileConvert();
+    m_pVerCurve = new (std::nothrow) VerticalCurve(m_pMileConvert);
 }
 
 RouteAPI::~RouteAPI()
@@ -63,7 +61,10 @@ tagCmlDistAngle* RouteAPI::TrsNEToCmlDist(const double& N_Y, const double& E_X, 
 
 DyArray<tagCmlDistAngle> RouteAPI::TrsNEToCmlDist(const double& N_Y, const double& E_X)
 {
-    return m_pHorCurve->TrsNEToCmlDist(E_X, N_Y);
+    if (m_pHorCurve)
+        return m_pHorCurve->TrsNEToCmlDist(E_X, N_Y);
+    
+    throw std::runtime_error("HorCurve ptr is null");
 }
 
 Point2d* RouteAPI::IntersectWithLine(const double& dAngle, const double& N_Y, const double& E_X, uint32_t& nArrCount)
@@ -73,7 +74,10 @@ Point2d* RouteAPI::IntersectWithLine(const double& dAngle, const double& N_Y, co
 
 DyArray<Point2d> RouteAPI::IntersectWithLine(const double& dAngle, const double& N_Y, const double& E_X)
 {
-    return m_pHorCurve->IntersectWithLine(dAngle, E_X, N_Y);
+    if (m_pHorCurve)
+        return m_pHorCurve->IntersectWithLine(dAngle, E_X, N_Y);
+    
+    throw std::runtime_error("HorCurve ptr is null");
 }
 
 double RouteAPI::GetLength()

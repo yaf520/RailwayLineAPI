@@ -177,17 +177,6 @@ tagCmlDistAngle* HorizontalCurve::TrsNEToCmlDist(const double& dX, const double&
         }
     }
     
-    /*
-    //调整内存大小
-    if (pArrRet && nArrCount < m_nElementCount)
-    {
-        tagCmlDistAngle* pNewArr = new tagCmlDistAngle[nArrCount];
-        memcpy(pNewArr, pArrRet, sizeof(tagCmlDistAngle) * nArrCount);
-        delete [] pArrRet;
-        pArrRet = pNewArr;
-    }
-     */
-    
     return pArrRet;
 }
 
@@ -275,20 +264,6 @@ Point2d* HorizontalCurve::IntersectWithLine(const double& dAngle, const double& 
             }
         }
     }
-    
-    /*
-    //调整内存大小
-    if (arrRet && nArrCount < m_nElementCount)
-    {
-        Point2d* arrNew = new Point2d[nArrCount];
-        for (int i = 0; i < nArrCount; i++)
-            *(arrNew + i) = *(arrRet + i);
-        
-        //memcpy((void*)arrNew, (void*)arrRet, sizeof(Point2d) * nArrCount);
-        delete [] arrRet;
-        arrRet = arrNew;
-    }
-     */
     
     return arrRet;
 }

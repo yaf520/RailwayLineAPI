@@ -10,6 +10,7 @@
 
 #include <assert.h>
 #include <new>
+#include <stdexcept>
 
 #pragma pack (push, 8)
 #pragma push_macro("new")
@@ -34,12 +35,12 @@ public:
     /// 拷贝构造函数
     DyArray(const DyArray<Type>&);
     /// 移动构造函数
-    DyArray(DyArray<Type>&&);
+    DyArray(DyArray<Type>&&) noexcept;
     /// 析构函数
     ~DyArray();
     
     /// 移动赋值符
-    DyArray<Type>& operator = (DyArray<Type>&&);
+    DyArray<Type>& operator = (DyArray<Type>&&) noexcept;
     /// 拷贝赋值符
     DyArray<Type>& operator = (const DyArray<Type>&);
     
@@ -122,7 +123,7 @@ DyArray<T>::DyArray(const DyArray<T>& src)
 }
 
 template <class T>
-DyArray<T>::DyArray(DyArray<T>&& src)
+DyArray<T>::DyArray(DyArray<T>&& src) noexcept
     :m_pData(nullptr),
     m_nMaxCount(0),
     m_nGrowCount(src.m_nGrowCount),
@@ -152,7 +153,7 @@ void DyArray<T>::Reset()
         for (int i = 0; i < m_nElementCount; i++)
             (m_pData + i)->~T();
         
-        delete [] (char*)m_pData;
+        ::operator delete ((void*)m_pData);
         m_pData = nullptr;
         
         m_nMaxCount = 0;
@@ -248,7 +249,7 @@ T& DyArray<T>::GetAt(int nIndex)
 {
     assert(nIndex >= 0 && nIndex < m_nElementCount);
     if (nIndex < 0 || nIndex >= m_nElementCount)
-        throw;
+        throw std::out_of_range("out of ElementCount");
     
     return m_pData[nIndex];
 }
@@ -258,7 +259,7 @@ const T& DyArray<T>::GetAt(int nIndex) const
 {
     assert(nIndex >= 0 && nIndex < m_nElementCount);
     if (nIndex < 0 || nIndex >= m_nElementCount)
-        throw;
+        throw std::out_of_range("out of ElementCount");
     
     return m_pData[nIndex];
 }
@@ -276,7 +277,7 @@ const T& DyArray<T>::operator[](int nIndex) const
 }
 
 template <class T>
-DyArray<T>& DyArray<T>::operator = (DyArray<T>&& src)
+DyArray<T>& DyArray<T>::operator = (DyArray<T>&& src) noexcept
 {
     if (this != &src)
     {
@@ -327,11 +328,11 @@ void DyArray<T>::AllocMemory(int nNewCount)
             minSize = nNewCount;
         m_nMaxCount += minSize;
         
-        T* pNewData = (T*)new char[sizeof(T) * m_nMaxCount];
+        T* pNewData = (T*)::operator new(sizeof(T) * m_nMaxCount);
         memcpy((void*)pNewData, (void*)m_pData, sizeof(T) * m_nElementCount);
         memset((void*)(pNewData + m_nElementCount), 0, sizeof(T) * (m_nMaxCount - m_nElementCount));
         
-        delete [] (char*)m_pData;
+        ::operator delete ((void*)m_pData);
         m_pData = pNewData;
     }
 }

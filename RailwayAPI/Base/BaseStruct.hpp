@@ -80,15 +80,6 @@ struct tagDLInfo
         memset(strBefNo, 0, sizeof(strBefNo));
         memset(strBehNo, 0, sizeof(strBehNo));
     }
-    
-    virtual tagDLInfo& operator = (const tagDLInfo& info)
-    {
-        this->dBefLich = info.dBefLich;
-        this->dBehLich = info.dBehLich;
-        strcpy(this->strBefNo, info.strBefNo);
-        strcpy(this->strBehNo, info.strBehNo);
-        return *this;
-    }
 };
 
 ///坡度信息
@@ -141,6 +132,18 @@ struct tagExportLineElement
         nPosCount = 0;
     }
     
+    tagExportLineElement(const tagExportLineElement& src)
+    {
+        if (this != &src)
+        {
+            this->eLineType = src.eLineType;
+            this->nPosCount = src.nPosCount;
+            this->pArrPos = new PointExport[this->nPosCount];
+            for (int i = 0; i < nPosCount; i++)
+                *(pArrPos + i) = src.pArrPos[i];
+        }
+    }
+    
     virtual ~tagExportLineElement()
     {
         if (pArrPos)
@@ -151,13 +154,23 @@ struct tagExportLineElement
         }
     }
     
-    virtual tagExportLineElement& operator = (const tagExportLineElement& data)
+    virtual tagExportLineElement& operator = (const tagExportLineElement& src)
     {
-        this->eLineType = data.eLineType;
-        this->nPosCount = data.nPosCount;
-        this->pArrPos = new PointExport[this->nPosCount];
-        for (int i = 0; i < nPosCount; i++)
-            *(pArrPos + i) = data.pArrPos[i];
+        if (this != &src)
+        {
+            if (pArrPos)
+            {
+                delete[] pArrPos;
+                pArrPos = nullptr;
+                nPosCount = 0;
+            }
+            
+            this->eLineType = src.eLineType;
+            this->nPosCount = src.nPosCount;
+            this->pArrPos = new PointExport[this->nPosCount];
+            for (int i = 0; i < nPosCount; i++)
+                *(pArrPos + i) = src.pArrPos[i];
+        }
         
         return *this;
     }

@@ -4,7 +4,7 @@
 //  Created by 易傲飞 on 2023/10/27.
 //
 
-#include <cassert>
+#include <assert.h>
 #include "SpiralLineElement.hpp"
 #include "BaseCalFun.hpp"
 
