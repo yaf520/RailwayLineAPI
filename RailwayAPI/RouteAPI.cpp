@@ -37,6 +37,11 @@ void RouteAPI::SetData(const tagJDInfo* pJDInfo, uint32_t jdCount, const tagDLIn
     m_pVerCurve->SetSlopeData(pSlopeInfo, slopeCount);
 }
 
+void RouteAPI::UpdateJD(int nIndex, const Vector2d& vecOffset)
+{
+    m_pHorCurve->UpdateJD(nIndex, vecOffset);
+}
+
 bool RouteAPI::TrsCmlDistToNE(const double& dCml, const double& dDist, double& N_Y, double& E_X, double& dFwj)
 {
     double dTanAngle = 0.0;

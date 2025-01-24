@@ -15,8 +15,9 @@ StraightLineElement::StraightLineElement()
 
 bool StraightLineElement::TrsCmlDistToNE(const double& dCml, const double& dDist, double& dX, double& dY, double& dAngle)
 {
-    assert(dCml >= m_dStartCml);
-    if (dCml - m_dStartCml < 0) return false;
+    assert(dCml >= m_dStartCml - s_dCalPrecision && dCml <= m_dStartCml + m_dTotalLen + s_dCalPrecision);
+    if (dCml < m_dStartCml - s_dCalPrecision || dCml > m_dStartCml + m_dTotalLen + s_dCalPrecision)
+        return false;
     
     double dDeltaLen = dCml - m_dStartCml;
     Point2d posDist = m_posStart + TrsCmlToNE_Relative(dDeltaLen);
@@ -80,10 +81,8 @@ uint32_t StraightLineElement::IntersectWithLine(const double& dAngle, const doub
 
 tagExportLineElement* StraightLineElement::ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep)
 {
-    double dDeltaLen = BaseCalFun::Round(dEndCml - dStartCml);
-    double dTotalLenTmp = BaseCalFun::Round(m_dTotalLen);
-    assert(dStartCml >= m_dStartCml && dDeltaLen <= dTotalLenTmp);
-    if (dStartCml < m_dStartCml || dDeltaLen > dTotalLenTmp)
+    assert(dStartCml >= m_dStartCml - s_dCalPrecision && dEndCml <= m_dStartCml + m_dTotalLen + s_dCalPrecision);
+    if (dStartCml < m_dStartCml - s_dCalPrecision || dEndCml > m_dStartCml + m_dTotalLen + s_dCalPrecision)
         return nullptr;
     
     double dAngle = 0.0;

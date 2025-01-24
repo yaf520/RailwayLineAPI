@@ -568,6 +568,23 @@ void LineElementManager::SetJDData(const tagJDInfo* pJDInfo, uint32_t nCount)
     }
 }
 
+void LineElementManager::UpdateJD(uint32_t nIndex, const Vector2d& vecOffset)
+{
+    if (nIndex >= m_nJDCount || vecOffset.isZeroVec())
+        return;
+    
+    //复制数据
+    tagJDInfo* pJDCopy = new tagJDInfo[m_nJDCount];
+    memcpy(pJDCopy, m_arrJD, sizeof(tagJDInfo) * m_nJDCount);
+    //修改相应数据
+    pJDCopy[nIndex].dX += vecOffset.x;
+    pJDCopy[nIndex].dY += vecOffset.y;
+    //重置数据
+    SetJDData(pJDCopy, m_nJDCount);
+    
+    delete [] pJDCopy;
+}
+
 tagExportLineElement* LineElementManager::ExportHorCurve(int& nArrCount, double dStartCml, double dEndCml, double dDist, double dCurveStep)
 {
     nArrCount = 0;
@@ -622,13 +639,11 @@ double LineElementManager::GetLength()
     switch (m_eCurveType) {
         case CurveType::HorizontalCurve:
         {
-            double dTotalLen = m_arrLineElement[m_nElementCount - 1]->m_dStartCml + m_arrLineElement[m_nElementCount - 1]->m_dTotalLen;
-            return BaseCalFun::Round(dTotalLen);
+            return m_arrLineElement[m_nElementCount - 1]->m_dStartCml + m_arrLineElement[m_nElementCount - 1]->m_dTotalLen;
         }
         case CurveType::VerticalCurve:
         {
-            double dTotalLen = m_arrJD[m_nJDCount - 1].dX - m_arrJD[0].dX;
-            return BaseCalFun::Round(dTotalLen);
+            return m_arrJD[m_nJDCount - 1].dX - m_arrJD[0].dX;
         }
         default:
         {

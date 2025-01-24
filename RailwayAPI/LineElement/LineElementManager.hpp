@@ -92,6 +92,12 @@ public:
     ///   - iCount: 数组大小
     void SetJDData(const tagJDInfo* pJDInfo, uint32_t nCount);
     
+    /// 修改交点数据
+    /// - Parameters:
+    ///   - nIndex: 交点索引
+    ///   - vecOffset: 偏移向量
+    void UpdateJD(uint32_t nIndex, const Vector2d& vecOffset);
+    
     /// 导出指定里程范围内平曲线数据
     /// - Parameters:
     ///   - nArrCount: 数组大小

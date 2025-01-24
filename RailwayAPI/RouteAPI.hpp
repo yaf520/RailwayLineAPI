@@ -51,6 +51,12 @@ public:
     ///   - slopeCount: 坡度数组大小
     void SetData(const tagJDInfo* pJDInfo, uint32_t jdCount, const tagDLInfo* pDLCount, uint32_t dlCount, const tagSlopeInfo* pSlopeInfo, uint32_t slopeCount);
     
+    /// 更新交点
+    /// - Parameters:
+    ///   - nIndex: 交点索引
+    ///   - vecOffset: 偏移向量
+    void UpdateJD(int nIndex, const Vector2d& vecOffset);
+    
     /// 连续里程+投影距离 -> 坐标+方位角
     /// - Parameters:
     ///   - dCml: 连续里程
