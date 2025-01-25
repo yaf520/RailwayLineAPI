@@ -23,8 +23,9 @@ SpiralLineElement::SpiralLineElement()
 
 bool SpiralLineElement::TrsCmlDistToNE(const double& dCml, const double& dDist, double& dX, double& dY, double& dAngle)
 {
-    assert(dCml >= m_dStartCml);
-    if (dCml - m_dStartCml < 0) return false;
+    assert(dCml >= m_dStartCml - s_dCalPrecision && dCml <= m_dStartCml + m_dTotalLen + s_dCalPrecision);
+    if (dCml < m_dStartCml - s_dCalPrecision || dCml > m_dStartCml + m_dTotalLen + s_dCalPrecision)
+        return false;
     
     //转向方向(左转true右转false)
     bool bTurnDir = ((m_bEnter && m_bTurnLeft) || (!m_bEnter && !m_bTurnLeft));
@@ -147,10 +148,8 @@ uint32_t SpiralLineElement::IntersectWithLine(const double& dAngle, const double
 
 tagExportLineElement* SpiralLineElement::ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep)
 {
-    double dDeltaLen = BaseCalFun::Round(dEndCml - dStartCml);
-    double dTotalLenTmp = BaseCalFun::Round(m_dTotalLen);
-    assert(dStartCml >= m_dStartCml && dDeltaLen <= dTotalLenTmp);
-    if (dStartCml < m_dStartCml || dDeltaLen > dTotalLenTmp)
+    assert(dStartCml >= m_dStartCml - s_dCalPrecision && dEndCml <= m_dStartCml + m_dTotalLen + s_dCalPrecision);
+    if (dStartCml < m_dStartCml - s_dCalPrecision || dEndCml > m_dStartCml + m_dTotalLen + s_dCalPrecision)
         return nullptr;
     
     int nPosCount = ceil((dEndCml - dStartCml) / dCurveStep) + 1;

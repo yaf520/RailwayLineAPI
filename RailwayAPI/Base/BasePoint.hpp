@@ -22,6 +22,8 @@ static const int s_nMaxArrCount = 2;
 static const int s_nEstimateRootSection = 10;
 ///缓和曲线计算积分精度
 static const int s_nAddPreCount = 10;
+///长度有效值
+static const double s_dLenPrecision = 1.0e-5;
 
 ///基础二维点、向量结构体
 typedef struct BasePoint2d

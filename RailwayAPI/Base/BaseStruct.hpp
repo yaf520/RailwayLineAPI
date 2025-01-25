@@ -40,7 +40,9 @@ struct tagJDInfo
     double dArcR1;          //第一圆曲线半径
     double dArcR2;          //第二圆曲线半径
     double dID;             //弧长控制参数(0为两段圆弧相等，非0则为第一段圆弧长度)
-    //int nBelongTo;          //所属线元索引
+    
+    int arrUnitsIndex[5];   //包含索引
+    int nIndexCount;        //索引数目
     
     ///初始化值
     tagJDInfo()
@@ -61,7 +63,9 @@ struct tagJDInfo
         dID = 0.0;
         dEnterR = __DBL_MAX__;
         dExitR = __DBL_MAX__;
-        //nBelongTo = -1;
+        
+        memset(arrUnitsIndex, 0, sizeof(int) * 5);
+        nIndexCount = 0;
     }
 };
 

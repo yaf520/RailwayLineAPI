@@ -59,17 +59,15 @@ private:
     ///   - nCurIndex: 当前交点索引
     ///   - arrLineElement: 线元单元数组
     ///   - nCurveElementCount： 线元数组大小
-    ///   - return: 单元起点坐标
-    Point2d CalculateLineElement(uint32_t nCurIndex, BaseLineElement** arrLineElement, uint8_t& nCurveElementCount);
+    void CalculateLineElement(uint32_t nCurIndex, BaseLineElement** arrLineElement, uint8_t& nCurveElementCount);
     
     /// 计算线元单元
     /// - Parameters:
     ///   - nCurIndex: 当前交点索引
     ///   - arrLineElement: 线元单元数组
     ///   - nCurveElementCount： 线元数组大小
-    ///   - posCurveStart:线元单元起点
     ///   - dCurrentCml: 当前里程
-    void JointLineElement(uint32_t nCurIndex, BaseLineElement** arrLineElement, uint8_t& nCurveElementCount, Point2d posCurveStart, double& dCurrentCml);
+    void JointLineElement(uint32_t nCurIndex, BaseLineElement** arrLineElement, uint8_t& nCurveElementCount, double& dCurrentCml);
     
     /// 计算曲线要素
     /// - Parameters:
@@ -96,7 +94,7 @@ public:
     /// - Parameters:
     ///   - nIndex: 交点索引
     ///   - vecOffset: 偏移向量
-    void UpdateJD(uint32_t nIndex, const Vector2d& vecOffset);
+    void UpdateJD(int nIndex, const Vector2d& vecOffset);
     
     /// 导出指定里程范围内平曲线数据
     /// - Parameters:

@@ -136,6 +136,9 @@ tagCmlDistAngle* HorizontalCurve::TrsNEToCmlDist(const double& dX, const double&
     uint32_t nMaxCount = 8;
     for (uint32_t nIndex = 0; nIndex < m_nElementCount; nIndex++)
     {
+        if (m_arrLineElement[nIndex]->m_dTotalLen < s_dLenPrecision)
+            continue;
+        
         double arrCml[s_nMaxArrCount] = {0.0};
         double arrDist[s_nMaxArrCount] = {0.0};
         double arrAngle[s_nMaxArrCount] = {0.0};
@@ -185,6 +188,9 @@ DyArray<tagCmlDistAngle> HorizontalCurve::TrsNEToCmlDist(const double& dX, const
     
     for (uint32_t nIndex = 0; nIndex < m_nElementCount; nIndex++)
     {
+        if (m_arrLineElement[nIndex]->m_dTotalLen < s_dLenPrecision)
+            continue;
+        
         double arrCml[s_nMaxArrCount] = {0.0};
         double arrDist[s_nMaxArrCount] = {0.0};
         double arrAngle[s_nMaxArrCount] = {0.0};
@@ -224,6 +230,9 @@ Point2d* HorizontalCurve::IntersectWithLine(const double& dAngle, const double& 
     Point2d posBase(dX, dY);
     for (uint32_t nIndex = 0; nIndex < m_nElementCount; nIndex++)
     {
+        if (m_arrLineElement[nIndex]->m_dTotalLen < s_dLenPrecision)
+            continue;
+        
         Point2d arrPos[s_nMaxArrCount];
         uint32_t nCount = m_arrLineElement[nIndex]->IntersectWithLine(dAngle, dX, dY, arrPos);
         if (nCount > 0)
@@ -275,6 +284,9 @@ DyArray<Point2d> HorizontalCurve::IntersectWithLine(const double& dAngle, const 
     Point2d posBase(dX, dY);
     for (uint32_t nIndex = 0; nIndex < m_nElementCount; nIndex++)
     {
+        if (m_arrLineElement[nIndex]->m_dTotalLen < s_dLenPrecision)
+            continue;
+        
         Point2d arrPos[s_nMaxArrCount];
         uint32_t nCount = m_arrLineElement[nIndex]->IntersectWithLine(dAngle, dX, dY, arrPos);
         if (nCount > 0)
