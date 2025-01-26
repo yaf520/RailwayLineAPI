@@ -11,7 +11,7 @@
 
 enum class JDType : int
 {
-    Invaild = -3,           //无效
+    Invalid = -3,           //无效
     End,                    //终点
     Start,                  //起点
     TurnPoint,              //转折点
@@ -42,12 +42,12 @@ struct tagJDInfo
     double dID;             //弧长控制参数(0为两段圆弧相等，非0则为第一段圆弧长度)
     
     int arrUnitsIndex[5];   //包含索引
-    int nIndexCount;        //索引数目
+    uint8_t nIndexCount;    //索引数目
     
     ///初始化值
     tagJDInfo()
     {
-        nJDType = JDType::Invaild;
+        nJDType = JDType::Invalid;
         dX = 0.0;
         dY = 0.0;
         dL1 = -1.0;

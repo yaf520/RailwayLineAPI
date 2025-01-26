@@ -61,7 +61,7 @@ private:
     ///   - nCurveElementCount： 线元数组大小
     void CalculateLineElement(uint32_t nCurIndex, BaseLineElement** arrLineElement, uint8_t& nCurveElementCount);
     
-    /// 计算线元单元
+    /// 拼接线元单元
     /// - Parameters:
     ///   - nCurIndex: 当前交点索引
     ///   - arrLineElement: 线元单元数组

@@ -122,7 +122,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "A8C8BD07-F54E-4508-99AE-597118F2B6CE"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "ProjectTest/main.cpp"
@@ -169,23 +169,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "A6DE84B0-7ECA-4FF1-BC31-B9E6A9B3C21B"
-            shouldBeEnabled = "No"
-            condition = "pArcElement-&gt;m_dTotalLen &lt; 0.1"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "RailwayAPI/LineElement/LineElementManager.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "160"
-            endingLineNumber = "160"
-            landmarkName = "LineElementManager::CalculateLineElement(nCurIndex, arrLineElement, nCurveElementCount)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "C8EC2078-C48B-482B-A673-4161E5D50E4A"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -202,17 +185,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "B6C4BA1E-FC67-4840-B31A-3C0A60C5B7F8"
+            uuid = "D44FF85E-D2F3-435E-84CD-8EAE9874EF21"
             shouldBeEnabled = "No"
-            condition = "pArcElement-&gt;m_dTotalLen &lt; 1.0e-5"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "RailwayAPI/LineElement/LineElementManager.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "183"
-            endingLineNumber = "183"
-            landmarkName = "LineElementManager::CalculateLineElement(nCurIndex, arrLineElement, nCurveElementCount)"
+            startingLineNumber = "622"
+            endingLineNumber = "622"
+            landmarkName = "LineElementManager::SetJDData(pJDInfo, nCount)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

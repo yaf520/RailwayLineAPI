@@ -158,7 +158,6 @@ void LineElementManager::CalculateLineElement(uint32_t nCurIndex, BaseLineElemen
             }
             
             //圆曲线
-            //if (abs(dArcAngle) * dArcR > 0.01)
             do
             {
                 ArcElement* pArcElement = nullptr;
@@ -434,7 +433,6 @@ void LineElementManager::JointLineElement(uint32_t nCurIndex, BaseLineElement** 
     {
         //当前阶段起点
         Point2d posStart = (m_nElementCount == 0 ? posJD1 : m_arrLineElement[m_nElementCount - 1]->m_posEnd);
-        //if (posStart.distanceTo(posCurveStart) >= 0.01)
         
         //入直线
         StraightLineElement* pStraightLineElement = new StraightLineElement();
@@ -464,7 +462,6 @@ void LineElementManager::JointLineElement(uint32_t nCurIndex, BaseLineElement** 
     if ((m_arrJD + nCurIndex + 1)->dExitR == __DBL_MAX__ || (m_arrJD + nCurIndex + 2)->nJDType == JDType::End)
     {
         BaseLineElement* pPreLineElement = m_arrLineElement[m_nElementCount - 1];
-        //if (pPreLineElement->m_posEnd.distanceTo(posJD3) >= 0.01)
         
         //出直线
         StraightLineElement* pStraightLineElement = new StraightLineElement();
@@ -631,12 +628,12 @@ void LineElementManager::SetJDData(const tagJDInfo* pJDInfo, uint32_t nCount)
 
 void LineElementManager::UpdateJD(int nIndex, const Vector2d& vecOffset)
 {
+    if (nIndex < 0 || nIndex >= m_nJDCount || vecOffset.isZeroVec())
+        return;
+    
     //#define RESET_ALL
     
 #ifdef RESET_ALL
-    
-    if (nIndex >= m_nJDCount || vecOffset.isZeroVec())
-        return;
     
     //复制数据
     tagJDInfo* pJDCopy = new tagJDInfo[m_nJDCount];
@@ -672,26 +669,26 @@ void LineElementManager::UpdateJD(int nIndex, const Vector2d& vecOffset)
         
         //包含索引
         int* arrIndex = (m_arrJD + nJDIndex + 1)->arrUnitsIndex;
-        int nIndexCount = (m_arrJD + nJDIndex + 1)->nIndexCount;
+        uint8_t nIndexCount = (m_arrJD + nJDIndex + 1)->nIndexCount;
         
         if (nJDIndex == nStartJDIndex)
             nUpdateBeginIndex = __max(arrIndex[0] - 1, 0);
         nUpdateEndIndex = __min(arrIndex[nIndexCount - 1] + 1, m_nElementCount - 1);
         
         //找出修改的线元
-        for (int nIndex = 0; nIndex < nIndexCount; nIndex++)
+        for (uint8_t nIndex = 0; nIndex < nIndexCount; nIndex++)
             arrLineElement[nIndex] = m_arrLineElement[arrIndex[nIndex]];
         
         //重新计算数据
         CalculateLineElement(nJDIndex, arrLineElement, nUnitElementCount);
     }
     
-    //更新夹直线
+    //更新其他线元
     double dCurCml = m_arrLineElement[nUpdateBeginIndex]->m_dStartCml;
-    for (int i = nUpdateBeginIndex; i <= nUpdateEndIndex; i++)
+    for (int i = nUpdateBeginIndex; i < m_nElementCount; i++)
     {
         m_arrLineElement[i]->m_dStartCml = dCurCml;
-        if (m_arrLineElement[i]->m_eElementType == ElementType::Line)
+        if (i <= nUpdateEndIndex && m_arrLineElement[i]->m_eElementType == ElementType::Line)
         {
             int nPreIndex = __max(0, i - 1);
             int nNextIndex = __min(m_nElementCount - 1, i + 1);
@@ -704,12 +701,6 @@ void LineElementManager::UpdateJD(int nIndex, const Vector2d& vecOffset)
         dCurCml += m_arrLineElement[i]->m_dTotalLen;
     }
     
-    //更新后续所有线元里程
-    for (int i = nUpdateEndIndex + 1; i < m_nElementCount; i++)
-    {
-        m_arrLineElement[i]->m_dStartCml = dCurCml;
-        dCurCml += m_arrLineElement[i]->m_dTotalLen;
-    }
 #endif
     
 }
