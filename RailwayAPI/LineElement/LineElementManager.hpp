@@ -31,14 +31,14 @@ public:
 protected:
     ///线元数组
     BaseLineElement** m_arrLineElement;
-    ///线元数目
-    uint32_t m_nElementCount;
     //交点数组
     tagJDInfo* m_arrJD;
-    //交点数目
-    uint32_t m_nJDCount;
     ///曲线要素数组
     tagCurveElementItem* m_arrCurveElement;
+    ///线元数目
+    uint32_t m_nElementCount;
+    //交点数目
+    uint32_t m_nJDCount;
     ///曲线要素数组大小
     uint32_t m_nCurveElementCount;
     ///曲线类别

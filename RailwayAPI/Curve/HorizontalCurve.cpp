@@ -84,7 +84,7 @@ BaseLineElement* HorizontalCurve::PosBelongTo(Point2d pos)
 
 BaseLineElement* HorizontalCurve::CmlBelongTo(double dCml)
 {
-    if (dCml < 0.0 || dCml > GetLength() + s_dValidPrecision)
+    if (dCml < 0.0 || dCml > GetLength() + s_dCalPrecision)
         return nullptr;
     
     //通过里程查询在哪一线元范围内(二分查找法)

@@ -32,8 +32,8 @@
             filePath = "ProjectTest/main.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "219"
-            endingLineNumber = "219"
+            startingLineNumber = "235"
+            endingLineNumber = "235"
             landmarkName = "main(argc, argv)"
             landmarkType = "9">
          </BreakpointContent>
@@ -128,8 +128,8 @@
             filePath = "ProjectTest/main.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "214"
-            endingLineNumber = "214"
+            startingLineNumber = "230"
+            endingLineNumber = "230"
             landmarkName = "main(argc, argv)"
             landmarkType = "9">
          </BreakpointContent>
@@ -160,8 +160,8 @@
             filePath = "RailwayAPI/LineElement/LineElementManager.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "572"
-            endingLineNumber = "572"
+            startingLineNumber = "571"
+            endingLineNumber = "571"
             landmarkName = "LineElementManager::SetJDData(pJDInfo, nCount)"
             landmarkType = "7">
          </BreakpointContent>
@@ -176,8 +176,8 @@
             filePath = "RailwayAPI/LineElement/LineElementManager.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "648"
-            endingLineNumber = "648"
+            startingLineNumber = "647"
+            endingLineNumber = "647"
             landmarkName = "LineElementManager::UpdateJD(nIndex, vecOffset)"
             landmarkType = "7">
          </BreakpointContent>
@@ -192,10 +192,26 @@
             filePath = "RailwayAPI/LineElement/LineElementManager.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "622"
-            endingLineNumber = "622"
+            startingLineNumber = "621"
+            endingLineNumber = "621"
             landmarkName = "LineElementManager::SetJDData(pJDInfo, nCount)"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "7F01F15C-916B-4DAD-8695-7520B5A5AE8F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ProjectTest/main.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "198"
+            endingLineNumber = "198"
+            landmarkName = "main(argc, argv)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

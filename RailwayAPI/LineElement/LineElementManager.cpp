@@ -451,9 +451,8 @@ void LineElementManager::JointLineElement(uint32_t nCurIndex, BaseLineElement** 
     for (uint8_t j = 0; j < nCurveElementCount; j++)
     {
         arrLineElement[j]->m_dStartCml = dCurrentCml;
-        arrLineElement[j]->m_nIndex = m_nElementCount;
+        arrLineElement[j]->m_nIndex = (m_arrJD + nCurIndex + 1)->arrUnitsIndex[j] = m_nElementCount;
         
-        (m_arrJD + nCurIndex + 1)->arrUnitsIndex[j] = m_nElementCount;
         m_arrLineElement[m_nElementCount++] = arrLineElement[j];
         
         dCurrentCml += arrLineElement[j]->m_dTotalLen;

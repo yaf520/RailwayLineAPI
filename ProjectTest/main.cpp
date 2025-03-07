@@ -195,6 +195,22 @@ int main(int argc, const char * argv[]) {
     RouteAPI* pAPI = new RouteAPI;
     pAPI->SetData(&vecJD.front(), vecJD.size(), vecDL.size() > 0 ? &vecDL.front() : nullptr, vecDL.size(), vecSlope.size() > 0 ? &vecSlope.front() : nullptr, vecSlope.size());
     
+    double dLen1 = pAPI->GetLength();
+    
+    Point2d p4(11437.1811917216, 6829.9712457906);
+    Point2d p5(11451.2969, 6189.4564);
+    Vector2d vecOfffset = p5 - p4;
+    
+    pAPI->UpdateJD(2, vecOfffset);
+    
+    double dLen2 = pAPI->GetLength();
+    
+    //4
+    //6829.9712457906 11437.1811917216
+    
+    //5
+    //6189.4564 11451.2969 6000.0000000000
+    
 //#define SINGLE_DATA_TEST //单点测试
     
 #ifdef SINGLE_DATA_TEST
