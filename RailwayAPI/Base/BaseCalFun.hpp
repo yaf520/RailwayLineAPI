@@ -79,6 +79,10 @@ public:
     /// - Parameter dAngle: 弧度值
     static void KeepAngleIn2PI(double& dAngle);
     
+    /// 方位角与直角坐标系角的相互转换
+    /// - Parameter dAngle: 源角度
+    static double TransferAngle(double dAngle);
+    
     /// 四舍五入小数点
     /// - Parameters:
     ///   - dValue: 源数值

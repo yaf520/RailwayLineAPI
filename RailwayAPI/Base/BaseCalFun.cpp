@@ -128,6 +128,13 @@ void BaseCalFun::KeepAngleIn2PI(double& dAngle)
     }
 }
 
+double BaseCalFun::TransferAngle(double dAngle)
+{
+    double dRet = MATH_PI_2 - dAngle;
+    KeepAngleIn2PI(dRet);
+    return dRet;
+}
+
 double BaseCalFun::Round(const double& dValue, int nPrec)
 {
     double dRound = pow(10.0, nPrec);

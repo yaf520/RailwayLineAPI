@@ -171,8 +171,7 @@ tagCmlDistAngle* HorizontalCurve::TrsNEToCmlDist(const double& dX, const double&
                 
                 (pArrRet + nInsertIndex)->dCml = arrCml[nProIndex];
                 (pArrRet + nInsertIndex)->dDist = -arrDist[nProIndex];
-                (pArrRet + nInsertIndex)->dFwj = MATH_PI_2 - arrAngle[nProIndex];
-                BaseCalFun::KeepAngleIn2PI((pArrRet+ nInsertIndex)->dFwj);
+                (pArrRet + nInsertIndex)->dFwj = BaseCalFun::TransferAngle(arrAngle[nProIndex]);
                     
                 nArrCount++;
             }
@@ -209,8 +208,7 @@ DyArray<tagCmlDistAngle> HorizontalCurve::TrsNEToCmlDist(const double& dX, const
                 tagCmlDistAngle item;
                 item.dCml = arrCml[nProIndex];
                 item.dDist = -arrDist[nProIndex];
-                item.dFwj = MATH_PI_2 - arrAngle[nProIndex];
-                BaseCalFun::KeepAngleIn2PI(item.dFwj);
+                item.dFwj = BaseCalFun::TransferAngle(arrAngle[nProIndex]);
 
                 arrRet.InsertAt(nInsertIndex, item);
             }

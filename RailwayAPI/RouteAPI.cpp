@@ -47,9 +47,7 @@ bool RouteAPI::TrsCmlDistToNE(const double& dCml, const double& dDist, double& N
     double dTanAngle = 0.0;
     if (!m_pHorCurve->TrsCmlDistToNE(dCml, -dDist, E_X, N_Y, dTanAngle))
         return false;
-    dTanAngle = MATH_PI_2 - dTanAngle;
-    BaseCalFun::KeepAngleIn2PI(dTanAngle);
-    dFwj = dTanAngle;
+    dFwj = BaseCalFun::TransferAngle(dTanAngle);
     
     return true;
 }
