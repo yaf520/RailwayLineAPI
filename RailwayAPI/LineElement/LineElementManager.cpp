@@ -417,7 +417,7 @@ void LineElementManager::JointLineElement(uint32_t nCurIndex, BaseLineElement** 
     JDType nJDType = (m_arrJD + nCurIndex + 1)->nJDType;
     
     //单元起点
-    Point2d posCurveStart = arrLineElement[0]->m_posStart;
+    Point2d posCurveStart = (nCurveElementCount > 0 ? arrLineElement[0]->m_posStart : posJD2);
     
     //拼接线元
     if (m_nElementCount > 0 && m_arrLineElement[m_nElementCount - 1]->m_eElementType == ElementType::Line)

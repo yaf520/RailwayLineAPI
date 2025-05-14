@@ -248,9 +248,6 @@ template <class T>
 T& DyArray<T>::GetAt(int nIndex)
 {
     assert(nIndex >= 0 && nIndex < m_nElementCount);
-    if (nIndex < 0 || nIndex >= m_nElementCount)
-        throw std::out_of_range("out of ElementCount");
-    
     return m_pData[nIndex];
 }
 
@@ -258,9 +255,6 @@ template <class T>
 const T& DyArray<T>::GetAt(int nIndex) const
 {
     assert(nIndex >= 0 && nIndex < m_nElementCount);
-    if (nIndex < 0 || nIndex >= m_nElementCount)
-        throw std::out_of_range("out of ElementCount");
-    
     return m_pData[nIndex];
 }
 

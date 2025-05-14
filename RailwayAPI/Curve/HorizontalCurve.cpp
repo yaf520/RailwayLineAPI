@@ -151,7 +151,7 @@ tagCmlDistAngle* HorizontalCurve::TrsNEToCmlDist(const double& dX, const double&
             
             if (nArrCount >= nMaxCount)
             {
-                nMaxCount += __max(nCount, nMaxCount);
+                nMaxCount += nArrCount;
                 tagCmlDistAngle* pNewArr = new tagCmlDistAngle[nMaxCount];
                 memcpy(pNewArr, pArrRet, sizeof(tagCmlDistAngle) * nArrCount);
                 delete [] pArrRet;
@@ -240,7 +240,7 @@ Point2d* HorizontalCurve::IntersectWithLine(const double& dAngle, const double& 
             
             if (nArrCount >= nMaxCount)
             {
-                nMaxCount += __max(nCount, nMaxCount);
+                nMaxCount += nArrCount;
                 Point2d* pNewArr = new Point2d[nMaxCount];
                 memcpy((void*)pNewArr, (void*)arrRet, sizeof(Point2d) * nArrCount);
                 delete [] arrRet;
