@@ -28,9 +28,9 @@ public:
     
 protected:
     //相对里程->相对坐标
-    inline Point2d TrsCmlToNE_Relative(const double& dCml) override { return Point2d(cos(m_dStartTanAngle), sin(m_dStartTanAngle)) * dCml; };
+    inline Point2d TrsCmlToNE_Relative(const double& dCml) override { return Point2d(cos(dStartTanAngle), sin(dStartTanAngle)) * dCml; };
     
-    double TrsCmlToAngle_Relative(const double& dCml) override { return m_dStartTanAngle; }
+    double TrsCmlToAngle_Relative(const double& dCml) override { return dStartTanAngle; }
     
 public:
     void InitData() override {};

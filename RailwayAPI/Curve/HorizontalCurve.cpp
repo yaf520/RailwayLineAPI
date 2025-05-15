@@ -30,7 +30,7 @@ BaseLineElement* HorizontalCurve::PosBelongTo(Point2d pos)
     double dDisTemp = 0.0;
     for (uint32_t i = 0; i < m_nElementCount; i++)
     {
-        dDisTemp = m_arrLineElement[i]->m_posStart.distanceTo(pos);
+        dDisTemp = m_arrLineElement[i]->pntStart.distanceTo(pos);
         if (dDisTemp < dMinDis)
         {
             dMinDis = dDisTemp;
@@ -40,11 +40,11 @@ BaseLineElement* HorizontalCurve::PosBelongTo(Point2d pos)
     
 #ifdef USE_VECTOR
     
-    Vector2d vecCal = pos - m_arrLineElement[nMinDisIndex]->m_posStart;
+    Vector2d vecCal = pos - m_arrLineElement[nMinDisIndex]->pntStart;
     if (vecCal.isZeroVec())
         return m_arrLineElement[nMinDisIndex];
     
-    double dLineElementAngle = m_arrLineElement[nMinDisIndex]->m_dStartTanAngle;
+    double dLineElementAngle = m_arrLineElement[nMinDisIndex]->dStartTanAngle;
     Vector2d vecTan(cos(dLineElementAngle), sin(dLineElementAngle));
     
     double dDot = BaseCalFun::Round(vecTan.dot(vecCal) / vecCal.model()) ;
@@ -54,9 +54,9 @@ BaseLineElement* HorizontalCurve::PosBelongTo(Point2d pos)
     bool bInPreElement = (dDot < 0.0);
     if (bInPreElement && nMinDisIndex == 0)
     {
-        Vector2d vec = m_arrLineElement[nMinDisIndex]->m_posStart - m_arrLineElement[m_nElementCount - 1]->m_posEnd;
+        Vector2d vec = m_arrLineElement[nMinDisIndex]->pntStart - m_arrLineElement[m_nElementCount - 1]->pntEnd;
         if (vec.model() < 0.0001 &&
-            abs(m_arrLineElement[nMinDisIndex]->m_dStartTanAngle - m_arrLineElement[m_nElementCount - 1]->m_dStartTanAngle) < s_dCalPrecision)
+            abs(m_arrLineElement[nMinDisIndex]->dStartTanAngle - m_arrLineElement[m_nElementCount - 1]->dStartTanAngle) < s_dCalPrecision)
             return m_arrLineElement[m_nElementCount - 1];
         
         return nullptr;
@@ -92,7 +92,7 @@ BaseLineElement* HorizontalCurve::CmlBelongTo(double dCml)
     int right = m_nElementCount - 1;
     while (left <= right) {
         int mid = (left + right) / 2;
-        if (m_arrLineElement[mid]->m_dStartCml > dCml)
+        if (m_arrLineElement[mid]->dStartCml > dCml)
             right = mid - 1;
         else
             left = mid + 1;
@@ -136,7 +136,7 @@ tagCmlDistAngle* HorizontalCurve::TrsNEToCmlDist(const double& dX, const double&
     uint32_t nMaxCount = 8;
     for (uint32_t nIndex = 0; nIndex < m_nElementCount; nIndex++)
     {
-        if (m_arrLineElement[nIndex]->m_dTotalLen < s_dLenPrecision)
+        if (m_arrLineElement[nIndex]->dTotalLen < s_dLenPrecision)
             continue;
         
         double arrCml[s_nMaxArrCount] = {0.0};
@@ -187,7 +187,7 @@ DyArray<tagCmlDistAngle> HorizontalCurve::TrsNEToCmlDist(const double& dX, const
     
     for (uint32_t nIndex = 0; nIndex < m_nElementCount; nIndex++)
     {
-        if (m_arrLineElement[nIndex]->m_dTotalLen < s_dLenPrecision)
+        if (m_arrLineElement[nIndex]->dTotalLen < s_dLenPrecision)
             continue;
         
         double arrCml[s_nMaxArrCount] = {0.0};
@@ -228,7 +228,7 @@ Point2d* HorizontalCurve::IntersectWithLine(const double& dAngle, const double& 
     Point2d posBase(dX, dY);
     for (uint32_t nIndex = 0; nIndex < m_nElementCount; nIndex++)
     {
-        if (m_arrLineElement[nIndex]->m_dTotalLen < s_dLenPrecision)
+        if (m_arrLineElement[nIndex]->dTotalLen < s_dLenPrecision)
             continue;
         
         Point2d arrPos[s_nMaxArrCount];
@@ -282,7 +282,7 @@ DyArray<Point2d> HorizontalCurve::IntersectWithLine(const double& dAngle, const 
     Point2d posBase(dX, dY);
     for (uint32_t nIndex = 0; nIndex < m_nElementCount; nIndex++)
     {
-        if (m_arrLineElement[nIndex]->m_dTotalLen < s_dLenPrecision)
+        if (m_arrLineElement[nIndex]->dTotalLen < s_dLenPrecision)
             continue;
         
         Point2d arrPos[s_nMaxArrCount];

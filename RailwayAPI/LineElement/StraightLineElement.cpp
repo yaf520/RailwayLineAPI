@@ -10,18 +10,18 @@
 
 StraightLineElement::StraightLineElement()
 {
-    m_eElementType = ElementType::Line;
+    eElementType = ElementType::Line;
 }
 
 bool StraightLineElement::TrsCmlDistToNE(const double& dCml, const double& dDist, double& dX, double& dY, double& dAngle)
 {
-    assert(dCml >= m_dStartCml - s_dCalPrecision && dCml <= m_dStartCml + m_dTotalLen + s_dCalPrecision);
-    if (dCml < m_dStartCml - s_dCalPrecision || dCml > m_dStartCml + m_dTotalLen + s_dCalPrecision)
+    assert(dCml >= dStartCml - s_dCalPrecision && dCml <= dStartCml + dTotalLen + s_dCalPrecision);
+    if (dCml < dStartCml - s_dCalPrecision || dCml > dStartCml + dTotalLen + s_dCalPrecision)
         return false;
     
-    double dDeltaLen = dCml - m_dStartCml;
-    Point2d posDist = m_posStart + TrsCmlToNE_Relative(dDeltaLen);
-    dAngle = m_dStartTanAngle;
+    double dDeltaLen = dCml - dStartCml;
+    Point2d posDist = pntStart + TrsCmlToNE_Relative(dDeltaLen);
+    dAngle = dStartTanAngle;
     
     //投影点
     if (dDist != 0.0)
@@ -40,15 +40,15 @@ uint32_t StraightLineElement::TrsNEToCmlDist(const double& dX, const double& dY,
 {
     double dPecent = 0.0;
     Point2d posBase(dX, dY);
-    Point2d posPrj = BaseCalFun::PointToLineProjection(posBase, m_posStart, m_posEnd, dPecent);
+    Point2d posPrj = BaseCalFun::PointToLineProjection(posBase, pntStart, pntEnd, dPecent);
     
     if (dPecent < -s_dCalPrecision || dPecent > 1.0 + s_dCalPrecision) return 0;
     
-    arrAngle[0] = m_dStartTanAngle;
-    arrCml[0] = m_dStartCml + posPrj.distanceTo(m_posStart);
+    arrAngle[0] = dStartTanAngle;
+    arrCml[0] = dStartCml + posPrj.distanceTo(pntStart);
     
     //左右判断
-    Vector2d vec1 = m_posEnd - posPrj;
+    Vector2d vec1 = pntEnd - posPrj;
     Vector2d vec2 = posBase - posPrj;
     double dCross = vec1.cross(vec2);
     arrDist[0] = posPrj.distanceTo(posBase) * (dCross > 0.0 ? 1.0 : -1.0);
@@ -58,19 +58,19 @@ uint32_t StraightLineElement::TrsNEToCmlDist(const double& dX, const double& dY,
 
 uint32_t StraightLineElement::IntersectWithLine(const double& dAngle, const double& dX, const double& dY, Point2d arrCrossPos[s_nMaxArrCount])
 {
-    if (abs(dAngle - m_dStartTanAngle) < s_dCalPrecision)
+    if (abs(dAngle - dStartTanAngle) < s_dCalPrecision)
         return 0;
     
     Vector2d vec1(cos(dAngle), sin(dAngle));
-    Vector2d vec2(cos(m_dStartTanAngle), sin(m_dStartTanAngle));
+    Vector2d vec2(cos(dStartTanAngle), sin(dStartTanAngle));
     Point2d p1(dX, dY);
-    Point2d p2 = m_posStart;
+    Point2d p2 = pntStart;
     
     double t = (p2 - p1).cross(vec2) / vec1.cross(vec2);
     Point2d posCross = p1 + vec1 * t;
     
     double dPecent = 0.0;
-    BaseCalFun::PointToLineProjection(posCross, m_posStart, m_posEnd, dPecent);
+    BaseCalFun::PointToLineProjection(posCross, pntStart, pntEnd, dPecent);
     if (dPecent < -s_dCalPrecision || dPecent > 1.0 + s_dCalPrecision)
         return 0;
     
@@ -81,14 +81,14 @@ uint32_t StraightLineElement::IntersectWithLine(const double& dAngle, const doub
 
 tagExportLineElement* StraightLineElement::ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep)
 {
-    assert(dStartCml >= m_dStartCml - s_dCalPrecision && dEndCml <= m_dStartCml + m_dTotalLen + s_dCalPrecision);
-    if (dStartCml < m_dStartCml - s_dCalPrecision || dEndCml > m_dStartCml + m_dTotalLen + s_dCalPrecision)
+    assert(dStartCml >= dStartCml - s_dCalPrecision && dEndCml <= dStartCml + dTotalLen + s_dCalPrecision);
+    if (dStartCml < dStartCml - s_dCalPrecision || dEndCml > dStartCml + dTotalLen + s_dCalPrecision)
         return nullptr;
     
     double dAngle = 0.0;
     tagExportLineElement* pRet = new tagExportLineElement;
     pRet->nPosCount = 2;
-    pRet->eLineType = m_eElementType;
+    pRet->eLineType = eElementType;
     pRet->pArrPos = new PointExport[2];
     TrsCmlDistToNE(dStartCml, dDist, pRet->pArrPos[0].dX, pRet->pArrPos[0].dY, dAngle);
     TrsCmlDistToNE(dEndCml, dDist, pRet->pArrPos[1].dX, pRet->pArrPos[1].dY, dAngle);
@@ -98,9 +98,9 @@ tagExportLineElement* StraightLineElement::ExportHorCurve(double dStartCml, doub
 
 bool StraightLineElement::TrsCmlToHeight(const double& dCml, double& dHeight, double& dFyj)
 {
-    double dDeltaCml = dCml - m_posStart.x;
-    dHeight = m_posStart.y + tan(m_dStartTanAngle) * dDeltaCml;
-    dFyj = m_dStartTanAngle;
+    double dDeltaCml = dCml - pntStart.x;
+    dHeight = pntStart.y + tan(dStartTanAngle) * dDeltaCml;
+    dFyj = dStartTanAngle;
     
     return true;
 }

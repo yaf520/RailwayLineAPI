@@ -17,8 +17,8 @@ public:
     virtual ~ArcElement() {}
     
 public:
-    double m_dArcR;
-    bool m_bTurnLeft;
+    double dArcR;
+    bool bTurnLeft;
     
 public:
     bool TrsCmlDistToNE(const double& dCml, const double& dDist, double& dX, double& dY, double& dAngle) override;
@@ -35,7 +35,7 @@ protected:
     //相对里程->相对坐标
     Point2d TrsCmlToNE_Relative(const double& dCml) override;
     
-    inline double TrsCmlToAngle_Relative(const double& dCml) override { return dCml / m_dArcR; }
+    inline double TrsCmlToAngle_Relative(const double& dCml) override { return dCml / dArcR; }
     
 public:
     void InitData() override;

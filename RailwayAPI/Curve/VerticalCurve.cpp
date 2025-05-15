@@ -46,7 +46,7 @@ BaseLineElement* VerticalCurve::CmlBelongTo(double dCml)
     int right = m_nElementCount - 1;
     while (left <= right) {
         int mid = (left + right) / 2;
-        if (m_arrLineElement[mid]->m_posStart.x > dCml)
+        if (m_arrLineElement[mid]->pntStart.x > dCml)
             right = mid - 1;
         else
             left = mid + 1;

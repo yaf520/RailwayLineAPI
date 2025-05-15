@@ -16,18 +16,18 @@
 class BaseLineElement
 {
 public:
-    BaseLineElement() : m_dStartCml(0.0), m_dTotalLen(0.0), m_dStartTanAngle(0.0), m_dEndTanAngle(0.0), m_eElementType(ElementType::Invalid), m_nIndex(0) {}
+    BaseLineElement() : dStartCml(0.0), dTotalLen(0.0), dStartTanAngle(0.0), dEndTanAngle(0.0), eElementType(ElementType::Invalid), nIndex(0) {}
     virtual ~BaseLineElement() {}
     
 public:
-    Point2d m_posStart;               //起点坐标
-    Point2d m_posEnd;                 //终点坐标
-    double m_dStartCml;               //起点里程
-    double m_dTotalLen;               //单段长度
-    double m_dStartTanAngle;          //起点角度
-    double m_dEndTanAngle;            //终点角度
-    ElementType m_eElementType;       //线段类别
-    uint32_t m_nIndex;                //线元索引
+    Point2d pntStart;               //起点坐标
+    Point2d pntEnd;                 //终点坐标
+    double dStartCml;               //起点里程
+    double dTotalLen;               //单段长度
+    double dStartTanAngle;          //起点角度
+    double dEndTanAngle;            //终点角度
+    ElementType eElementType;       //线段类别
+    uint32_t nIndex;                //线元索引
     
 public:
     ///连续里程+投影距离 -> 坐标+切线角
@@ -39,7 +39,7 @@ public:
     ///里程->高程+俯仰角
     virtual bool TrsCmlToHeight(const double& dCml, double& dHeight, double& dFyj) = 0;
     
-    ///计算任意直线的交点
+    ///计算与任意直线的交点
     virtual uint32_t IntersectWithLine(const double& dAngle, const double& dX, const double& dY, Point2d arrCrossPos[s_nMaxArrCount]) = 0;
     
     ///导出平曲线范围里程内的线元数据

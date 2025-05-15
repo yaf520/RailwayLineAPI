@@ -20,14 +20,14 @@ public:
     virtual ~SpiralLineElement() {}
     
 public:
-    double m_dEnterR;       //曲线起始半径
-    double m_dExitR;        //曲线结束半径
-    double m_dC;            //缓和曲线参数
-    bool m_bTurnLeft;       //转向方向
+    double dEnterR;       //曲线起始半径
+    double dExitR;        //曲线结束半径
+    double dC;            //缓和曲线参数
+    bool bTurnLeft;       //转向方向
     
 private:
     bool m_bEnter;          //入or出
-    Point2d m_posBase;      //计算基准点
+    Point2d m_pntBase;      //计算基准点
     double m_dBaseTanAngle; //计算基准切线角
     double m_dHideLen;      //非完整缓和曲线隐藏长度
     
@@ -46,7 +46,7 @@ protected:
     //相对里程->相对坐标
     Point2d TrsCmlToNE_Relative(const double& dCml) override;
     //相对里程->相对角度
-    inline double TrsCmlToAngle_Relative(const double& dCml) override { return dCml * dCml / 2.0 / m_dC; }
+    inline double TrsCmlToAngle_Relative(const double& dCml) override { return dCml * dCml / 2.0 / dC; }
     
 protected:
     //相对里程->圆心坐标

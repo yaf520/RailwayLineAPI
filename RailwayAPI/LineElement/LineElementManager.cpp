@@ -133,7 +133,7 @@ void LineElementManager::CalculateLineElement(uint32_t nCurIndex, BaseLineElemen
             {
                 //前缓和曲线
                 SpiralLineElement* pSpiralElement = nullptr;
-                if (arrLineElement[nCurveElementCount] && arrLineElement[nCurveElementCount]->m_eElementType == ElementType::SpiralCurve)
+                if (arrLineElement[nCurveElementCount] && arrLineElement[nCurveElementCount]->eElementType == ElementType::SpiralCurve)
                     pSpiralElement = (SpiralLineElement*)arrLineElement[nCurveElementCount++];
                 else
                 {
@@ -141,27 +141,27 @@ void LineElementManager::CalculateLineElement(uint32_t nCurIndex, BaseLineElemen
                     arrLineElement[nCurveElementCount++] = pSpiralElement;
                 }
                 
-                pSpiralElement->m_posStart = posCurveStart;
-                pSpiralElement->m_dStartTanAngle = dTanAngleStart;
-                pSpiralElement->m_dTotalLen = dL1;
-                pSpiralElement->m_bTurnLeft = bTurnLeft;
-                pSpiralElement->m_dEnterR =  dEnterR;
-                pSpiralElement->m_dExitR = dArcR;
+                pSpiralElement->pntStart = posCurveStart;
+                pSpiralElement->dStartTanAngle = dTanAngleStart;
+                pSpiralElement->dTotalLen = dL1;
+                pSpiralElement->bTurnLeft = bTurnLeft;
+                pSpiralElement->dEnterR =  dEnterR;
+                pSpiralElement->dExitR = dArcR;
                 pSpiralElement->InitData();
                 
-                vecWhole += (pSpiralElement->m_posEnd - pSpiralElement->m_posStart);
+                vecWhole += (pSpiralElement->pntEnd - pSpiralElement->pntStart);
                 
                 //变换起点
-                posCurveStart = pSpiralElement->m_posEnd;
+                posCurveStart = pSpiralElement->pntEnd;
                 //变换角度
-                dTanAngleStart = pSpiralElement->m_dEndTanAngle;
+                dTanAngleStart = pSpiralElement->dEndTanAngle;
             }
             
             //圆曲线
             do
             {
                 ArcElement* pArcElement = nullptr;
-                if (arrLineElement[nCurveElementCount] && arrLineElement[nCurveElementCount]->m_eElementType == ElementType::Arc)
+                if (arrLineElement[nCurveElementCount] && arrLineElement[nCurveElementCount]->eElementType == ElementType::Arc)
                     pArcElement = (ArcElement*)arrLineElement[nCurveElementCount++];
                 else
                 {
@@ -169,26 +169,26 @@ void LineElementManager::CalculateLineElement(uint32_t nCurIndex, BaseLineElemen
                     arrLineElement[nCurveElementCount++] = pArcElement;
                 }
                 
-                pArcElement->m_posStart = posCurveStart;
-                pArcElement->m_dStartTanAngle = dTanAngleStart;
-                pArcElement->m_dArcR = dArcR;
-                pArcElement->m_bTurnLeft = bTurnLeft;
-                pArcElement->m_dTotalLen = dArcR * abs(dArcAngle);
+                pArcElement->pntStart = posCurveStart;
+                pArcElement->dStartTanAngle = dTanAngleStart;
+                pArcElement->dArcR = dArcR;
+                pArcElement->bTurnLeft = bTurnLeft;
+                pArcElement->dTotalLen = dArcR * abs(dArcAngle);
                 pArcElement->InitData();
 
-                vecWhole += (pArcElement->m_posEnd - pArcElement->m_posStart);
+                vecWhole += (pArcElement->pntEnd - pArcElement->pntStart);
                 
                 //变换起点
-                posCurveStart = pArcElement->m_posEnd;
+                posCurveStart = pArcElement->pntEnd;
                 //变换角度
-                dTanAngleStart = pArcElement->m_dEndTanAngle;
+                dTanAngleStart = pArcElement->dEndTanAngle;
             } while(0);
             
             if (abs(dL2) > s_dCalPrecision)
             {
                 //后缓和曲线
                 SpiralLineElement* pSpiralElement = nullptr;
-                if (arrLineElement[nCurveElementCount] && arrLineElement[nCurveElementCount]->m_eElementType == ElementType::SpiralCurve)
+                if (arrLineElement[nCurveElementCount] && arrLineElement[nCurveElementCount]->eElementType == ElementType::SpiralCurve)
                     pSpiralElement = (SpiralLineElement*)arrLineElement[nCurveElementCount++];
                 else
                 {
@@ -196,15 +196,15 @@ void LineElementManager::CalculateLineElement(uint32_t nCurIndex, BaseLineElemen
                     arrLineElement[nCurveElementCount++] = pSpiralElement;
                 }
                 
-                pSpiralElement->m_posStart = posCurveStart;
-                pSpiralElement->m_dStartTanAngle = dTanAngleStart;
-                pSpiralElement->m_dTotalLen = dL2;
-                pSpiralElement->m_bTurnLeft = bTurnLeft;
-                pSpiralElement->m_dEnterR = dArcR;
-                pSpiralElement->m_dExitR = dExitR;
+                pSpiralElement->pntStart = posCurveStart;
+                pSpiralElement->dStartTanAngle = dTanAngleStart;
+                pSpiralElement->dTotalLen = dL2;
+                pSpiralElement->bTurnLeft = bTurnLeft;
+                pSpiralElement->dEnterR = dArcR;
+                pSpiralElement->dExitR = dExitR;
                 pSpiralElement->InitData();
 
-                vecWhole += (pSpiralElement->m_posEnd - pSpiralElement->m_posStart);
+                vecWhole += (pSpiralElement->pntEnd - pSpiralElement->pntStart);
             }
             
             //计算曲线起点世界坐标
@@ -260,7 +260,7 @@ void LineElementManager::CalculateLineElement(uint32_t nCurIndex, BaseLineElemen
             {
                 //第一段缓和曲线
                 SpiralLineElement* pSpiralElement = nullptr;
-                if (arrLineElement[nCurveElementCount] && arrLineElement[nCurveElementCount]->m_eElementType == ElementType::SpiralCurve)
+                if (arrLineElement[nCurveElementCount] && arrLineElement[nCurveElementCount]->eElementType == ElementType::SpiralCurve)
                     pSpiralElement = (SpiralLineElement*)arrLineElement[nCurveElementCount++];
                 else
                 {
@@ -268,26 +268,26 @@ void LineElementManager::CalculateLineElement(uint32_t nCurIndex, BaseLineElemen
                     arrLineElement[nCurveElementCount++] = pSpiralElement;
                 }
                 
-                pSpiralElement->m_posStart = posCurveStart;
-                pSpiralElement->m_dStartTanAngle = dTanAngleStart;
-                pSpiralElement->m_dTotalLen = dL1;
-                pSpiralElement->m_bTurnLeft = bTurnLeft;
-                pSpiralElement->m_dEnterR = dEnterR;
-                pSpiralElement->m_dExitR = dArcR1;
+                pSpiralElement->pntStart = posCurveStart;
+                pSpiralElement->dStartTanAngle = dTanAngleStart;
+                pSpiralElement->dTotalLen = dL1;
+                pSpiralElement->bTurnLeft = bTurnLeft;
+                pSpiralElement->dEnterR = dEnterR;
+                pSpiralElement->dExitR = dArcR1;
                 pSpiralElement->InitData();
                 
-                vecWhole += (pSpiralElement->m_posEnd - pSpiralElement->m_posStart);
+                vecWhole += (pSpiralElement->pntEnd - pSpiralElement->pntStart);
                 
                 //变换起点
-                posCurveStart = pSpiralElement->m_posEnd;
+                posCurveStart = pSpiralElement->pntEnd;
                 //变换角度
-                dTanAngleStart = pSpiralElement->m_dEndTanAngle;
+                dTanAngleStart = pSpiralElement->dEndTanAngle;
             }
             
             do {
                 //第一段圆曲线
                 ArcElement* pArcElement = nullptr;
-                if (arrLineElement[nCurveElementCount] && arrLineElement[nCurveElementCount]->m_eElementType == ElementType::Arc)
+                if (arrLineElement[nCurveElementCount] && arrLineElement[nCurveElementCount]->eElementType == ElementType::Arc)
                     pArcElement = (ArcElement*)arrLineElement[nCurveElementCount++];
                 else
                 {
@@ -295,25 +295,25 @@ void LineElementManager::CalculateLineElement(uint32_t nCurIndex, BaseLineElemen
                     arrLineElement[nCurveElementCount++] = pArcElement;
                 }
                 
-                pArcElement->m_posStart = posCurveStart;
-                pArcElement->m_dStartTanAngle = dTanAngleStart;
-                pArcElement->m_dArcR = dArcR1;
-                pArcElement->m_bTurnLeft = bTurnLeft;
-                pArcElement->m_dTotalLen = dArcR1 * abs(dArcAngle1);
+                pArcElement->pntStart = posCurveStart;
+                pArcElement->dStartTanAngle = dTanAngleStart;
+                pArcElement->dArcR = dArcR1;
+                pArcElement->bTurnLeft = bTurnLeft;
+                pArcElement->dTotalLen = dArcR1 * abs(dArcAngle1);
                 pArcElement->InitData();
                 
-                vecWhole += (pArcElement->m_posEnd - pArcElement->m_posStart);
+                vecWhole += (pArcElement->pntEnd - pArcElement->pntStart);
                 
                 //变换起点
-                posCurveStart = pArcElement->m_posEnd;
+                posCurveStart = pArcElement->pntEnd;
                 //变换角度
-                dTanAngleStart = pArcElement->m_dEndTanAngle;
+                dTanAngleStart = pArcElement->dEndTanAngle;
             } while (false);
             
             do {
                 //第二段缓和曲线
                 SpiralLineElement* pSpiralElement = nullptr;
-                if (arrLineElement[nCurveElementCount] && arrLineElement[nCurveElementCount]->m_eElementType == ElementType::SpiralCurve)
+                if (arrLineElement[nCurveElementCount] && arrLineElement[nCurveElementCount]->eElementType == ElementType::SpiralCurve)
                     pSpiralElement = (SpiralLineElement*)arrLineElement[nCurveElementCount++];
                 else
                 {
@@ -321,26 +321,26 @@ void LineElementManager::CalculateLineElement(uint32_t nCurIndex, BaseLineElemen
                     arrLineElement[nCurveElementCount++] = pSpiralElement;
                 }
                 
-                pSpiralElement->m_posStart = posCurveStart;
-                pSpiralElement->m_dStartTanAngle = dTanAngleStart;
-                pSpiralElement->m_dTotalLen = dL2;
-                pSpiralElement->m_bTurnLeft = bTurnLeft;
-                pSpiralElement->m_dEnterR =  dArcR1;
-                pSpiralElement->m_dExitR = dArcR2;
+                pSpiralElement->pntStart = posCurveStart;
+                pSpiralElement->dStartTanAngle = dTanAngleStart;
+                pSpiralElement->dTotalLen = dL2;
+                pSpiralElement->bTurnLeft = bTurnLeft;
+                pSpiralElement->dEnterR =  dArcR1;
+                pSpiralElement->dExitR = dArcR2;
                 pSpiralElement->InitData();
                 
-                vecWhole += (pSpiralElement->m_posEnd - pSpiralElement->m_posStart);
+                vecWhole += (pSpiralElement->pntEnd - pSpiralElement->pntStart);
                 
                 //变换起点
-                posCurveStart = pSpiralElement->m_posEnd;
+                posCurveStart = pSpiralElement->pntEnd;
                 //变换角度
-                dTanAngleStart = pSpiralElement->m_dEndTanAngle;
+                dTanAngleStart = pSpiralElement->dEndTanAngle;
             } while (false);
             
             do {
                 //第二段圆曲线
                 ArcElement* pArcElement = nullptr;
-                if (arrLineElement[nCurveElementCount] && arrLineElement[nCurveElementCount]->m_eElementType == ElementType::Arc)
+                if (arrLineElement[nCurveElementCount] && arrLineElement[nCurveElementCount]->eElementType == ElementType::Arc)
                     pArcElement = (ArcElement*)arrLineElement[nCurveElementCount++];
                 else
                 {
@@ -348,26 +348,26 @@ void LineElementManager::CalculateLineElement(uint32_t nCurIndex, BaseLineElemen
                     arrLineElement[nCurveElementCount++] = pArcElement;
                 }
                 
-                pArcElement->m_posStart = posCurveStart;
-                pArcElement->m_dStartTanAngle = dTanAngleStart;
-                pArcElement->m_dArcR = dArcR2;
-                pArcElement->m_bTurnLeft = bTurnLeft;
-                pArcElement->m_dTotalLen = dArcR2 * abs(dArcAngle2);
+                pArcElement->pntStart = posCurveStart;
+                pArcElement->dStartTanAngle = dTanAngleStart;
+                pArcElement->dArcR = dArcR2;
+                pArcElement->bTurnLeft = bTurnLeft;
+                pArcElement->dTotalLen = dArcR2 * abs(dArcAngle2);
                 pArcElement->InitData();
 
-                vecWhole += (pArcElement->m_posEnd - pArcElement->m_posStart);
+                vecWhole += (pArcElement->pntEnd - pArcElement->pntStart);
                 
                 //变换起点
-                posCurveStart = pArcElement->m_posEnd;
+                posCurveStart = pArcElement->pntEnd;
                 //变换角度
-                dTanAngleStart = pArcElement->m_dEndTanAngle;
+                dTanAngleStart = pArcElement->dEndTanAngle;
             } while (false);
             
             if (dL3 > 0.0)
             {
                 //第三段缓和曲线
                 SpiralLineElement* pSpiralElement = nullptr;
-                if (arrLineElement[nCurveElementCount] && arrLineElement[nCurveElementCount]->m_eElementType == ElementType::SpiralCurve)
+                if (arrLineElement[nCurveElementCount] && arrLineElement[nCurveElementCount]->eElementType == ElementType::SpiralCurve)
                     pSpiralElement = (SpiralLineElement*)arrLineElement[nCurveElementCount++];
                 else
                 {
@@ -375,15 +375,15 @@ void LineElementManager::CalculateLineElement(uint32_t nCurIndex, BaseLineElemen
                     arrLineElement[nCurveElementCount++] = pSpiralElement;
                 }
                 
-                pSpiralElement->m_posStart = posCurveStart;
-                pSpiralElement->m_dStartTanAngle = dTanAngleStart;
-                pSpiralElement->m_dTotalLen = dL3;
-                pSpiralElement->m_bTurnLeft = bTurnLeft;
-                pSpiralElement->m_dEnterR = dArcR2;
-                pSpiralElement->m_dExitR = dExitR;
+                pSpiralElement->pntStart = posCurveStart;
+                pSpiralElement->dStartTanAngle = dTanAngleStart;
+                pSpiralElement->dTotalLen = dL3;
+                pSpiralElement->bTurnLeft = bTurnLeft;
+                pSpiralElement->dEnterR = dArcR2;
+                pSpiralElement->dExitR = dExitR;
                 pSpiralElement->InitData();
 
-                vecWhole += (pSpiralElement->m_posEnd - pSpiralElement->m_posStart);
+                vecWhole += (pSpiralElement->pntEnd - pSpiralElement->pntStart);
             }
             
             //计算曲线起点世界坐标
@@ -417,32 +417,32 @@ void LineElementManager::JointLineElement(uint32_t nCurIndex, BaseLineElement** 
     JDType nJDType = (m_arrJD + nCurIndex + 1)->nJDType;
     
     //单元起点
-    Point2d posCurveStart = (nCurveElementCount > 0 ? arrLineElement[0]->m_posStart : posJD2);
+    Point2d posCurveStart = (nCurveElementCount > 0 ? arrLineElement[0]->pntStart : posJD2);
     
     //拼接线元
-    if (m_nElementCount > 0 && m_arrLineElement[m_nElementCount - 1]->m_eElementType == ElementType::Line)
+    if (m_nElementCount > 0 && m_arrLineElement[m_nElementCount - 1]->eElementType == ElementType::Line)
     {
         BaseLineElement* pPreLineElement = m_arrLineElement[m_nElementCount - 1];
         //调整前一段直线
-        pPreLineElement->m_posEnd = posCurveStart;
-        pPreLineElement->m_dTotalLen = pPreLineElement->m_posStart.distanceTo(posCurveStart);
+        pPreLineElement->pntEnd = posCurveStart;
+        pPreLineElement->dTotalLen = pPreLineElement->pntStart.distanceTo(posCurveStart);
         
-        dCurrentCml += pPreLineElement->m_dTotalLen;
+        dCurrentCml += pPreLineElement->dTotalLen;
     }
     else
     {
         //当前阶段起点
-        Point2d posStart = (m_nElementCount == 0 ? posJD1 : m_arrLineElement[m_nElementCount - 1]->m_posEnd);
+        Point2d posStart = (m_nElementCount == 0 ? posJD1 : m_arrLineElement[m_nElementCount - 1]->pntEnd);
         
         //入直线
         StraightLineElement* pStraightLineElement = new StraightLineElement();
-        pStraightLineElement->m_posStart = posStart;
-        pStraightLineElement->m_posEnd = posCurveStart;
-        pStraightLineElement->m_dStartTanAngle = pStraightLineElement->m_dEndTanAngle = BaseCalFun::CalAngleX(posJD1, posJD2);
-        pStraightLineElement->m_dTotalLen = pStraightLineElement->m_posStart.distanceTo(pStraightLineElement->m_posEnd);
-        pStraightLineElement->m_dStartCml = dCurrentCml;
-        pStraightLineElement->m_nIndex = m_nElementCount;
-        dCurrentCml += pStraightLineElement->m_dTotalLen;
+        pStraightLineElement->pntStart = posStart;
+        pStraightLineElement->pntEnd = posCurveStart;
+        pStraightLineElement->dStartTanAngle = pStraightLineElement->dEndTanAngle = BaseCalFun::CalAngleX(posJD1, posJD2);
+        pStraightLineElement->dTotalLen = pStraightLineElement->pntStart.distanceTo(pStraightLineElement->pntEnd);
+        pStraightLineElement->dStartCml = dCurrentCml;
+        pStraightLineElement->nIndex = m_nElementCount;
+        dCurrentCml += pStraightLineElement->dTotalLen;
         m_arrLineElement[m_nElementCount++] = pStraightLineElement;
     }
     
@@ -450,12 +450,12 @@ void LineElementManager::JointLineElement(uint32_t nCurIndex, BaseLineElement** 
     (m_arrJD + nCurIndex + 1)->nIndexCount = nCurveElementCount;
     for (uint8_t j = 0; j < nCurveElementCount; j++)
     {
-        arrLineElement[j]->m_dStartCml = dCurrentCml;
-        arrLineElement[j]->m_nIndex = (m_arrJD + nCurIndex + 1)->arrUnitsIndex[j] = m_nElementCount;
+        arrLineElement[j]->dStartCml = dCurrentCml;
+        arrLineElement[j]->nIndex = (m_arrJD + nCurIndex + 1)->arrUnitsIndex[j] = m_nElementCount;
         
         m_arrLineElement[m_nElementCount++] = arrLineElement[j];
         
-        dCurrentCml += arrLineElement[j]->m_dTotalLen;
+        dCurrentCml += arrLineElement[j]->dTotalLen;
     }
     
     if ((m_arrJD + nCurIndex + 1)->dExitR == __DBL_MAX__ || (m_arrJD + nCurIndex + 2)->nJDType == JDType::End)
@@ -464,13 +464,13 @@ void LineElementManager::JointLineElement(uint32_t nCurIndex, BaseLineElement** 
         
         //出直线
         StraightLineElement* pStraightLineElement = new StraightLineElement();
-        pStraightLineElement->m_posStart = pPreLineElement->m_posEnd;
-        pStraightLineElement->m_posEnd = posJD3;
-        pStraightLineElement->m_dStartTanAngle = pStraightLineElement->m_dEndTanAngle
+        pStraightLineElement->pntStart = pPreLineElement->pntEnd;
+        pStraightLineElement->pntEnd = posJD3;
+        pStraightLineElement->dStartTanAngle = pStraightLineElement->dEndTanAngle
             = BaseCalFun::CalAngleX((nJDType == JDType::ThreeUnitBack ? posJDRef : posJD2), posJD3);
-        pStraightLineElement->m_dStartCml = dCurrentCml;
-        pStraightLineElement->m_nIndex = m_nElementCount;
-        pStraightLineElement->m_dTotalLen = pStraightLineElement->m_posStart.distanceTo(pStraightLineElement->m_posEnd);
+        pStraightLineElement->dStartCml = dCurrentCml;
+        pStraightLineElement->nIndex = m_nElementCount;
+        pStraightLineElement->dTotalLen = pStraightLineElement->pntStart.distanceTo(pStraightLineElement->pntEnd);
         m_arrLineElement[m_nElementCount++] = pStraightLineElement;
     }
 }
@@ -512,38 +512,38 @@ void LineElementManager::CurveElement(uint32_t nCurIndex, BaseLineElement** arrL
     if (nCurveElementCount > 0)
     {
         //切线长
-        item.dT1 = arrLineElement[0]->m_posStart.distanceTo(posJD2);
-        item.dT2 = arrLineElement[nCurveElementCount - 1]->m_posEnd.distanceTo(posJD2);
+        item.dT1 = arrLineElement[0]->pntStart.distanceTo(posJD2);
+        item.dT2 = arrLineElement[nCurveElementCount - 1]->pntEnd.distanceTo(posJD2);
         
         for (int i = 0; i < nCurveElementCount; i++)
         {
             //总计长度
-            item.dCurveLen += arrLineElement[i]->m_dTotalLen;
+            item.dCurveLen += arrLineElement[i]->dTotalLen;
             
-            if (arrLineElement[i]->m_eElementType == ElementType::Arc)
+            if (arrLineElement[i]->eElementType == ElementType::Arc)
             {
                 //圆曲线
                 ArcElement* pArcElement = (ArcElement*)arrLineElement[i];
                 //半径
-                item.dArcR = pArcElement->m_dArcR;
+                item.dArcR = pArcElement->dArcR;
                 
                 if (i > 0)
                 {
-                    item.dL1 = arrLineElement[i - 1]->m_dTotalLen;
-                    item.dA1 = pow(((SpiralLineElement*)arrLineElement[i - 1])->m_dC, 0.5);
+                    item.dL1 = arrLineElement[i - 1]->dTotalLen;
+                    item.dA1 = pow(((SpiralLineElement*)arrLineElement[i - 1])->dC, 0.5);
                 }
                 if (i + 1 < nCurveElementCount)
                 {
-                    item.dL2 = arrLineElement[i + 1]->m_dTotalLen;
-                    item.dA2 = pow(((SpiralLineElement*)arrLineElement[i + 1])->m_dC, 0.5);
+                    item.dL2 = arrLineElement[i + 1]->dTotalLen;
+                    item.dA2 = pow(((SpiralLineElement*)arrLineElement[i + 1])->dC, 0.5);
                 }
                 
                 //属性点里程
-                item.dHYCml = pArcElement->m_dStartCml;
-                item.dYHCml = pArcElement->m_dStartCml + pArcElement->m_dTotalLen;
-                item.dQZCml = pArcElement->m_dStartCml + pArcElement->m_dTotalLen / 2.0;
-                item.dZHCml = (i > 0 ? arrLineElement[i - 1]->m_dStartCml : item.dHYCml);
-                item.dHZCml = (i + 1 < nCurveElementCount ? arrLineElement[i + 1]->m_dStartCml + arrLineElement[i + 1]->m_dTotalLen : item.dYHCml);
+                item.dHYCml = pArcElement->dStartCml;
+                item.dYHCml = pArcElement->dStartCml + pArcElement->dTotalLen;
+                item.dQZCml = pArcElement->dStartCml + pArcElement->dTotalLen / 2.0;
+                item.dZHCml = (i > 0 ? arrLineElement[i - 1]->dStartCml : item.dHYCml);
+                item.dHZCml = (i + 1 < nCurveElementCount ? arrLineElement[i + 1]->dStartCml + arrLineElement[i + 1]->dTotalLen : item.dYHCml);
                 
                 //外矢距
                 Point2d posQZ;
@@ -585,12 +585,12 @@ void LineElementManager::SetJDData(const tagJDInfo* pJDInfo, uint32_t nCount)
         double dAngle_JD1_JD2 = BaseCalFun::CalAngleX(posJD1, posJD2);
         
         BaseLineElement* pLineElement = new StraightLineElement;
-        pLineElement->m_posStart = posJD1;
-        pLineElement->m_posEnd = posJD2;
-        pLineElement->m_dStartTanAngle = pLineElement->m_dEndTanAngle = dAngle_JD1_JD2;
-        pLineElement->m_dStartCml = 0.0;
-        pLineElement->m_dTotalLen = posJD1.distanceTo(posJD2);
-        pLineElement->m_nIndex = m_nElementCount;
+        pLineElement->pntStart = posJD1;
+        pLineElement->pntEnd = posJD2;
+        pLineElement->dStartTanAngle = pLineElement->dEndTanAngle = dAngle_JD1_JD2;
+        pLineElement->dStartCml = 0.0;
+        pLineElement->dTotalLen = posJD1.distanceTo(posJD2);
+        pLineElement->nIndex = m_nElementCount;
         m_arrLineElement[m_nElementCount++] = pLineElement;
         
         return;
@@ -683,21 +683,21 @@ void LineElementManager::UpdateJD(int nIndex, const Vector2d& vecOffset)
     }
     
     //更新其他线元
-    double dCurCml = m_arrLineElement[nUpdateBeginIndex]->m_dStartCml;
+    double dCurCml = m_arrLineElement[nUpdateBeginIndex]->dStartCml;
     for (int i = nUpdateBeginIndex; i < m_nElementCount; i++)
     {
-        m_arrLineElement[i]->m_dStartCml = dCurCml;
-        if (i <= nUpdateEndIndex && m_arrLineElement[i]->m_eElementType == ElementType::Line)
+        m_arrLineElement[i]->dStartCml = dCurCml;
+        if (i <= nUpdateEndIndex && m_arrLineElement[i]->eElementType == ElementType::Line)
         {
             int nPreIndex = __max(0, i - 1);
             int nNextIndex = __min(m_nElementCount - 1, i + 1);
             
-            m_arrLineElement[i]->m_posStart = (nPreIndex == 0 ? Point2d(m_arrJD->dX, m_arrJD->dY) : m_arrLineElement[nPreIndex]->m_posEnd);
-            m_arrLineElement[i]->m_posEnd = (nNextIndex == m_nElementCount - 1 ? Point2d((m_arrJD + nEndJDIndex)->dX, (m_arrJD + nEndJDIndex)->dY) : m_arrLineElement[nNextIndex]->m_posStart);
-            m_arrLineElement[i]->m_dTotalLen = m_arrLineElement[i]->m_posStart.distanceTo(m_arrLineElement[i]->m_posEnd);
-            m_arrLineElement[i]->m_dStartTanAngle = m_arrLineElement[i]->m_dEndTanAngle = BaseCalFun::CalAngleX(m_arrLineElement[i]->m_posStart, m_arrLineElement[i]->m_posEnd);
+            m_arrLineElement[i]->pntStart = (nPreIndex == 0 ? Point2d(m_arrJD->dX, m_arrJD->dY) : m_arrLineElement[nPreIndex]->pntEnd);
+            m_arrLineElement[i]->pntEnd = (nNextIndex == m_nElementCount - 1 ? Point2d((m_arrJD + nEndJDIndex)->dX, (m_arrJD + nEndJDIndex)->dY) : m_arrLineElement[nNextIndex]->pntStart);
+            m_arrLineElement[i]->dTotalLen = m_arrLineElement[i]->pntStart.distanceTo(m_arrLineElement[i]->pntEnd);
+            m_arrLineElement[i]->dStartTanAngle = m_arrLineElement[i]->dEndTanAngle = BaseCalFun::CalAngleX(m_arrLineElement[i]->pntStart, m_arrLineElement[i]->pntEnd);
         }
-        dCurCml += m_arrLineElement[i]->m_dTotalLen;
+        dCurCml += m_arrLineElement[i]->dTotalLen;
     }
     
 #endif
@@ -718,8 +718,8 @@ tagExportLineElement* LineElementManager::ExportHorCurve(int& nArrCount, double 
     if (!pEndElement)
         return nullptr;
     
-    int nStartIndex = pStartElement->m_nIndex;
-    int nEndIndex = pEndElement->m_nIndex;
+    int nStartIndex = pStartElement->nIndex;
+    int nEndIndex = pEndElement->nIndex;
     
     nArrCount = nEndIndex - nStartIndex + 1;
     tagExportLineElement* pRet = new tagExportLineElement[nArrCount];
@@ -727,14 +727,14 @@ tagExportLineElement* LineElementManager::ExportHorCurve(int& nArrCount, double 
     for (int nCurInex = nStartIndex; nCurInex <= nEndIndex; nCurInex++)
     {
         BaseLineElement* pCurLineElement = m_arrLineElement[nCurInex];
-        if (pCurLineElement->m_dTotalLen <= s_dLenPrecision)
+        if (pCurLineElement->dTotalLen <= s_dLenPrecision)
         {
             nArrCount--;
             continue;
         }
         
-        double dCurStartCml = (nCurInex == nStartIndex ? dStartCml : pCurLineElement->m_dStartCml);
-        double dCurEndCml = (nCurInex == nEndIndex ? dEndCml : pCurLineElement->m_dStartCml + pCurLineElement->m_dTotalLen);
+        double dCurStartCml = (nCurInex == nStartIndex ? dStartCml : pCurLineElement->dStartCml);
+        double dCurEndCml = (nCurInex == nEndIndex ? dEndCml : pCurLineElement->dStartCml + pCurLineElement->dTotalLen);
         tagExportLineElement* pExportInfo = pCurLineElement->ExportHorCurve(dCurStartCml, dCurEndCml, dDist, dCurveStep);
         if (!pExportInfo)
         {
@@ -762,7 +762,7 @@ double LineElementManager::GetLength()
     
     switch (m_eCurveType) {
         case CurveType::HorizontalCurve:
-            return m_arrLineElement[m_nElementCount - 1]->m_dStartCml + m_arrLineElement[m_nElementCount - 1]->m_dTotalLen;
+            return m_arrLineElement[m_nElementCount - 1]->dStartCml + m_arrLineElement[m_nElementCount - 1]->dTotalLen;
         case CurveType::VerticalCurve:
             return m_arrJD[m_nJDCount - 1].dX - m_arrJD[0].dX;
         default:
