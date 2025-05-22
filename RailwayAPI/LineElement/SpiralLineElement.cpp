@@ -8,12 +8,6 @@
 #include "SpiralLineElement.hpp"
 #include "BaseCalFun.hpp"
 
-#define RELATIVE_X(n, x) (pow(-1, n) * pow(1.0 / dC, 2 * n) * pow(x, 4 * n + 1) / (BaseCalFun::Factorial(2 * n) * (4 * n + 1) * pow(2, 2 * n)))
-#define RELATIVE_Y(n, x) (pow(-1, n) * pow(1.0 / dC, 2 * n + 1) * pow(x, 4 * n + 3) / (BaseCalFun::Factorial(2 * n + 1) * (4 * n + 3) * pow(2, 2 * n + 1)))
-#define RELATIVE_DX_1(n, x) (pow(-1, n) * pow(1.0 / dC, 2 * n) * pow(x, 4 * n) * (4 * n + 1) / (BaseCalFun::Factorial(2 * n) * (4 * n + 1) * pow(2, 2 * n)))
-#define RELATIVE_DY_1(n, x) (pow(-1, n) * pow(1.0 / dC, 2 * n + 1) * pow(x, 4 * n + 2) * (4 * n + 3) / (BaseCalFun::Factorial(2 * n + 1) * (4 * n + 3) * pow(2, 2 * n + 1)))
-#define RELATIVE_DX_2(n, x) (n == 0 ? 0 : (pow(-1, n) * pow(1.0 / dC, 2 * n) * pow(x, 4 * n - 1) * (4 * n + 1) * 4 * n / (BaseCalFun::Factorial(2 * n) * (4 * n + 1) * pow(2, 2 * n))))
-#define RELATIVE_DY_2(n, x) (pow(-1, n) * pow(1.0 / dC, 2 * n + 1) * pow(x, 4 * n + 1) * (4 * n + 3) * (4 * n + 2) / (BaseCalFun::Factorial(2 * n + 1) * (4 * n + 3) * pow(2, 2 * n + 1)))
 
 SpiralLineElement::SpiralLineElement()
     : BaseLineElement()
@@ -176,8 +170,8 @@ Point2d SpiralLineElement::TrsCmlToNE_Relative(const double& dCml)
     double dY = 0.0;
     for (int i = 0; i < s_nAddPreCount; i++)
     {
-        double x = RELATIVE_X(i, dCml);
-        double y = RELATIVE_Y(i, dCml);
+        double x = this->relative_x(dCml, i);
+        double y = this->relative_y(dCml, i);
         if (abs(x) < s_dValidPrecision && abs(y) < s_dValidPrecision)
             break;
         
@@ -273,8 +267,8 @@ double SpiralLineElement::f_original_proj(const double& dL0, const double& dPara
     double x = 0.0, y = 0.0;
     for (int n = 0; n < s_nAddPreCount; n++)
     {
-        double xAdd = RELATIVE_X(n, dL0);
-        double yAdd = RELATIVE_Y(n, dL0);
+        double xAdd = this->relative_x(dL0, n);
+        double yAdd = this->relative_y(dL0, n);
         
         if (abs(xAdd) < s_dValidPrecision && abs(yAdd) < s_dValidPrecision)
             break;
@@ -291,8 +285,8 @@ double SpiralLineElement::f_original_cross(const double& dL0, const double& k, c
     double x = 0.0, y = 0.0;
     for (int n = 0; n < s_nAddPreCount; n++)
     {
-        double xAdd = RELATIVE_X(n, dL0);
-        double yAdd = RELATIVE_Y(n, dL0);
+        double xAdd = this->relative_x(dL0, n);
+        double yAdd = this->relative_y(dL0, n);
         
         if (abs(xAdd) < s_dValidPrecision && abs(yAdd) < s_dValidPrecision)
             break;
@@ -310,11 +304,11 @@ double SpiralLineElement::f_first_deriv_proj(const double& dL0, const double& dP
     double x = 0.0, y = 0.0, dx = 0.0, dy = 0.0;
     for (int n = 0; n < s_nAddPreCount; n++)
     {
-        double xAdd = RELATIVE_X(n, dL0);
-        double yAdd = RELATIVE_Y(n, dL0);
+        double xAdd = this->relative_x(dL0, n);
+        double yAdd = this->relative_y(dL0, n);
         
-        double dxAdd = RELATIVE_DX_1(n, dL0);
-        double dyAdd = RELATIVE_DY_1(n, dL0);
+        double dxAdd = this->relative_dx(dL0, n);
+        double dyAdd = this->relative_dy(dL0, n);
         
         if (abs(xAdd) < s_dValidPrecision && abs(yAdd) < s_dValidPrecision
             && abs(dxAdd) < s_dValidPrecision && abs(dyAdd) < s_dValidPrecision)
@@ -333,8 +327,8 @@ double SpiralLineElement::f_first_deriv_cross(const double& dL0, const double& k
     double dx = 0.0, dy = 0.0;
     for (int n = 0; n < s_nAddPreCount; n++)
     {
-        double dxAdd = RELATIVE_DX_1(n, dL0);
-        double dyAdd = RELATIVE_DY_1(n, dL0);
+        double dxAdd = this->relative_dx(dL0, n);
+        double dyAdd = this->relative_dy(dL0, n);
         
         if (abs(dxAdd) < s_dValidPrecision && abs(dyAdd) < s_dValidPrecision)
             break;
@@ -355,14 +349,14 @@ double SpiralLineElement::f_second_deriv_proj(const double& x0, const double& dP
     double x = 0.0, y = 0.0, dx1 = 0.0, dy1 = 0.0, dx2 = 0.0, dy2 = 0.0;
     for (int n = 0; n < s_nAddPreCount; n++)
     {
-        double xAdd = RELATIVE_X(n, x0);
-        double yAdd = RELATIVE_Y(n, x0);
+        double xAdd = this->relative_x(x0, n);
+        double yAdd = this->relative_y(x0, n);
         
-        double d_first_xAdd = RELATIVE_DX_1(n, x0);
-        double d_first_yAdd = RELATIVE_DY_1(n, x0);
+        double d_first_xAdd = this->relative_dx(x0, n);
+        double d_first_yAdd = this->relative_dy(x0, n);
         
-        double d_second_xAdd = RELATIVE_DX_2(n, x0);
-        double d_second_yAdd = RELATIVE_DY_2(n, x0);
+        double d_second_xAdd = this->relative_d2x(x0, n);
+        double d_second_yAdd = this->relative_d2y(x0, n);
         
         if (abs(xAdd) < s_dValidPrecision && abs(yAdd) < s_dValidPrecision
             && abs(d_first_xAdd) < s_dValidPrecision && abs(d_first_yAdd) < s_dValidPrecision
@@ -385,8 +379,8 @@ double SpiralLineElement::f_second_deriv_cross(const double& x0, const double& k
     double dx2 = 0.0, dy2 = 0.0;
     for (int n = 0; n < s_nAddPreCount; n++)
     {
-        double d_second_xAdd = RELATIVE_DX_2(n, x0);
-        double d_second_yAdd = RELATIVE_DY_2(n, x0);
+        double d_second_xAdd = this->relative_d2x(x0, n);
+        double d_second_yAdd = this->relative_d2y(x0, n);
         
         if (abs(d_second_xAdd) < s_dValidPrecision && abs(d_second_yAdd) < s_dValidPrecision)
             break;

@@ -56,6 +56,27 @@ public:
     void InitData() override;
     
     void AdjustData(const Point2d& pos) override;
+   
+    ///求相对坐标
+private:
+    inline double relative_x(double l, int n){
+        return (pow(-1, n) * pow(1.0 / dC, 2 * n) * pow(l, 4 * n + 1) / (BaseCalFun::Factorial(2 * n) * (4 * n + 1) * pow(2, 2 * n)));
+    }
+    inline double relative_y(double l, int n){
+        return (pow(-1, n) * pow(1.0 / dC, 2 * n + 1) * pow(l, 4 * n + 3) / (BaseCalFun::Factorial(2 * n + 1) * (4 * n + 3) * pow(2, 2 * n + 1)));
+    }
+    inline double relative_dx(double l, int n){
+        return (pow(-1, n) * pow(1.0 / dC, 2 * n) * pow(l, 4 * n) * (4 * n + 1) / (BaseCalFun::Factorial(2 * n) * (4 * n + 1) * pow(2, 2 * n)));
+    }
+    inline double relative_dy(double l, int n){
+        return (pow(-1, n) * pow(1.0 / dC, 2 * n + 1) * pow(l, 4 * n + 2) * (4 * n + 3) / (BaseCalFun::Factorial(2 * n + 1) * (4 * n + 3) * pow(2, 2 * n + 1)));
+    }
+    inline double relative_d2x(double l, int n){
+        return (n == 0 ? 0 : (pow(-1, n) * pow(1.0 / dC, 2 * n) * pow(l, 4 * n - 1) * (4 * n + 1) * 4 * n / (BaseCalFun::Factorial(2 * n) * (4 * n + 1) * pow(2, 2 * n))));
+    }
+    inline double relative_d2y(double l, int n){
+        return (pow(-1, n) * pow(1.0 / dC, 2 * n + 1) * pow(l, 4 * n + 1) * (4 * n + 3) * (4 * n + 2) / (BaseCalFun::Factorial(2 * n + 1) * (4 * n + 3) * pow(2, 2 * n + 1)));
+    }
     
 private:
     ///原函数
@@ -70,6 +91,8 @@ private:
     double f_second_deriv_proj(const double& x0, const double& dParamX, const double& dParamY);
     ///二阶导函数
     double f_second_deriv_cross(const double& x0, const double& k, const double& b);
+    
+
     
 private:
     ///预估根
