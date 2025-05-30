@@ -64,7 +64,7 @@ public:
     ///   - N_Y: 纬距
     ///   - E_X: 经距
     ///   - dFwj: 方位角
-    bool TrsCmlDistToNE(const double& dCml, const double& dDist, double& N_Y, double& E_X, double& dFwj);
+    bool TrsCmlDistToNE(double dCml, double dDist, double& N_Y, double& E_X, double& dFwj);
     
     /// 坐标 -> 连续里程+投影距离+方位角
     /// - Parameters:
@@ -73,7 +73,7 @@ public:
     ///   - dCml: 连续里程
     ///   - dDist: 投影距离(左负右正)
     ///   - dFwj: 方位角
-    bool TrsNEToCmlDist(const double& N_Y, const double& E_X, double& dCml, double& dDist, double& dFwj);
+    bool TrsNEToCmlDist(double N_Y, double E_X, double& dCml, double& dDist, double& dFwj);
     
     /// 坐标 -> 计算任意直线与路线的所有交点
     /// - Parameters:
@@ -82,14 +82,14 @@ public:
     ///   - E_X: 经距
     ///   - nArrCount: 数组大小
     ///   - return: 交点数组数组地址
-    Point2d* IntersectWithLine(const double& dAngle, const double& N_Y, const double& E_X, uint32_t& nArrCount);
+    Point2d* IntersectWithLine(double dAngle, double N_Y, double E_X, uint32_t& nArrCount);
     
     /// 坐标 -> 计算任意直线与路线的所有交点
     /// - Parameters:
     ///   - dAngle: 直线角度
     ///   - N_Y: 纬距
     ///   - E_X: 经距
-    DyArray<Point2d> IntersectWithLine(const double& dAngle, const double& N_Y, const double& E_X);
+    DyArray<Point2d> IntersectWithLine(double dAngle, double N_Y, double E_X);
     
     /// 坐标 -> 连续里程+投影距离+方位角 集合
     /// - Parameters:
@@ -97,20 +97,20 @@ public:
     ///   - E_X: 经距
     ///   - nCount: 数组大小
     ///   - return: 数组地址
-    tagCmlDistAngle* TrsNEToCmlDist(const double& N_Y, const double& E_X, uint32_t& nCount);
+    tagCmlDistAngle* TrsNEToCmlDist(double N_Y, double E_X, uint32_t& nCount);
     
     /// 坐标 -> 连续里程+投影距离+方位角 集合
     /// - Parameters:
     ///   - N_Y: 纬距
     ///   - E_X: 经距
-    DyArray<tagCmlDistAngle> TrsNEToCmlDist(const double& N_Y, const double& E_X);
+    DyArray<tagCmlDistAngle> TrsNEToCmlDist(double N_Y, double E_X);
     
     /// 线路总长度
     double GetLength();
     
     /// 连续里程->现场里程
     /// - Parameter cml: 连续里程
-    bool TrsCmltoCkml(const double& cml, char ckml[64], int nPrec = 3);
+    bool TrsCmltoCkml(double cml, char ckml[64], int nPrec = 3);
     
     /// 现场里程->连续里程
     /// - Parameters:
@@ -124,13 +124,6 @@ public:
     ///   - dHZ: 轨面高程
     ///   - dFyj: 俯仰角
     void GetDesignHeight(double dCml, double& dHZ, double& dFyj);
-    
-    /// 更新平曲线交点坐标
-    /// - Parameters:
-    ///   - nIndex: 交点索引
-    ///   - dX: X坐标
-    ///   - dY: Y坐标
-    bool UpdateHorJD(const int& nIndex, const double& dX, const double& dY);
     
     /// 导出指定里程范围内平曲线数据
     /// - Parameters:

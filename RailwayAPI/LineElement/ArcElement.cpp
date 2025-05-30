@@ -13,7 +13,7 @@ ArcElement::ArcElement()
     eElementType = ElementType::Arc;
 }
 
-bool ArcElement::TrsCmlDistToNE(const double& dCml, const double& dDist, double& dX, double& dY, double& dAngle)
+bool ArcElement::TrsCmlDistToNE(double dCml, double dDist, double& dX, double& dY, double& dAngle)
 {
     assert(dCml >= dStartCml - s_dCalPrecision && dCml <= dStartCml + dTotalLen + s_dCalPrecision);
     if (dCml < dStartCml - s_dCalPrecision || dCml > dStartCml + dTotalLen + s_dCalPrecision)
@@ -37,7 +37,7 @@ bool ArcElement::TrsCmlDistToNE(const double& dCml, const double& dDist, double&
     return true;
 }
 
-uint32_t ArcElement::TrsNEToCmlDist(const double& dX, const double& dY, double arrCml[s_nMaxArrCount], double arrDist[s_nMaxArrCount], double arrAngle[s_nMaxArrCount])
+uint32_t ArcElement::TrsNEToCmlDist(double dX, double dY, double arrCml[s_nMaxArrCount], double arrDist[s_nMaxArrCount], double arrAngle[s_nMaxArrCount])
 {
     //计算圆心坐标
     double dAngleR = dStartTanAngle + (bTurnLeft ? MATH_PI_2 : -MATH_PI_2);
@@ -108,7 +108,7 @@ uint32_t ArcElement::TrsNEToCmlDist(const double& dX, const double& dY, double a
     return nCurCount;
 }
 
-bool ArcElement::TrsCmlToHeight(const double& dCml, double& dHeight, double& dFyj)
+bool ArcElement::TrsCmlToHeight(double dCml, double& dHeight, double& dFyj)
 {
     //1.计算圆心坐标
     double dAngleR = dStartTanAngle + (bTurnLeft ? MATH_PI_2 : -MATH_PI_2);
@@ -131,7 +131,7 @@ bool ArcElement::TrsCmlToHeight(const double& dCml, double& dHeight, double& dFy
     return true;
 }
 
-uint32_t ArcElement::IntersectWithLine(const double& dAngle, const double& dX, const double& dY, Point2d arrCrossPos[s_nMaxArrCount])
+uint32_t ArcElement::IntersectWithLine(double dAngle, double dX, double dY, Point2d arrCrossPos[s_nMaxArrCount])
 {
     //直线起点
     Point2d posOnlineA(dX, dY);
@@ -205,7 +205,7 @@ tagExportLineElement* ArcElement::ExportHorCurve(double dStartCml, double dEndCm
     return pRet;
 }
 
-Point2d ArcElement::TrsCmlToNE_Relative(const double& dCml)
+Point2d ArcElement::TrsCmlToNE_Relative(double dCml)
 {
     double dArcAngle = dCml / dArcR;
     double dDeltaX = sin(dArcAngle) * dArcR;

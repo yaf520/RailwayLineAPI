@@ -26,17 +26,17 @@ private:
     
 public:
     ///里程+投影计算坐标+切线角
-    bool TrsCmlDistToNE(const double& dCml, const double& dDist, double& dX, double& dY, double& dAngle);
+    bool TrsCmlDistToNE(double dCml, double dDist, double& dX, double& dY, double& dAngle);
     ///坐标计算投影点里程+投影距离+切线角
-    bool TrsNEToCmlDist(const double& dX, const double& dY, double& dCml, double& dDist, double& dAngle);
+    bool TrsNEToCmlDist(double dX, double dY, double& dCml, double& dDist, double& dAngle);
     ///坐标计算投影点里程+投影距离+切线角集合
-    tagCmlDistAngle* TrsNEToCmlDist(const double& dX, const double& dY, uint32_t& nArrCount);
+    tagCmlDistAngle* TrsNEToCmlDist(double dX, double dY, uint32_t& nArrCount);
     ///坐标计算投影点里程+投影距离+切线角集合
-    DyArray<tagCmlDistAngle> TrsNEToCmlDist(const double& dX, const double& dY);
+    DyArray<tagCmlDistAngle> TrsNEToCmlDist(double dX, double dY);
     ///获取与直线的交点
-    Point2d* IntersectWithLine(const double& dAngle, const double& dX, const double& dY, uint32_t& nArrCount);
+    Point2d* IntersectWithLine(double dAngle, double dX, double dY, uint32_t& nArrCount);
     ///获取与直线的交点
-    DyArray<Point2d> IntersectWithLine(const double& dAngle, const double& dX, const double& dY);
+    DyArray<Point2d> IntersectWithLine(double dAngle, double dX, double dY);
 };
 
 #endif /* HorizontalObject_hpp */

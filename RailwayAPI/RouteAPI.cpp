@@ -42,7 +42,7 @@ void RouteAPI::UpdateJD(int nIndex, const Vector2d& vecOffset)
     m_pHorCurve->UpdateJD(nIndex, vecOffset);
 }
 
-bool RouteAPI::TrsCmlDistToNE(const double& dCml, const double& dDist, double& N_Y, double& E_X, double& dFwj)
+bool RouteAPI::TrsCmlDistToNE(double dCml, double dDist, double& N_Y, double& E_X, double& dFwj)
 {
     double dTanAngle = 0.0;
     if (!m_pHorCurve->TrsCmlDistToNE(dCml, -dDist, E_X, N_Y, dTanAngle))
@@ -52,17 +52,17 @@ bool RouteAPI::TrsCmlDistToNE(const double& dCml, const double& dDist, double& N
     return true;
 }
 
-bool RouteAPI::TrsNEToCmlDist(const double& N_Y, const double& E_X, double& dCml, double& dDist, double& dFwj)
+bool RouteAPI::TrsNEToCmlDist(double N_Y, double E_X, double& dCml, double& dDist, double& dFwj)
 {
     return m_pHorCurve->TrsNEToCmlDist(E_X, N_Y, dCml, dDist, dFwj);
 }
 
-tagCmlDistAngle* RouteAPI::TrsNEToCmlDist(const double& N_Y, const double& E_X, uint32_t& nCount)
+tagCmlDistAngle* RouteAPI::TrsNEToCmlDist(double N_Y, double E_X, uint32_t& nCount)
 {
     return m_pHorCurve->TrsNEToCmlDist(E_X, N_Y, nCount);
 }
 
-DyArray<tagCmlDistAngle> RouteAPI::TrsNEToCmlDist(const double& N_Y, const double& E_X)
+DyArray<tagCmlDistAngle> RouteAPI::TrsNEToCmlDist(double N_Y, double E_X)
 {
     if (m_pHorCurve)
         return m_pHorCurve->TrsNEToCmlDist(E_X, N_Y);
@@ -70,12 +70,12 @@ DyArray<tagCmlDistAngle> RouteAPI::TrsNEToCmlDist(const double& N_Y, const doubl
     throw std::runtime_error("HorCurve ptr is null");
 }
 
-Point2d* RouteAPI::IntersectWithLine(const double& dAngle, const double& N_Y, const double& E_X, uint32_t& nArrCount)
+Point2d* RouteAPI::IntersectWithLine(double dAngle, double N_Y, double E_X, uint32_t& nArrCount)
 {
     return m_pHorCurve->IntersectWithLine(dAngle, E_X, N_Y , nArrCount);
 }
 
-DyArray<Point2d> RouteAPI::IntersectWithLine(const double& dAngle, const double& N_Y, const double& E_X)
+DyArray<Point2d> RouteAPI::IntersectWithLine(double dAngle, double N_Y, double E_X)
 {
     if (m_pHorCurve)
         return m_pHorCurve->IntersectWithLine(dAngle, E_X, N_Y);
@@ -89,7 +89,7 @@ double RouteAPI::GetLength()
 }
 
 ///连续里程->现场里程
-bool RouteAPI::TrsCmltoCkml(const double& cml, char ckml[64], int nPrec)
+bool RouteAPI::TrsCmltoCkml(double cml, char ckml[64], int nPrec)
 {
     return m_pMileConvert->TrsCmltoCkml(cml, ckml, nPrec);
 }

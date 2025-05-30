@@ -29,7 +29,7 @@ public:
     ///计算累计曲线长度
     double GetSumLengthOfMile(char strMark[16], double dMileValue, int& iReliability, char strErr[64]);
     ///连续里程->现场里程
-    bool TrsCmltoCkml(const double& cml, char ckml[64], int nPrec);
+    bool TrsCmltoCkml(double cml, char ckml[64], int nPrec);
     ///现场里程->连续里程
     bool TrsCkmlToCml(char ckml[64], double& cml, char strErr[64]);
 };

@@ -247,7 +247,7 @@ double MileConvert::GetSumLengthOfMile(char strMark[16], double dMileValue, int&
     return dConMile;
 }
 
-bool MileConvert::TrsCmltoCkml(const double& cml, char ckml[64], int nPrec)
+bool MileConvert::TrsCmltoCkml(double cml, char ckml[64], int nPrec)
 {
     
 #if 0

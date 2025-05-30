@@ -32,7 +32,7 @@ private:
     
 public:
     ///里程->高程+俯仰角
-    bool TrsCmlToHeight(const double& dCml, double& dHeight, double& dAngle);
+    bool TrsCmlToHeight(double dCml, double& dHeight, double& dAngle);
 };
 
 #endif /* VerticalObject_hpp */

@@ -667,7 +667,7 @@ void LineElementManager::UpdateJD(int nIndex, const Vector2d& vecOffset)
         nUnitElementCount = 0;
         
         //包含索引
-        int* arrIndex = (m_arrJD + nJDIndex + 1)->arrUnitsIndex;
+        const int* arrIndex = (m_arrJD + nJDIndex + 1)->arrUnitsIndex;
         uint8_t nIndexCount = (m_arrJD + nJDIndex + 1)->nIndexCount;
         
         if (nJDIndex == nStartJDIndex)

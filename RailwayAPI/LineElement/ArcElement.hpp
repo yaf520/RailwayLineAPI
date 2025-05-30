@@ -21,21 +21,21 @@ public:
     bool bTurnLeft;
     
 public:
-    bool TrsCmlDistToNE(const double& dCml, const double& dDist, double& dX, double& dY, double& dAngle) override;
+    bool TrsCmlDistToNE(double dCml, double dDist, double& dX, double& dY, double& dAngle) override;
     
-    uint32_t TrsNEToCmlDist(const double& dX, const double& dY, double arrCml[s_nMaxArrCount], double arrDist[s_nMaxArrCount], double arrAngle[s_nMaxArrCount]) override;
+    uint32_t TrsNEToCmlDist(double dX, double dY, double arrCml[s_nMaxArrCount], double arrDist[s_nMaxArrCount], double arrAngle[s_nMaxArrCount]) override;
     
-    bool TrsCmlToHeight(const double& dCml, double& dHeight, double& dFyj) override;
+    bool TrsCmlToHeight(double dCml, double& dHeight, double& dFyj) override;
     
-    uint32_t IntersectWithLine(const double& dAngle, const double& dX, const double& dY, Point2d arrCrossPos[s_nMaxArrCount]) override;
+    uint32_t IntersectWithLine(double dAngle, double dX, double dY, Point2d arrCrossPos[s_nMaxArrCount]) override;
     
     tagExportLineElement* ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep) override;
     
 protected:
     //相对里程->相对坐标
-    Point2d TrsCmlToNE_Relative(const double& dCml) override;
+    Point2d TrsCmlToNE_Relative(double dCml) override;
     
-    inline double TrsCmlToAngle_Relative(const double& dCml) override { return dCml / dArcR; }
+    inline double TrsCmlToAngle_Relative(double dCml) override { return dCml / dArcR; }
     
 public:
     void InitData() override;

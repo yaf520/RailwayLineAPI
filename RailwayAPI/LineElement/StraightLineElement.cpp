@@ -13,7 +13,7 @@ StraightLineElement::StraightLineElement()
     eElementType = ElementType::Line;
 }
 
-bool StraightLineElement::TrsCmlDistToNE(const double& dCml, const double& dDist, double& dX, double& dY, double& dAngle)
+bool StraightLineElement::TrsCmlDistToNE(double dCml, double dDist, double& dX, double& dY, double& dAngle)
 {
     assert(dCml >= dStartCml - s_dCalPrecision && dCml <= dStartCml + dTotalLen + s_dCalPrecision);
     if (dCml < dStartCml - s_dCalPrecision || dCml > dStartCml + dTotalLen + s_dCalPrecision)
@@ -36,7 +36,7 @@ bool StraightLineElement::TrsCmlDistToNE(const double& dCml, const double& dDist
     return true;
 }
 
-uint32_t StraightLineElement::TrsNEToCmlDist(const double& dX, const double& dY, double arrCml[s_nMaxArrCount], double arrDist[s_nMaxArrCount], double arrAngle[s_nMaxArrCount])
+uint32_t StraightLineElement::TrsNEToCmlDist(double dX, double dY, double arrCml[s_nMaxArrCount], double arrDist[s_nMaxArrCount], double arrAngle[s_nMaxArrCount])
 {
     double dPecent = 0.0;
     Point2d posBase(dX, dY);
@@ -56,7 +56,7 @@ uint32_t StraightLineElement::TrsNEToCmlDist(const double& dX, const double& dY,
     return 1;
 }
 
-uint32_t StraightLineElement::IntersectWithLine(const double& dAngle, const double& dX, const double& dY, Point2d arrCrossPos[s_nMaxArrCount])
+uint32_t StraightLineElement::IntersectWithLine(double dAngle, double dX, double dY, Point2d arrCrossPos[s_nMaxArrCount])
 {
     if (abs(dAngle - dStartTanAngle) < s_dCalPrecision)
         return 0;
@@ -96,7 +96,7 @@ tagExportLineElement* StraightLineElement::ExportHorCurve(double dStartCml, doub
     return pRet;
 }
 
-bool StraightLineElement::TrsCmlToHeight(const double& dCml, double& dHeight, double& dFyj)
+bool StraightLineElement::TrsCmlToHeight(double dCml, double& dHeight, double& dFyj)
 {
     double dDeltaCml = dCml - pntStart.x;
     dHeight = pntStart.y + tan(dStartTanAngle) * dDeltaCml;

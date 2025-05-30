@@ -57,7 +57,7 @@ BaseLineElement* VerticalCurve::CmlBelongTo(double dCml)
     return m_arrLineElement[right];
 }
 
-bool VerticalCurve::TrsCmlToHeight(const double& dCml, double& dHeight, double& dAngle)
+bool VerticalCurve::TrsCmlToHeight(double dCml, double& dHeight, double& dAngle)
 {
     double dCmlRound = BaseCalFun::Round(dCml);
     BaseLineElement* pLineElement = CmlBelongTo(dCmlRound);

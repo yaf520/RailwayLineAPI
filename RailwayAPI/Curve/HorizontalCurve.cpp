@@ -104,7 +104,7 @@ BaseLineElement* HorizontalCurve::CmlBelongTo(double dCml)
 }
 
 //里程+投影计算坐标+切线角
-bool HorizontalCurve::TrsCmlDistToNE(const double& dCml, const double& dDist, double& dX, double& dY, double& dAngle)
+bool HorizontalCurve::TrsCmlDistToNE(double dCml, double dDist, double& dX, double& dY, double& dAngle)
 {
     BaseLineElement* pLineElement = CmlBelongTo(dCml);
     if (!pLineElement)
@@ -113,7 +113,7 @@ bool HorizontalCurve::TrsCmlDistToNE(const double& dCml, const double& dDist, do
 }
 
 //坐标计算投影点里程+投影距离+切线角
-bool HorizontalCurve::TrsNEToCmlDist(const double& dX, const double& dY, double& dCml, double& dDist, double& dAngle)
+bool HorizontalCurve::TrsNEToCmlDist(double dX, double dY, double& dCml, double& dDist, double& dAngle)
 {
     DyArray<tagCmlDistAngle> arrPos = TrsNEToCmlDist(dX, dY);
     if (arrPos.GetCount() > 0)
@@ -128,7 +128,7 @@ bool HorizontalCurve::TrsNEToCmlDist(const double& dX, const double& dY, double&
     return false;
 }
 
-tagCmlDistAngle* HorizontalCurve::TrsNEToCmlDist(const double& dX, const double& dY, uint32_t& nArrCount)
+tagCmlDistAngle* HorizontalCurve::TrsNEToCmlDist(double dX, double dY, uint32_t& nArrCount)
 {
     nArrCount = 0;
     tagCmlDistAngle* pArrRet = nullptr;
@@ -181,7 +181,7 @@ tagCmlDistAngle* HorizontalCurve::TrsNEToCmlDist(const double& dX, const double&
     return pArrRet;
 }
 
-DyArray<tagCmlDistAngle> HorizontalCurve::TrsNEToCmlDist(const double& dX, const double& dY)
+DyArray<tagCmlDistAngle> HorizontalCurve::TrsNEToCmlDist(double dX, double dY)
 {
     DyArray<tagCmlDistAngle> arrRet;
     
@@ -218,7 +218,7 @@ DyArray<tagCmlDistAngle> HorizontalCurve::TrsNEToCmlDist(const double& dX, const
     return arrRet;
 }
 
-Point2d* HorizontalCurve::IntersectWithLine(const double& dAngle, const double& dX, const double& dY, uint32_t& nArrCount)
+Point2d* HorizontalCurve::IntersectWithLine(double dAngle, double dX, double dY, uint32_t& nArrCount)
 {
     nArrCount = 0;
     Point2d* arrRet = nullptr;
@@ -274,7 +274,7 @@ Point2d* HorizontalCurve::IntersectWithLine(const double& dAngle, const double& 
     return arrRet;
 }
 
-DyArray<Point2d> HorizontalCurve::IntersectWithLine(const double& dAngle, const double& dX, const double& dY)
+DyArray<Point2d> HorizontalCurve::IntersectWithLine(double dAngle, double dX, double dY)
 {
     DyArray<Point2d> arrRet;
     
