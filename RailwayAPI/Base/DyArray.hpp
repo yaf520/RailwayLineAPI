@@ -1,6 +1,5 @@
 //
 //  Array.hpp
-//  test
 //
 //  Created by 易傲飞 on 2025/1/3.
 //
@@ -10,7 +9,6 @@
 
 #include <assert.h>
 #include <new>
-#include <stdexcept>
 
 #pragma pack (push, 8)
 #pragma push_macro("new")
@@ -18,7 +16,8 @@
 #undef new
 #undef delete
 
-#define ARRAY_GROWTH_THRESHOLD 0x10000
+#define ARRAY_GROWTH_THRESHOLD 0x10000      //最大增长字节
+#define ARRAY_GROWTH_MIN_COUNT 8            //最小增长数目
 
 template <class Type>
 class DyArray
@@ -26,12 +25,11 @@ class DyArray
 private:
     int m_nMaxCount;            //缓冲数目
     int m_nElementCount;        //元素数目
-    int m_nGrowCount;           //增长数目
     Type* m_pData;              //缓存指针
     
 public:
     /// 构造函数
-    DyArray(int nCount = 0, int nGrowCount = 8);
+    DyArray(int nCount = 0);
     /// 拷贝构造函数
     DyArray(const DyArray<Type>&);
     /// 移动构造函数
@@ -49,7 +47,7 @@ public:
     
 public:
     /// 获取当前元素数目
-    inline int GetCount() {
+    inline int GetCount() const {
         return m_nElementCount;
     }
     
@@ -99,24 +97,21 @@ public:
 };
 
 template <class T>
-DyArray<T>::DyArray(int nCount, int nGrowCount)
+DyArray<T>::DyArray(int nCount)
     :m_pData(nullptr),
     m_nMaxCount(0),
-    m_nGrowCount(nGrowCount),
     m_nElementCount(0)
 {
     if (nCount > 0)
-        AllocMemory(nCount);
+        SetElementCount(nCount);
 }
 
 template <class T>
 DyArray<T>::DyArray(const DyArray<T>& src)
     :m_pData(nullptr),
     m_nMaxCount(0),
-    m_nGrowCount(src.m_nGrowCount),
     m_nElementCount(0)
 {
-    AllocMemory(src.m_nMaxCount);
     SetElementCount(src.m_nElementCount);
     for (int i = 0; i < m_nElementCount; i++)
         m_pData[i] = src[i];
@@ -126,7 +121,6 @@ template <class T>
 DyArray<T>::DyArray(DyArray<T>&& src) noexcept
     :m_pData(nullptr),
     m_nMaxCount(0),
-    m_nGrowCount(src.m_nGrowCount),
     m_nElementCount(0)
 {
     m_pData = src.m_pData;
@@ -136,7 +130,6 @@ DyArray<T>::DyArray(DyArray<T>&& src) noexcept
     src.m_pData = nullptr;
     src.m_nMaxCount = 0;
     src.m_nElementCount = 0;
-    src.m_nGrowCount = 0;
 }
 
 template <class T>
@@ -158,7 +151,6 @@ void DyArray<T>::Reset()
         
         m_nMaxCount = 0;
         m_nElementCount = 0;
-        m_nGrowCount = 0;
     }
 }
 
@@ -173,8 +165,7 @@ int DyArray<T>::Add(const T &item)
 template <class T>
 void DyArray<T>::SetElementCount(int nNewSize)
 {
-    assert(nNewSize >= 0);
-    if (nNewSize < 0)
+    if (nNewSize <= 0)
         return;
     
     AllocMemory(nNewSize);
@@ -200,13 +191,11 @@ void DyArray<T>::InsertAt(int nIndex, const T& item, int nCount)
     {
         int nOldCount = m_nElementCount;
         SetElementCount(nCount + m_nElementCount);
-        for (int i = 0; i < nCount; i++)
-            (m_pData + nOldCount + i)->~T();
         
         memmove((void*)(m_pData + nIndex + nCount), (void*)(m_pData + nIndex), sizeof(T) * (nOldCount - nIndex));
         memset((void*)(m_pData + nIndex), 0, sizeof(T) * nCount);
-        for (int i = 0; i < nCount; i++)
-            new ((void*)(m_pData + nIndex + i)) T();
+//        for (int i = 0; i < nCount; i++)
+//            new ((void*)(m_pData + nIndex + i)) T();
     }
     else
         SetElementCount(nIndex + nCount);
@@ -277,7 +266,6 @@ DyArray<T>& DyArray<T>::operator = (DyArray<T>&& src) noexcept
     {
         Reset();
         
-        m_nGrowCount = src.m_nGrowCount;
         m_pData = src.m_pData;
         m_nMaxCount = src.m_nMaxCount;
         m_nElementCount = src.m_nElementCount;
@@ -285,7 +273,6 @@ DyArray<T>& DyArray<T>::operator = (DyArray<T>&& src) noexcept
         src.m_pData = nullptr;
         src.m_nMaxCount = 0;
         src.m_nElementCount = 0;
-        src.m_nGrowCount = 0;
     }
     
     return *this;
@@ -297,8 +284,6 @@ DyArray<T>& DyArray<T>::operator = (const DyArray<T>& src)
     if (this != &src)
     {
         RemoveAll();
-        
-        AllocMemory(src.m_nMaxCount);
         SetElementCount(src.m_nElementCount);
         
         for (int i = 0; i < m_nElementCount; i++)
@@ -310,17 +295,16 @@ DyArray<T>& DyArray<T>::operator = (const DyArray<T>& src)
 template <class T>
 void DyArray<T>::AllocMemory(int nNewCount)
 {
-    assert(nNewCount > 0);
     if (nNewCount <= 0)
         return;
     
     if (nNewCount > m_nMaxCount)
     {
         const int nGrowCount = (m_nMaxCount * sizeof(T) < ARRAY_GROWTH_THRESHOLD ? m_nMaxCount : ARRAY_GROWTH_THRESHOLD / sizeof(T));
-        int minSize = m_nMaxCount + (nGrowCount < m_nGrowCount ? m_nGrowCount : nGrowCount);
+        int minSize = m_nMaxCount + (nGrowCount < ARRAY_GROWTH_MIN_COUNT ? ARRAY_GROWTH_MIN_COUNT : nGrowCount);
         if (nNewCount > minSize)
             minSize = nNewCount;
-        m_nMaxCount += minSize;
+        m_nMaxCount = minSize;
         
         T* pNewData = (T*)::operator new(sizeof(T) * m_nMaxCount);
         memcpy((void*)pNewData, (void*)m_pData, sizeof(T) * m_nElementCount);
