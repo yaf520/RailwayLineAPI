@@ -13,7 +13,7 @@
 class SpiralLineElement : public BaseLineElement
 {
     ///函数指针
-    typedef double (SpiralLineElement::*pFunc)(double, double, double);
+    typedef double (SpiralLineElement::*pFunc)(double, double, double) const;
     
 public:
     SpiralLineElement();
@@ -32,25 +32,21 @@ private:
     double m_dHideLen;      //非完整缓和曲线隐藏长度
     
 public:
-    bool TrsCmlDistToNE(double dCml, double dDist, double& dX, double& dY, double& dAngle) override;
+    bool TrsCmlDistToNE(double dCml, double dDist, double& dX, double& dY, double& dAngle) const override;
     
-    uint32_t TrsNEToCmlDist(double dX, double dY, double arrCml[s_nMaxArrCount], double arrDist[s_nMaxArrCount], double arrAngle[s_nMaxArrCount]) override;
+    uint32_t TrsNEToCmlDist(double dX, double dY, double arrCml[s_nMaxArrCount], double arrDist[s_nMaxArrCount], double arrAngle[s_nMaxArrCount]) const override;
     
-    bool TrsCmlToHeight(double dCml, double& dHeight, double& dAngle) override { return false;};
+    bool TrsCmlToHeight(double dCml, double& dHeight, double& dAngle) const override { return false;};
     
-    uint32_t IntersectWithLine(double dAngle, double dX, double dY, Point2d arrCrossPos[s_nMaxArrCount]) override;
+    uint32_t IntersectWithLine(double dAngle, double dX, double dY, Point2d arrCrossPos[s_nMaxArrCount]) const override;
     
-    tagExportLineElement* ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep) override;
+    tagExportLineElement* ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep) const override;
     
 protected:
     //相对里程->相对坐标
-    Point2d TrsCmlToNE_Relative(double dCml) override;
+    Point2d TrsCmlToNE_Relative(double dCml) const override;
     //相对里程->相对角度
-    inline double TrsCmlToAngle_Relative(double dCml) override { return dCml * dCml / 2.0 / dC; }
-    
-protected:
-    //相对里程->圆心坐标
-    Point2d TrsCmlToCenter_Relative(double dCml);
+    inline double TrsCmlToAngle_Relative(double dCml) const override { return dCml * dCml / 2.0 / dC; }
 
 public:
     void InitData() override;
@@ -59,46 +55,44 @@ public:
    
     ///求相对坐标
 private:
-    inline double relative_x(double l, int n){
+    inline double relative_x(double l, int n) const {
         return (pow(-1, n) * pow(1.0 / dC, 2 * n) * pow(l, 4 * n + 1) / (BaseCalFun::Factorial(2 * n) * (4 * n + 1) * pow(2, 2 * n)));
     }
-    inline double relative_y(double l, int n){
+    inline double relative_y(double l, int n) const {
         return (pow(-1, n) * pow(1.0 / dC, 2 * n + 1) * pow(l, 4 * n + 3) / (BaseCalFun::Factorial(2 * n + 1) * (4 * n + 3) * pow(2, 2 * n + 1)));
     }
-    inline double relative_dx(double l, int n){
+    inline double relative_dx(double l, int n) const {
         return (pow(-1, n) * pow(1.0 / dC, 2 * n) * pow(l, 4 * n) * (4 * n + 1) / (BaseCalFun::Factorial(2 * n) * (4 * n + 1) * pow(2, 2 * n)));
     }
-    inline double relative_dy(double l, int n){
+    inline double relative_dy(double l, int n) const {
         return (pow(-1, n) * pow(1.0 / dC, 2 * n + 1) * pow(l, 4 * n + 2) * (4 * n + 3) / (BaseCalFun::Factorial(2 * n + 1) * (4 * n + 3) * pow(2, 2 * n + 1)));
     }
-    inline double relative_d2x(double l, int n){
+    inline double relative_d2x(double l, int n) const {
         return (n == 0 ? 0 : (pow(-1, n) * pow(1.0 / dC, 2 * n) * pow(l, 4 * n - 1) * (4 * n + 1) * 4 * n / (BaseCalFun::Factorial(2 * n) * (4 * n + 1) * pow(2, 2 * n))));
     }
-    inline double relative_d2y(double l, int n){
+    inline double relative_d2y(double l, int n) const {
         return (pow(-1, n) * pow(1.0 / dC, 2 * n + 1) * pow(l, 4 * n + 1) * (4 * n + 3) * (4 * n + 2) / (BaseCalFun::Factorial(2 * n + 1) * (4 * n + 3) * pow(2, 2 * n + 1)));
     }
     
 private:
     ///原函数
-    double f_original_proj(double x0, double dParamX, double dParamY);
+    double f_original_proj(double x0, double dParamX, double dParamY) const;
     ///原函数
-    double f_original_cross(double x0, double k, double b);
+    double f_original_cross(double x0, double k, double b) const;
     ///一阶导函数
-    double f_first_deriv_proj(double x0, double dParamX, double dParamY);
+    double f_first_deriv_proj(double x0, double dParamX, double dParamY) const;
     ///一阶导函数
-    double f_first_deriv_cross(double x0, double k, double b);
+    double f_first_deriv_cross(double x0, double k, double b) const;
     ///二阶导函数
-    double f_second_deriv_proj(double x0, double dParamX, double dParamY);
+    double f_second_deriv_proj(double x0, double dParamX, double dParamY) const;
     ///二阶导函数
-    double f_second_deriv_cross(double x0, double k, double b);
-    
-
+    double f_second_deriv_cross(double x0, double k, double b) const;
     
 private:
     ///预估根
-    uint32_t EstimateRoot(pFunc pf_original, pFunc pf_first_deriv, pFunc pf_second_deriv, double dParamX, double dParamY, double arrEstimateRoot[s_nMaxArrCount]);
+    uint32_t EstimateRoot(pFunc pf_original, pFunc pf_first_deriv, pFunc pf_second_deriv, double dParamX, double dParamY, double arrEstimateRoot[s_nMaxArrCount]) const;
     ///牛顿迭代法
-    bool NewtonIter(pFunc pf_original, pFunc pf_first_deriv, double dEstimateRoot, double dParamX, double dParamY, double& dRoot);
+    bool NewtonIter(pFunc pf_original, pFunc pf_first_deriv, double dEstimateRoot, double dParamX, double dParamY, double& dRoot) const;
 };
 
 

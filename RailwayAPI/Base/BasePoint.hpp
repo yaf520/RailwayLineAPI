@@ -32,21 +32,18 @@ typedef struct BasePoint2d
     double y;
     
     BasePoint2d()
+        :x(0.0), y(0.0)
     {
-        x = 0.0;
-        y = 0.0;
     }
 
-    BasePoint2d(double x, double y)
+    BasePoint2d(double xx, double yy)
+        :x(xx), y(yy)
     {
-        this->x = x;
-        this->y = y;
     }
     
     BasePoint2d(const BasePoint2d& pos)
+        :x(pos.x), y(pos.y)
     {
-        this->x = pos.x;
-        this->y = pos.y;
     }
     
     void Set(double x, double y)
@@ -55,138 +52,96 @@ typedef struct BasePoint2d
         this->y = y;
     }
     
-    virtual BasePoint2d& operator = (const BasePoint2d& pos)
-    {
-        this->x = pos.x;
-        this->y = pos.y;
-        return *this;
-    }
-    
-    virtual BasePoint2d operator + (const BasePoint2d& pos)
+    BasePoint2d operator + (const BasePoint2d& pos) const
     {
         return BasePoint2d(this->x + pos.x, this->y + pos.y);
     }
     
-    virtual BasePoint2d operator + (const BasePoint2d& pos) const
-    {
-        return BasePoint2d(this->x + pos.x, this->y + pos.y);
-    }
-    
-    virtual BasePoint2d operator - (const BasePoint2d& pos)
+    BasePoint2d operator - (const BasePoint2d& pos) const
     {
         return BasePoint2d(this->x - pos.x, this->y - pos.y);
     }
     
-    virtual BasePoint2d operator - (const BasePoint2d& pos) const
-    {
-        return BasePoint2d(this->x - pos.x, this->y - pos.y);
-    }
-    
-    virtual BasePoint2d& operator += (const BasePoint2d& pos)
+    BasePoint2d& operator += (const BasePoint2d& pos)
     {
         this->x += pos.x;
         this->y += pos.y;
         return *this;
     }
     
-    virtual BasePoint2d& operator -= (const BasePoint2d& pos)
+    BasePoint2d& operator -= (const BasePoint2d& pos)
     {
         this->x -= pos.x;
         this->y -= pos.y;
         return *this;
     }
     
-    virtual BasePoint2d operator * (const int& i)
+    BasePoint2d operator * (const int& i) const
     {
         return BasePoint2d(this->x * i, this->y * i);
     }
     
-    virtual BasePoint2d operator * (const double& d)
+    BasePoint2d operator * (const double& d) const
     {
         return BasePoint2d(this->x * d, this->y * d);
     }
     
-    virtual BasePoint2d operator * (const float& f)
+    BasePoint2d operator * (const float& f) const
     {
         return BasePoint2d(this->x * f, this->y * f);
     }
     
-    virtual BasePoint2d operator / (const int& i)
+    BasePoint2d operator / (const int& i) const
     {
         return BasePoint2d(this->x / i, this->y / i);
     }
     
-    virtual BasePoint2d operator / (const double& d)
+    BasePoint2d operator / (const double& d) const
     {
         return BasePoint2d(this->x / d, this->y / d);
     }
     
-    virtual BasePoint2d operator / (const float& f)
+    BasePoint2d operator / (const float& f) const
     {
         return BasePoint2d(this->x / f, this->y / f);
     }
     
-    virtual bool operator == (const BasePoint2d& pos)
+    bool operator == (const BasePoint2d& pos) const
     {
         return (this->x == pos.x && this->y == pos.y);
     }
     
-    virtual bool operator != (const BasePoint2d& pos)
+    bool operator != (const BasePoint2d& pos) const
     {
         return (this->x != pos.x || this->y != pos.y);
     }
     
-    virtual double distanceTo(const BasePoint2d& pos)
+    double distanceTo(const BasePoint2d& pos) const
     {
         return sqrt(pow(this->x - pos.x, 2) + pow(this->y - pos.y, 2));
     }
     
-    virtual double distanceTo(const BasePoint2d& pos) const
-    {
-        return sqrt(pow(this->x - pos.x, 2) + pow(this->y - pos.y, 2));
-    }
-    
-    virtual double dot(const BasePoint2d& pos)
+    double dot(const BasePoint2d& pos) const
     {
         return this->x * pos.x + this->y * pos.y;
     }
     
-    virtual double dot(const BasePoint2d& pos) const
-    {
-        return this->x * pos.x + this->y * pos.y;
-    }
-    
-    virtual double cross(const BasePoint2d& pos)
+    double cross(const BasePoint2d& pos) const
     {
         return this->x * pos.y - pos.x * this->y;
     }
     
-    virtual double cross(const BasePoint2d& pos) const
-    {
-        return this->x * pos.y - pos.x * this->y;
-    }
-    
-    virtual double model()
+    double model() const
     {
         return sqrt(x * x + y * y);
     }
     
-    virtual double model() const
-    {
-        return sqrt(x * x + y * y);
-    }
-    
-    virtual bool isZeroVec()
+    bool isZeroVec() const
     {
         return (abs(x) <= s_dCalPrecision && abs(y) <= s_dCalPrecision);
     }
     
-    virtual bool isZeroVec() const
-    {
-        return (abs(x) <= s_dCalPrecision && abs(y) <= s_dCalPrecision);
-    }
-    
-    virtual double angle()
+    double angle() const
     {
         if (abs(x) < s_dCalPrecision)
             return (y >= 0.0 ? MATH_PI_2 : MATH_PI * 1.5);

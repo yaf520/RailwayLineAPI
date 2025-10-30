@@ -9,7 +9,6 @@
 #define HorizontalObject_hpp
 
 #include "LineElementManager.hpp"
-#include "DyArray.hpp"
 
 class HorizontalCurve : public LineElementManager
 {
@@ -20,23 +19,21 @@ public:
     
 private:
     ///计算点的投影属于哪一线元
-    BaseLineElement* PosBelongTo(Point2d pos) override;
+    BaseLineElement* PosBelongTo(Point2d pos) const override;
     ///计算里程属于哪一线元
-    BaseLineElement* CmlBelongTo(double dCml) override;
+    BaseLineElement* CmlBelongTo(double dCml) const override;
     
 public:
     ///里程+投影计算坐标+切线角
-    bool TrsCmlDistToNE(double dCml, double dDist, double& dX, double& dY, double& dAngle);
+    virtual bool TrsCmlDistToNE(double dCml, double dDist, double& dX, double& dY, double& dAngle) const;
     ///坐标计算投影点里程+投影距离+切线角
-    bool TrsNEToCmlDist(double dX, double dY, double& dCml, double& dDist, double& dAngle);
+    virtual bool TrsNEToCmlDist(double dX, double dY, double& dCml, double& dDist, double& dAngle) const;
     ///坐标计算投影点里程+投影距离+切线角集合
-    tagCmlDistAngle* TrsNEToCmlDist(double dX, double dY, uint32_t& nArrCount);
-    ///坐标计算投影点里程+投影距离+切线角集合
-    DyArray<tagCmlDistAngle> TrsNEToCmlDist(double dX, double dY);
+    virtual tagCmlDistAngle* TrsNEToCmlDist(double dX, double dY, uint32_t& nArrCount) const;
     ///获取与直线的交点
-    Point2d* IntersectWithLine(double dAngle, double dX, double dY, uint32_t& nArrCount);
-    ///获取与直线的交点
-    DyArray<Point2d> IntersectWithLine(double dAngle, double dX, double dY);
+    virtual Point2d* IntersectWithLine(double dAngle, double dX, double dY, uint32_t& nArrCount) const;
+    ///导出偏移曲线交点信息
+    virtual tagJDInfo* ExportOffsetJDInfo(double dOffsetDist, int& nJDCount) const;
 };
 
 #endif /* HorizontalObject_hpp */

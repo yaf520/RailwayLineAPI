@@ -26,13 +26,13 @@ public:
     
 private:
     ///计算点的投影属于哪一线元
-    BaseLineElement* PosBelongTo(Point2d pos) override { return nullptr;}
+    BaseLineElement* PosBelongTo(Point2d pos) const override { return nullptr;}
     ///计算里程属于哪一线元
-    BaseLineElement* CmlBelongTo(double dCml) override;
+    BaseLineElement* CmlBelongTo(double dCml) const override;
     
 public:
     ///里程->高程+俯仰角
-    bool TrsCmlToHeight(double dCml, double& dHeight, double& dAngle);
+    bool TrsCmlToHeight(double dCml, double& dHeight, double& dAngle) const;
 };
 
 #endif /* VerticalObject_hpp */

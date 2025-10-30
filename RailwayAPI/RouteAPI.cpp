@@ -39,10 +39,10 @@ void RouteAPI::SetData(const tagJDInfo* pJDInfo, uint32_t jdCount, const tagDLIn
 
 void RouteAPI::UpdateJD(int nIndex, const Vector2d& vecOffset)
 {
-    m_pHorCurve->UpdateJD(nIndex, vecOffset);
+    m_pHorCurve->UpdateJDCoordinates(nIndex, vecOffset);
 }
 
-bool RouteAPI::TrsCmlDistToNE(double dCml, double dDist, double& N_Y, double& E_X, double& dFwj)
+bool RouteAPI::TrsCmlDistToNE(double dCml, double dDist, double& N_Y, double& E_X, double& dFwj) const
 {
     double dTanAngle = 0.0;
     if (!m_pHorCurve->TrsCmlDistToNE(dCml, -dDist, E_X, N_Y, dTanAngle))
@@ -52,35 +52,31 @@ bool RouteAPI::TrsCmlDistToNE(double dCml, double dDist, double& N_Y, double& E_
     return true;
 }
 
-bool RouteAPI::TrsNEToCmlDist(double N_Y, double E_X, double& dCml, double& dDist, double& dFwj)
+bool RouteAPI::TrsNEToCmlDist(double N_Y, double E_X, double& dCml, double& dDist, double& dFwj) const
 {
-    return m_pHorCurve->TrsNEToCmlDist(E_X, N_Y, dCml, dDist, dFwj);
-}
-
-tagCmlDistAngle* RouteAPI::TrsNEToCmlDist(double N_Y, double E_X, uint32_t& nCount)
-{
-    return m_pHorCurve->TrsNEToCmlDist(E_X, N_Y, nCount);
-}
-
-DyArray<tagCmlDistAngle> RouteAPI::TrsNEToCmlDist(double N_Y, double E_X)
-{
-    if (m_pHorCurve)
-        return m_pHorCurve->TrsNEToCmlDist(E_X, N_Y);
+    if (!m_pHorCurve->TrsNEToCmlDist(E_X, N_Y, dCml, dDist, dFwj))
+        return false;
     
-    throw std::runtime_error("HorCurve ptr is null");
+    dDist = -dDist;
+    dFwj = BaseCalFun::TransferAngle(dFwj);
+    
+    return true;
 }
 
-Point2d* RouteAPI::IntersectWithLine(double dAngle, double N_Y, double E_X, uint32_t& nArrCount)
+tagCmlDistAngle* RouteAPI::TrsNEToCmlDist(double N_Y, double E_X, uint32_t& nCount) const
+{
+    tagCmlDistAngle* arrRet = m_pHorCurve->TrsNEToCmlDist(E_X, N_Y, nCount);
+    for (int i = 0; i < nCount; i++)
+    {
+        (arrRet + i)->dDist *= -1.0;
+        (arrRet + i)->dAngle = BaseCalFun::TransferAngle((arrRet + i)->dAngle);
+    }
+    return arrRet;
+}
+
+Point2d* RouteAPI::IntersectWithLine(double dAngle, double N_Y, double E_X, uint32_t& nArrCount) const
 {
     return m_pHorCurve->IntersectWithLine(dAngle, E_X, N_Y , nArrCount);
-}
-
-DyArray<Point2d> RouteAPI::IntersectWithLine(double dAngle, double N_Y, double E_X)
-{
-    if (m_pHorCurve)
-        return m_pHorCurve->IntersectWithLine(dAngle, E_X, N_Y);
-    
-    throw std::runtime_error("HorCurve ptr is null");
 }
 
 double RouteAPI::GetLength()
@@ -89,22 +85,22 @@ double RouteAPI::GetLength()
 }
 
 ///连续里程->现场里程
-bool RouteAPI::TrsCmltoCkml(double cml, char ckml[64], int nPrec)
+bool RouteAPI::TrsCmltoCkml(double cml, char ckml[64], int nPrec) const
 {
     return m_pMileConvert->TrsCmltoCkml(cml, ckml, nPrec);
 }
 
-bool RouteAPI::TrsCkmlToCml(char ckml[64], double& cml, char strErr[64])
+bool RouteAPI::TrsCkmlToCml(char ckml[64], double& cml, char strErr[64]) const
 {
     return m_pMileConvert->TrsCkmlToCml(ckml, cml, strErr);
 }
 
-void RouteAPI::GetDesignHeight(double dCml, double& dHZ, double& dFyj)
+void RouteAPI::GetDesignHeight(double dCml, double& dHZ, double& dFyj) const
 {
     m_pVerCurve->TrsCmlToHeight(dCml, dHZ, dFyj);
 }
 
-tagExportLineElement* RouteAPI::ExportHorCurve(int& nArrCount, double dStartCml, double dEndCml, double dDist, double dCurveStep)
+tagExportLineElement* RouteAPI::ExportHorCurve(int& nArrCount, double dStartCml, double dEndCml, double dDist, double dCurveStep) const
 {
     if (!m_pHorCurve)
     {
@@ -114,7 +110,7 @@ tagExportLineElement* RouteAPI::ExportHorCurve(int& nArrCount, double dStartCml,
     return m_pHorCurve->ExportHorCurve(nArrCount, dStartCml, dEndCml, dDist, dCurveStep);
 }
 
-const tagJDInfo* RouteAPI::ExportJDInfo(int& nCount)
+const tagJDInfo* RouteAPI::ExportJDInfo(int& nCount) const
 {
     return m_pHorCurve->ExportJDInfo(nCount);
 }

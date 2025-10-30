@@ -13,7 +13,7 @@ ArcElement::ArcElement()
     eElementType = ElementType::Arc;
 }
 
-bool ArcElement::TrsCmlDistToNE(double dCml, double dDist, double& dX, double& dY, double& dAngle)
+bool ArcElement::TrsCmlDistToNE(double dCml, double dDist, double& dX, double& dY, double& dAngle) const
 {
     assert(dCml >= dStartCml - s_dCalPrecision && dCml <= dStartCml + dTotalLen + s_dCalPrecision);
     if (dCml < dStartCml - s_dCalPrecision || dCml > dStartCml + dTotalLen + s_dCalPrecision)
@@ -37,7 +37,7 @@ bool ArcElement::TrsCmlDistToNE(double dCml, double dDist, double& dX, double& d
     return true;
 }
 
-uint32_t ArcElement::TrsNEToCmlDist(double dX, double dY, double arrCml[s_nMaxArrCount], double arrDist[s_nMaxArrCount], double arrAngle[s_nMaxArrCount])
+uint32_t ArcElement::TrsNEToCmlDist(double dX, double dY, double arrCml[s_nMaxArrCount], double arrDist[s_nMaxArrCount], double arrAngle[s_nMaxArrCount]) const
 {
     //计算圆心坐标
     double dAngleR = dStartTanAngle + (bTurnLeft ? MATH_PI_2 : -MATH_PI_2);
@@ -108,7 +108,7 @@ uint32_t ArcElement::TrsNEToCmlDist(double dX, double dY, double arrCml[s_nMaxAr
     return nCurCount;
 }
 
-bool ArcElement::TrsCmlToHeight(double dCml, double& dHeight, double& dFyj)
+bool ArcElement::TrsCmlToHeight(double dCml, double& dHeight, double& dFyj) const
 {
     //1.计算圆心坐标
     double dAngleR = dStartTanAngle + (bTurnLeft ? MATH_PI_2 : -MATH_PI_2);
@@ -131,7 +131,7 @@ bool ArcElement::TrsCmlToHeight(double dCml, double& dHeight, double& dFyj)
     return true;
 }
 
-uint32_t ArcElement::IntersectWithLine(double dAngle, double dX, double dY, Point2d arrCrossPos[s_nMaxArrCount])
+uint32_t ArcElement::IntersectWithLine(double dAngle, double dX, double dY, Point2d arrCrossPos[s_nMaxArrCount]) const
 {
     //直线起点
     Point2d posOnlineA(dX, dY);
@@ -186,7 +186,7 @@ uint32_t ArcElement::IntersectWithLine(double dAngle, double dX, double dY, Poin
     return nCurCount;
 }
 
-tagExportLineElement* ArcElement::ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep)
+tagExportLineElement* ArcElement::ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep) const
 {
     assert(dStartCml >= dStartCml - s_dCalPrecision && dEndCml <= dStartCml + dTotalLen + s_dCalPrecision);
     if (dStartCml < dStartCml - s_dCalPrecision || dEndCml > dStartCml + dTotalLen + s_dCalPrecision)
@@ -205,7 +205,7 @@ tagExportLineElement* ArcElement::ExportHorCurve(double dStartCml, double dEndCm
     return pRet;
 }
 
-Point2d ArcElement::TrsCmlToNE_Relative(double dCml)
+Point2d ArcElement::TrsCmlToNE_Relative(double dCml) const
 {
     double dArcAngle = dCml / dArcR;
     double dDeltaX = sin(dArcAngle) * dArcR;

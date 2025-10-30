@@ -10,7 +10,6 @@
 
 #include "BaseStruct.hpp"
 #include "BasePoint.hpp"
-#include "DyArray.hpp"
 
 ///平曲线
 class HorizontalCurve;
@@ -64,7 +63,7 @@ public:
     ///   - N_Y: 纬距
     ///   - E_X: 经距
     ///   - dFwj: 方位角
-    bool TrsCmlDistToNE(double dCml, double dDist, double& N_Y, double& E_X, double& dFwj);
+    bool TrsCmlDistToNE(double dCml, double dDist, double& N_Y, double& E_X, double& dFwj) const;
     
     /// 坐标 -> 连续里程+投影距离+方位角
     /// - Parameters:
@@ -73,7 +72,7 @@ public:
     ///   - dCml: 连续里程
     ///   - dDist: 投影距离(左负右正)
     ///   - dFwj: 方位角
-    bool TrsNEToCmlDist(double N_Y, double E_X, double& dCml, double& dDist, double& dFwj);
+    bool TrsNEToCmlDist(double N_Y, double E_X, double& dCml, double& dDist, double& dFwj) const;
     
     /// 坐标 -> 计算任意直线与路线的所有交点
     /// - Parameters:
@@ -82,48 +81,35 @@ public:
     ///   - E_X: 经距
     ///   - nArrCount: 数组大小
     ///   - return: 交点数组数组地址
-    Point2d* IntersectWithLine(double dAngle, double N_Y, double E_X, uint32_t& nArrCount);
-    
-    /// 坐标 -> 计算任意直线与路线的所有交点
-    /// - Parameters:
-    ///   - dAngle: 直线角度
-    ///   - N_Y: 纬距
-    ///   - E_X: 经距
-    DyArray<Point2d> IntersectWithLine(double dAngle, double N_Y, double E_X);
-    
+    Point2d* IntersectWithLine(double dAngle, double N_Y, double E_X, uint32_t& nArrCount) const;
+
     /// 坐标 -> 连续里程+投影距离+方位角 集合
     /// - Parameters:
     ///   - N_Y: 纬距
     ///   - E_X: 经距
     ///   - nCount: 数组大小
     ///   - return: 数组地址
-    tagCmlDistAngle* TrsNEToCmlDist(double N_Y, double E_X, uint32_t& nCount);
-    
-    /// 坐标 -> 连续里程+投影距离+方位角 集合
-    /// - Parameters:
-    ///   - N_Y: 纬距
-    ///   - E_X: 经距
-    DyArray<tagCmlDistAngle> TrsNEToCmlDist(double N_Y, double E_X);
+    tagCmlDistAngle* TrsNEToCmlDist(double N_Y, double E_X, uint32_t& nCount) const;
     
     /// 线路总长度
     double GetLength();
     
     /// 连续里程->现场里程
     /// - Parameter cml: 连续里程
-    bool TrsCmltoCkml(double cml, char ckml[64], int nPrec = 3);
+    bool TrsCmltoCkml(double cml, char ckml[64], int nPrec = 3) const;
     
     /// 现场里程->连续里程
     /// - Parameters:
     ///   - cml: 连续里程
     ///   - bReliability: 是否可靠
-    bool TrsCkmlToCml(char ckml[64], double& cml, char strErr[64]);
+    bool TrsCkmlToCml(char ckml[64], double& cml, char strErr[64]) const;
     
     /// 连续里程->轨面高程
     /// - Parameters:
     ///   - dCml: 连续里程
     ///   - dHZ: 轨面高程
     ///   - dFyj: 俯仰角
-    void GetDesignHeight(double dCml, double& dHZ, double& dFyj);
+    void GetDesignHeight(double dCml, double& dHZ, double& dFyj) const;
     
     /// 导出指定里程范围内平曲线数据
     /// - Parameters:
@@ -133,11 +119,11 @@ public:
     ///   - dDist: 偏移距离
     ///   - dCurveStep: 缓和曲线步长
     ///   - return: 线元数组首地址
-    tagExportLineElement* ExportHorCurve(int& nArrCount, double dStartCml, double dEndCml, double dDist, double dCurveStep);
+    tagExportLineElement* ExportHorCurve(int& nArrCount, double dStartCml, double dEndCml, double dDist, double dCurveStep) const;
     
     /// 导出交点信息
     /// - Parameter nCount: 交点数目
-    const tagJDInfo* ExportJDInfo(int& nCount);
+    const tagJDInfo* ExportJDInfo(int& nCount) const;
 };
 
 #pragma GCC visibility pop

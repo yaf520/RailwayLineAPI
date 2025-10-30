@@ -11,18 +11,18 @@
 #include <ctype.h>
 
 HorizontalCurve::HorizontalCurve()
-    : LineElementManager(CurveType::HorizontalCurve)
+: LineElementManager(CurveType::HorizontalCurve)
 {
-
+    
 }
 
 HorizontalCurve::~HorizontalCurve()
 {
-
+    
 }
 
 //计算点的投影属于哪一线元
-BaseLineElement* HorizontalCurve::PosBelongTo(Point2d pos)
+BaseLineElement* HorizontalCurve::PosBelongTo(Point2d pos) const
 {
     //查找距离起点最近的线元
     uint32_t nMinDisIndex = 0;
@@ -82,7 +82,7 @@ BaseLineElement* HorizontalCurve::PosBelongTo(Point2d pos)
     
 }
 
-BaseLineElement* HorizontalCurve::CmlBelongTo(double dCml)
+BaseLineElement* HorizontalCurve::CmlBelongTo(double dCml) const
 {
     if (dCml < 0.0 || dCml > GetLength() + s_dCalPrecision)
         return nullptr;
@@ -104,7 +104,7 @@ BaseLineElement* HorizontalCurve::CmlBelongTo(double dCml)
 }
 
 //里程+投影计算坐标+切线角
-bool HorizontalCurve::TrsCmlDistToNE(double dCml, double dDist, double& dX, double& dY, double& dAngle)
+bool HorizontalCurve::TrsCmlDistToNE(double dCml, double dDist, double& dX, double& dY, double& dAngle) const
 {
     BaseLineElement* pLineElement = CmlBelongTo(dCml);
     if (!pLineElement)
@@ -113,22 +113,25 @@ bool HorizontalCurve::TrsCmlDistToNE(double dCml, double dDist, double& dX, doub
 }
 
 //坐标计算投影点里程+投影距离+切线角
-bool HorizontalCurve::TrsNEToCmlDist(double dX, double dY, double& dCml, double& dDist, double& dAngle)
+bool HorizontalCurve::TrsNEToCmlDist(double dX, double dY, double& dCml, double& dDist, double& dAngle) const
 {
-    DyArray<tagCmlDistAngle> arrPos = TrsNEToCmlDist(dX, dY);
-    if (arrPos.GetCount() > 0)
+    uint32_t nCount = 0;
+    tagCmlDistAngle* pArr = this->TrsNEToCmlDist(dX, dY, nCount);
+    if (nCount > 0)
     {
-        dCml = arrPos.begin()->dCml;
-        dDist = arrPos.begin()->dDist;
-        dAngle = arrPos.begin()->dFwj;
+        dCml = pArr->dCml;
+        dDist = pArr->dDist;
+        dAngle = pArr->dAngle;
+        
+        delete [] pArr;
         
         return true;
     }
-
+    
     return false;
 }
 
-tagCmlDistAngle* HorizontalCurve::TrsNEToCmlDist(double dX, double dY, uint32_t& nArrCount)
+tagCmlDistAngle* HorizontalCurve::TrsNEToCmlDist(double dX, double dY, uint32_t& nArrCount) const
 {
     nArrCount = 0;
     tagCmlDistAngle* pArrRet = nullptr;
@@ -147,11 +150,11 @@ tagCmlDistAngle* HorizontalCurve::TrsNEToCmlDist(double dX, double dY, uint32_t&
         if (nCount > 0)
         {
             if (!pArrRet)
-                pArrRet = new tagCmlDistAngle[m_nElementCount];
+                pArrRet = new tagCmlDistAngle[nMaxCount];
             
-            if (nArrCount >= nMaxCount)
+            if (nArrCount + nCount > nMaxCount)
             {
-                nMaxCount += nArrCount;
+                nMaxCount *= 2;
                 tagCmlDistAngle* pNewArr = new tagCmlDistAngle[nMaxCount];
                 memcpy(pNewArr, pArrRet, sizeof(tagCmlDistAngle) * nArrCount);
                 delete [] pArrRet;
@@ -170,9 +173,9 @@ tagCmlDistAngle* HorizontalCurve::TrsNEToCmlDist(double dX, double dY, uint32_t&
                     memmove(pArrRet + nInsertIndex + 1, pArrRet + nInsertIndex, (nArrCount - nInsertIndex) * sizeof(tagCmlDistAngle));
                 
                 (pArrRet + nInsertIndex)->dCml = arrCml[nProIndex];
-                (pArrRet + nInsertIndex)->dDist = -arrDist[nProIndex];
-                (pArrRet + nInsertIndex)->dFwj = BaseCalFun::TransferAngle(arrAngle[nProIndex]);
-                    
+                (pArrRet + nInsertIndex)->dDist = arrDist[nProIndex];
+                (pArrRet + nInsertIndex)->dAngle = arrAngle[nProIndex];
+                
                 nArrCount++;
             }
         }
@@ -181,44 +184,7 @@ tagCmlDistAngle* HorizontalCurve::TrsNEToCmlDist(double dX, double dY, uint32_t&
     return pArrRet;
 }
 
-DyArray<tagCmlDistAngle> HorizontalCurve::TrsNEToCmlDist(double dX, double dY)
-{
-    DyArray<tagCmlDistAngle> arrRet;
-    
-    for (uint32_t nIndex = 0; nIndex < m_nElementCount; nIndex++)
-    {
-        if (m_arrLineElement[nIndex]->dTotalLen < s_dLenPrecision)
-            continue;
-        
-        double arrCml[s_nMaxArrCount] = {0.0};
-        double arrDist[s_nMaxArrCount] = {0.0};
-        double arrAngle[s_nMaxArrCount] = {0.0};
-        
-        uint32_t nCount = m_arrLineElement[nIndex]->TrsNEToCmlDist(dX, dY, arrCml, arrDist, arrAngle);
-        if (nCount > 0)
-        {
-            for (int nProIndex = 0; nProIndex < nCount; nProIndex++)
-            {
-                //插入排序
-                uint32_t nInsertIndex = 0;
-                for (nInsertIndex = 0; nInsertIndex < arrRet.GetCount(); nInsertIndex++)
-                    if (abs(arrDist[nProIndex]) < abs(arrRet[nInsertIndex].dDist))
-                        break;
-                
-                tagCmlDistAngle item;
-                item.dCml = arrCml[nProIndex];
-                item.dDist = -arrDist[nProIndex];
-                item.dFwj = BaseCalFun::TransferAngle(arrAngle[nProIndex]);
-
-                arrRet.InsertAt(nInsertIndex, item);
-            }
-        }
-    }
-    
-    return arrRet;
-}
-
-Point2d* HorizontalCurve::IntersectWithLine(double dAngle, double dX, double dY, uint32_t& nArrCount)
+Point2d* HorizontalCurve::IntersectWithLine(double dAngle, double dX, double dY, uint32_t& nArrCount) const
 {
     nArrCount = 0;
     Point2d* arrRet = nullptr;
@@ -236,11 +202,11 @@ Point2d* HorizontalCurve::IntersectWithLine(double dAngle, double dX, double dY,
         if (nCount > 0)
         {
             if (!arrRet)
-                arrRet = new Point2d[m_nElementCount];
+                arrRet = new Point2d[nMaxCount];
             
-            if (nArrCount >= nMaxCount)
+            if (nArrCount + nCount > nMaxCount)
             {
-                nMaxCount += nArrCount;
+                nMaxCount *= 2;
                 Point2d* pNewArr = new Point2d[nMaxCount];
                 memcpy((void*)pNewArr, (void*)arrRet, sizeof(Point2d) * nArrCount);
                 delete [] arrRet;
@@ -274,34 +240,81 @@ Point2d* HorizontalCurve::IntersectWithLine(double dAngle, double dX, double dY,
     return arrRet;
 }
 
-DyArray<Point2d> HorizontalCurve::IntersectWithLine(double dAngle, double dX, double dY)
+tagJDInfo* HorizontalCurve::ExportOffsetJDInfo(double dOffsetDist, int& nJDCount) const
 {
-    DyArray<Point2d> arrRet;
+    bool bSuccess = true;
     
-    //基准点
-    Point2d posBase(dX, dY);
-    for (uint32_t nIndex = 0; nIndex < m_nElementCount; nIndex++)
+    tagJDInfo* arrJDInfo = new tagJDInfo[m_nJDCount];
+    
+    double dDir = dOffsetDist / abs(dOffsetDist);
+    for (int nCurIndex = 0; nCurIndex + 2 < m_nJDCount; nCurIndex++)
     {
-        if (m_arrLineElement[nIndex]->dTotalLen < s_dLenPrecision)
-            continue;
+        const tagJDInfo* pCurItem = m_arrJD + nCurIndex;
         
-        Point2d arrPos[s_nMaxArrCount];
-        uint32_t nCount = m_arrLineElement[nIndex]->IntersectWithLine(dAngle, dX, dY, arrPos);
-        if (nCount > 0)
+        bool bType = (pCurItem + 1)->nJDType != JDType::ThreeUnit;
+        bool bSpiralR = (((pCurItem + 1)->dEnterR != __DBL_MAX__ && (pCurItem + 1)->dL1 != 0.0)
+                         || ((pCurItem + 1)->dExitR != __DBL_MAX__ && (pCurItem + 1)->dL2 != 0.0)
+                         || abs((pCurItem + 1)->dL1 - (pCurItem + 1)->dL2) > s_dLenPrecision);
+        if (bType || bSpiralR)
         {
-            for (int nCrossIndex = 0; nCrossIndex < nCount; nCrossIndex++)
-            {
-                //插入排序
-                uint32_t nInsertIndex = 0;
-                for (nInsertIndex = 0; nInsertIndex < arrRet.GetCount(); nInsertIndex++)
-                    if (posBase.distanceTo(arrPos[nCrossIndex]) < posBase.distanceTo(arrRet[nInsertIndex]))
-                        break;
-
-                arrRet.InsertAt(nInsertIndex, arrPos[nCrossIndex]);
-            }
+            bSuccess = false;
+            break;
         }
+        
+        Point2d pntJD1(pCurItem->dX, pCurItem->dY);
+        Point2d pntJD2((pCurItem + 1)->dX, (pCurItem + 1)->dY);
+        Point2d pntJD3((pCurItem + 2)->dX, (pCurItem + 2)->dY);
+        
+        double dAngle1 = BaseCalFun::CalAngleX(pntJD1, pntJD2);
+        dAngle1 += MATH_PI_2 * dDir;
+        Vector2d vecOffset1(cos(dAngle1), sin(dAngle1));
+        
+        double dAngle2 = BaseCalFun::CalAngleX(pntJD2, pntJD3);
+        dAngle2 += MATH_PI_2 *dDir;
+        Vector2d vecOffset2(cos(dAngle2), sin(dAngle2));
+        
+        Point2d pntNewJD1 = pntJD1 + vecOffset1 * abs(dOffsetDist);
+        Point2d pntNewJD3 = pntJD3 + vecOffset2 * abs(dOffsetDist);
+        Point2d pntNewJD2;
+        if (!BaseCalFun::Intersect2Line(pntNewJD1, pntJD2 - pntJD1, pntNewJD3, pntJD3 - pntJD2, pntNewJD2))
+        {
+            bSuccess = false;
+            break;
+        }
+        
+        double dTurnAngle = BaseCalFun::CalTurnAngle(pntJD1, pntJD2, pntJD3);
+        double dSpiralAngle = (pCurItem + 1)->dL1 / 2.0 / (pCurItem + 1)->dArcR1;
+        double old_p = (pCurItem + 1)->dL1 * (pCurItem + 1)->dL1 / (pCurItem + 1)->dArcR1 / 24.0 - pow((pCurItem + 1)->dL1, 4.0) / pow((pCurItem + 1)->dArcR1, 3.0) / 2688.0;
+        
+        dOffsetDist *= (dTurnAngle > 0.0 ? -1.0 : 1.0);
+        double dNewArcR = ((old_p + (pCurItem + 1)->dArcR1) + dOffsetDist) / (1.0 + dSpiralAngle * dSpiralAngle / 6.0 - pow(dSpiralAngle, 4.0) / 168.0);
+        
+        double dNewL = dSpiralAngle * dNewArcR * 2.0;
+        
+        if (nCurIndex == 0)
+        {
+            arrJDInfo[nCurIndex].dX = pntNewJD1.x;
+            arrJDInfo[nCurIndex].dY = pntNewJD1.y;
+        }
+        if (nCurIndex + 2)
+        {
+            arrJDInfo[nCurIndex + 2].dX = pntNewJD3.x;
+            arrJDInfo[nCurIndex + 2].dY = pntNewJD3.y;
+        }
+        arrJDInfo[nCurIndex + 1].dX = pntNewJD2.x;
+        arrJDInfo[nCurIndex + 1].dY = pntNewJD2.y;
+        arrJDInfo[nCurIndex + 1].dArcR1 = dNewArcR;
+        arrJDInfo[nCurIndex + 1].dL1 = arrJDInfo[nCurIndex + 1].dL2 = dNewL;
+        
     }
     
-    return arrRet;
+    if (!bSuccess)
+    {
+        delete [] arrJDInfo;
+        nJDCount = 0;
+        return nullptr;
+    }
+    
+    return arrJDInfo;
 }
 

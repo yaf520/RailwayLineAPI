@@ -19,7 +19,7 @@ public:
     /// - Parameters:
     ///   - posStart: 起点坐标
     ///   - posEnd: 终点坐标
-    static double CalAngleX(Point2d posStart, Point2d posEnd);
+    static double CalAngleX(const Point2d& posStart, const Point2d& posEnd);
     
     /// 点到直线的投影点坐标
     /// - Parameters:
@@ -27,20 +27,20 @@ public:
     ///   - O: 直线上的点1
     ///   - B: 直线上的点2
     ///   - dPecent: 百分比
-    static Point2d PointToLineProjection(Point2d A, Point2d O, Point2d B, double& dPecent);
+    static Point2d PointToLineProjection(const Point2d& A, const Point2d& O, const Point2d& B, double& dPecent);
     
     /// 计算两个向量的夹角
     /// - Parameters:
     ///   - vec1: 开始向量
     ///   - vec2: 结束向量
-    static double CalAngleBy2Vec(Vector2d vec1, Vector2d vec2);
+    static double CalAngleBy2Vec(const Vector2d& vec1, const Vector2d& vec2);
     
     /// 计算转向角
     /// - Parameters:
     ///   - p1: 第一个点
     ///   - p2: 第二个点
     ///   - p3: 第三个点
-    static double CalTurnAngle(Point2d p1, Point2d p2, Point2d p3);
+    static double CalTurnAngle(const Point2d& p1, const Point2d& p2, const Point2d& p3);
     
     /// 计算转向角
     /// - Parameters:
@@ -48,7 +48,7 @@ public:
     ///   - p2: 第二个点
     ///   - p3: 第三个点
     ///   - p4: 第四个点
-    static double CalTurnAngle(Point2d p1, Point2d p2, Point2d p3, Point2d p4);
+    static double CalTurnAngle(const Point2d& p1, const Point2d& p2, const Point2d& p3, const Point2d& p4);
     
     /// 坐标转换
     /// - Parameters:
@@ -56,7 +56,7 @@ public:
     ///   - posTransfer: 转换点
     ///   - bTurnDir: 转向
     ///   - dAngle: 转向角度
-    static Point2d TransferPos(Point2d posBase, Point2d posTransfer, bool bTurnDir, double dAngle);
+    static Point2d TransferPos(const Point2d& posBase, const Point2d& posTransfer, bool bTurnDir, double dAngle);
     
     /// 坐标转换
     /// - Parameters:
@@ -64,7 +64,7 @@ public:
     ///   - posTransfer: 转换点
     ///   - bTurnDir: 转向
     ///   - dAngle: 转向角度
-    static Point2d TransferPosReversal(Point2d posBase, Point2d posTransfer, bool bTurnDir, double dAngle);
+    static Point2d TransferPosReversal(const Point2d& posBase, const Point2d& posTransfer, bool bTurnDir, double dAngle);
     
     /// 坐标转换
     /// - Parameters:
@@ -73,7 +73,17 @@ public:
     ///   - bTurnDir: 转向
     ///   - dAngle: 转向角度
     ///   - return: 基准点坐标
-    static Point2d TransferBasePos(Point2d posTarget, Point2d posRelative, bool bTurnDir, double dAngle);
+    static Point2d TransferBasePos(const Point2d& posTarget, const Point2d& posRelative, bool bTurnDir, double dAngle);
+    
+    /// 计算两条直线交点坐标
+    /// - Parameters:
+    ///   - pnt1: 第一条直线上一点
+    ///   - vec1: 第一条直线方向
+    ///   - pnt2: 第二条直线上一点
+    ///   - vec2: 第二条直线方向
+    ///   - pntCross: 交点坐标
+    ///   - return: 是否有交点
+    static bool Intersect2Line(const Point2d& pnt1, const Vector2d& vec1, const Point2d& pnt2, const Vector2d& vec2, Point2d& pntCross);
     
     /// 保持弧度值在0-2pi之间
     /// - Parameter dAngle: 弧度值

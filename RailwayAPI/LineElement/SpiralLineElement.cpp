@@ -15,7 +15,7 @@ SpiralLineElement::SpiralLineElement()
     eElementType = ElementType::SpiralCurve;
 }
 
-bool SpiralLineElement::TrsCmlDistToNE(double dCml, double dDist, double& dX, double& dY, double& dAngle)
+bool SpiralLineElement::TrsCmlDistToNE(double dCml, double dDist, double& dX, double& dY, double& dAngle) const
 {
     assert(dCml >= dStartCml - s_dCalPrecision && dCml <= dStartCml + dTotalLen + s_dCalPrecision);
     if (dCml < dStartCml - s_dCalPrecision || dCml > dStartCml + dTotalLen + s_dCalPrecision)
@@ -47,7 +47,7 @@ bool SpiralLineElement::TrsCmlDistToNE(double dCml, double dDist, double& dX, do
     return true;
 }
 
-uint32_t SpiralLineElement::TrsNEToCmlDist(double dX, double dY, double arrCml[s_nMaxArrCount], double arrDist[s_nMaxArrCount], double arrAngle[s_nMaxArrCount])
+uint32_t SpiralLineElement::TrsNEToCmlDist(double dX, double dY, double arrCml[s_nMaxArrCount], double arrDist[s_nMaxArrCount], double arrAngle[s_nMaxArrCount]) const
 {
     //转向方向
     bool bTurnDir = ((m_bEnter && bTurnLeft) || (!m_bEnter && !bTurnLeft));
@@ -101,7 +101,7 @@ uint32_t SpiralLineElement::TrsNEToCmlDist(double dX, double dY, double arrCml[s
     return nRootCount;
 }
 
-uint32_t SpiralLineElement::IntersectWithLine(double dAngle, double dX, double dY, Point2d arrCrossPos[s_nMaxArrCount])
+uint32_t SpiralLineElement::IntersectWithLine(double dAngle, double dX, double dY, Point2d arrCrossPos[s_nMaxArrCount]) const
 {
     //转向方向
     bool bTurnDir = ((m_bEnter && bTurnLeft) || (!m_bEnter && !bTurnLeft));
@@ -140,7 +140,7 @@ uint32_t SpiralLineElement::IntersectWithLine(double dAngle, double dX, double d
     return nRootCount;
 }
 
-tagExportLineElement* SpiralLineElement::ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep)
+tagExportLineElement* SpiralLineElement::ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep) const
 {
     assert(dStartCml >= dStartCml - s_dCalPrecision && dEndCml <= dStartCml + dTotalLen + s_dCalPrecision);
     if (dStartCml < dStartCml - s_dCalPrecision || dEndCml > dStartCml + dTotalLen + s_dCalPrecision)
@@ -164,7 +164,7 @@ tagExportLineElement* SpiralLineElement::ExportHorCurve(double dStartCml, double
     return pRet;
 }
 
-Point2d SpiralLineElement::TrsCmlToNE_Relative(double dCml)
+Point2d SpiralLineElement::TrsCmlToNE_Relative(double dCml) const
 {
     double dX = 0.0;
     double dY = 0.0;
@@ -179,18 +179,6 @@ Point2d SpiralLineElement::TrsCmlToNE_Relative(double dCml)
         dY += y;
     }
     return Point2d(dX, dY);
-}
-
-Point2d SpiralLineElement::TrsCmlToCenter_Relative(double dCml)
-{
-    //对应坐标
-    Point2d posOnline = TrsCmlToNE_Relative(dCml + m_dHideLen);
-    //对应发现角度
-    double dNormalAngle = TrsCmlToAngle_Relative(dCml + m_dHideLen) + MATH_PI_2;
-    //对应半径
-    double dR = dC / (dCml + m_dHideLen);
-    //圆心坐标
-    return posOnline + Vector2d(cos(dNormalAngle), sin(dNormalAngle)) * dR;
 }
 
 void SpiralLineElement::InitData()
@@ -261,7 +249,7 @@ void SpiralLineElement::AdjustData(const Point2d& pos)
     m_pntBase += pos;
 }
 
-double SpiralLineElement::f_original_proj(double dL0, double dParamX, double dParamY)
+double SpiralLineElement::f_original_proj(double dL0, double dParamX, double dParamY) const
 {
     double dTanAngle = dL0 * dL0 / 2.0 / dC;
     double x = 0.0, y = 0.0;
@@ -280,7 +268,7 @@ double SpiralLineElement::f_original_proj(double dL0, double dParamX, double dPa
     return cos(dTanAngle) * (x - dParamX) + sin(dTanAngle) * (y - dParamY);
 }
 
-double SpiralLineElement::f_original_cross(double dL0, double k, double b)
+double SpiralLineElement::f_original_cross(double dL0, double k, double b) const
 {
     double x = 0.0, y = 0.0;
     for (int n = 0; n < s_nAddPreCount; n++)
@@ -298,7 +286,7 @@ double SpiralLineElement::f_original_cross(double dL0, double k, double b)
     return (k == __DBL_MAX__ ? x - b : k * x + b - y);
 }
 
-double SpiralLineElement::f_first_deriv_proj(double dL0, double dParamX, double dParamY)
+double SpiralLineElement::f_first_deriv_proj(double dL0, double dParamX, double dParamY) const
 {
     double dTanAngle = dL0 * dL0 / 2.0 / dC;
     double x = 0.0, y = 0.0, dx = 0.0, dy = 0.0;
@@ -322,7 +310,7 @@ double SpiralLineElement::f_first_deriv_proj(double dL0, double dParamX, double 
     return -sin(dTanAngle) * (dL0 / dC) * (x - dParamX) + cos(dTanAngle) * dx + cos(dTanAngle) * (dL0 / dC) * (y - dParamY) + sin(dTanAngle) * dy;
 }
 
-double SpiralLineElement::f_first_deriv_cross(double dL0, double k, double b)
+double SpiralLineElement::f_first_deriv_cross(double dL0, double k, double b) const
 {
     double dx = 0.0, dy = 0.0;
     for (int n = 0; n < s_nAddPreCount; n++)
@@ -340,7 +328,7 @@ double SpiralLineElement::f_first_deriv_cross(double dL0, double k, double b)
     return (k == __DBL_MAX__ ? dx : k * dx - dy);
 }
 
-double SpiralLineElement::f_second_deriv_proj(double x0, double dParamX, double dParamY)
+double SpiralLineElement::f_second_deriv_proj(double x0, double dParamX, double dParamY) const
 {
     double dTanAngle = x0 * x0 / 2.0 / dC;
     double dDTanAngle1 = x0 / dC;
@@ -374,7 +362,7 @@ double SpiralLineElement::f_second_deriv_proj(double x0, double dParamX, double 
     return -cos(dTanAngle) * dDTanAngle1 * dDTanAngle1 * (x - dParamX) - sin(dTanAngle) * dDTanAngle2 * (x - dParamX) - sin(dTanAngle) * dDTanAngle1 * dx1 - sin(dTanAngle) * dDTanAngle1 * dx1 + cos(dTanAngle) * dx2 - sin(dTanAngle) * dDTanAngle1 * dDTanAngle1 * (y - dParamY) + cos(dTanAngle) * dDTanAngle2 * (y - dParamY) + cos(dTanAngle) * dDTanAngle1 * dy1 + cos(dTanAngle) * dDTanAngle1 * dy1 + sin(dTanAngle) * dy2;
 }
 
-double SpiralLineElement::f_second_deriv_cross(double x0, double k, double b)
+double SpiralLineElement::f_second_deriv_cross(double x0, double k, double b) const
 {
     double dx2 = 0.0, dy2 = 0.0;
     for (int n = 0; n < s_nAddPreCount; n++)
@@ -392,7 +380,7 @@ double SpiralLineElement::f_second_deriv_cross(double x0, double k, double b)
     return (k == __DBL_MAX__ ? dx2 : k * dx2 - dy2);
 }
 
-uint32_t SpiralLineElement::EstimateRoot(pFunc pf_original, pFunc pf_first_deriv, pFunc pf_second_deriv, double dParamX, double dParamY, double arrEstimateRoot[s_nMaxArrCount])
+uint32_t SpiralLineElement::EstimateRoot(pFunc pf_original, pFunc pf_first_deriv, pFunc pf_second_deriv, double dParamX, double dParamY, double arrEstimateRoot[s_nMaxArrCount]) const
 {
 //#define ESTIMATE_TEST
     
@@ -515,7 +503,7 @@ uint32_t SpiralLineElement::EstimateRoot(pFunc pf_original, pFunc pf_first_deriv
     
 }
 
-bool SpiralLineElement::NewtonIter(pFunc pf_original, pFunc pf_first_deriv, double dEstimateRoot, double dParamX, double dParamY, double& dRoot)
+bool SpiralLineElement::NewtonIter(pFunc pf_original, pFunc pf_first_deriv, double dEstimateRoot, double dParamX, double dParamY, double& dRoot) const
 {
     //初始值
     double x0 = dEstimateRoot;

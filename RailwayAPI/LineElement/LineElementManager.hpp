@@ -14,7 +14,7 @@
 #include "ArcElement.hpp"
 #include "BaseStruct.hpp"
 
-enum class CurveType
+enum class CurveType : int
 {
     HorizontalCurve = 0,
     VerticalCurve
@@ -52,7 +52,7 @@ private:
     /// - Parameters:
     ///   - nIndex: 单元交点索引
     ///   - vecWhole: 曲线起始向量
-    Point2d CalUnitStartPos(uint32_t nIndex, const Vector2d& vecWhole);
+    Point2d CalUnitStartPos(uint32_t nIndex, const Vector2d& vecWhole) const;
     
     /// 计算线元单元
     /// - Parameters:
@@ -67,7 +67,7 @@ private:
     ///   - arrLineElement: 线元单元数组
     ///   - nCurveElementCount： 线元数组大小
     ///   - dCurrentCml: 当前里程
-    void JointLineElement(uint32_t nCurIndex, BaseLineElement** arrLineElement, uint8_t& nCurveElementCount, double& dCurrentCml);
+    void JointLineElement(uint32_t nCurIndex, BaseLineElement** arrLineElement, uint8_t nCurveElementCount, double& dCurrentCml);
     
     /// 计算曲线要素
     /// - Parameters:
@@ -78,10 +78,10 @@ private:
     
 private:
     ///计算点的投影属于哪一线元
-    virtual BaseLineElement* PosBelongTo(Point2d pos) = 0;
+    virtual BaseLineElement* PosBelongTo(Point2d pos) const = 0;
     
     ///计算里程属于哪一线元
-    virtual BaseLineElement* CmlBelongTo(double dCml) = 0;
+    virtual BaseLineElement* CmlBelongTo(double dCml) const = 0;
     
 public:
     /// 设置数据
@@ -90,11 +90,18 @@ public:
     ///   - iCount: 数组大小
     void SetJDData(const tagJDInfo* pJDInfo, uint32_t nCount);
     
-    /// 修改交点数据
+    /// 修改交点坐标
     /// - Parameters:
     ///   - nIndex: 交点索引
     ///   - vecOffset: 偏移向量
-    void UpdateJD(int nIndex, const Vector2d& vecOffset);
+    void UpdateJDCoordinates(int nIndex, const Vector2d& vecOffset);
+    
+    /// 更新交点坐标
+    /// - Parameters:
+    ///   - nIndex: 交点索引
+    ///   - dX: X坐标
+    ///   - dY: Y坐标
+    void UpdateJDCoordinates(int nIndex, double dX, double dY);
     
     /// 导出指定里程范围内平曲线数据
     /// - Parameters:
@@ -104,14 +111,14 @@ public:
     ///   - dDist: 偏移距离
     ///   - dCurveStep: 缓和曲线步长
     ///   - return: 线元数组首地址
-    tagExportLineElement* ExportHorCurve(int& nArrCount, double dStartCml, double dEndCml, double dDist, double dCurveStep);
+    tagExportLineElement* ExportHorCurve(int& nArrCount, double dStartCml, double dEndCml, double dDist, double dCurveStep) const;
     
     /// 导出交点信息
     /// - Parameter nCount: 交点数目
-    const tagJDInfo* ExportJDInfo(int& nCount);
+    const tagJDInfo* ExportJDInfo(int& nCount) const;
     
     /// 获取总长度
-    double GetLength();
+    double GetLength() const;
 };
 
 #endif /* LineElementManager_hpp */

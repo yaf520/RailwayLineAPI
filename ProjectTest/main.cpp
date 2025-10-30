@@ -183,7 +183,7 @@ int main(int argc, const char * argv[]) {
     
 #else
 
-    LoadEIFile("/Users/yaf/Downloads/公路平曲线/1.JD", vecJD);
+    LoadEIFile("/Users/yiaofei/Downloads/公路平曲线/1.JD", vecJD);
     
 #endif
     
@@ -193,7 +193,7 @@ int main(int argc, const char * argv[]) {
     const double dStep = 1.0615;
     
     RouteAPI* pAPI = new RouteAPI;
-    pAPI->SetData(&vecJD.front(), vecJD.size(), vecDL.size() > 0 ? &vecDL.front() : nullptr, vecDL.size(), vecSlope.size() > 0 ? &vecSlope.front() : nullptr, vecSlope.size());
+    pAPI->SetData(vecJD.data(), vecJD.size(), vecDL.size() > 0 ? vecDL.data() : nullptr, vecDL.size(), vecSlope.size() > 0 ? vecSlope.data() : nullptr, vecSlope.size());
     
     double dLen1 = pAPI->GetLength();
     
@@ -253,19 +253,27 @@ int main(int argc, const char * argv[]) {
         
         bool bFind = false;
         
-        DyArray<tagCmlDistAngle> arrRet = pAPI->TrsNEToCmlDist(dY, dX);
-        for (int nIndex = 0; nIndex < arrRet.GetCount(); nIndex++)
+        uint32_t nCount = 0;
+        tagCmlDistAngle* arrRet = pAPI->TrsNEToCmlDist(dY, dX, nCount);
+        if (nCount > 0)
         {
-            if (abs(arrRet[nIndex].dCml - dCml) < 1.0e-5)
+            for (int nIndex = 0; nIndex < nCount; nIndex++)
             {
-                snprintf(buffer, sizeof(buffer), "dX: %0.5f, dY: %0.5f =====> dCml: %0.5f, dDist: %0.5f, dAngle: %0.5f", dX, dY, arrRet[nIndex].dCml, arrRet[nIndex].dDist, arrRet[nIndex].dFwj);
-                cout << buffer << endl;
-                assert(abs(dDist - arrRet[nIndex].dDist) < 0.01);
-                bFind = true;
-                break;
+                if (abs(arrRet[nIndex].dCml - dCml) < 1.0e-5)
+                {
+                    snprintf(buffer, sizeof(buffer), "dX: %0.5f, dY: %0.5f =====> dCml: %0.5f, dDist: %0.5f, dAngle: %0.5f", dX, dY, arrRet[nIndex].dCml, arrRet[nIndex].dDist, arrRet[nIndex].dAngle);
+                    cout << buffer << endl;
+                    assert(abs(dDist - arrRet[nIndex].dDist) < 0.01);
+                    bFind = true;
+                    break;
+                }
             }
+            
+            delete [] arrRet;
+            assert(bFind);
         }
-        assert(bFind);
+        
+        
         /*
         uint32_t nCount = 0;
         tagCmlDistAngle* pArr = pAPI->TrsNEToCmlDist(dY, dX, nCount);

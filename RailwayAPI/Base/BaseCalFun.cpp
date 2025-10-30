@@ -8,31 +8,12 @@
 #include <string.h>
 #include "BaseCalFun.hpp"
 
-double BaseCalFun::CalAngleX(Point2d posStart, Point2d posEnd)
+double BaseCalFun::CalAngleX(const Point2d& posStart, const Point2d& posEnd)
 {
-    double dDeltaX = posEnd.x - posStart.x;
-    double dDeltaY = posEnd.y - posStart.y;
-    if (abs(dDeltaX) < s_dCalPrecision)
-        return (dDeltaY >= 0.0 ? MATH_PI_2 : MATH_PI * 1.5);
-    
-    double dAngle = atan(dDeltaY / dDeltaX);
-    if (dDeltaY >= 0.0)
-    {
-        if (dDeltaX < -s_dCalPrecision)
-            dAngle += MATH_PI;
-    }
-    else
-    {
-        if (dDeltaX < -s_dCalPrecision)
-            dAngle += MATH_PI;
-        else
-            dAngle += MATH_PI * 2.0;
-    }
-    
-    return dAngle;
+    return (posEnd - posStart).angle();
 }
 
-Point2d BaseCalFun::PointToLineProjection(Point2d A, Point2d O, Point2d B, double& dPecent)
+Point2d BaseCalFun::PointToLineProjection(const Point2d& A, const Point2d& O, const Point2d& B, double& dPecent)
 {
     Vector2d OA = A - O;
     Vector2d OB = B - O;
@@ -52,7 +33,7 @@ Point2d BaseCalFun::PointToLineProjection(Point2d A, Point2d O, Point2d B, doubl
     return Point2d(O.x + OB.x * dPecent, O.y + OB.y * dPecent);
 }
 
-double BaseCalFun::CalAngleBy2Vec(Vector2d vec1, Vector2d vec2)
+double BaseCalFun::CalAngleBy2Vec(const Vector2d& vec1, const Vector2d& vec2)
 {
     double dModel1 = vec1.model();
     double dModel2 = vec2.model();
@@ -66,7 +47,7 @@ double BaseCalFun::CalAngleBy2Vec(Vector2d vec1, Vector2d vec2)
     return (dCross > 0.0 ? dTurnAngle : -dTurnAngle);
 }
 
-double BaseCalFun::CalTurnAngle(Point2d p1, Point2d p2, Point2d p3)
+double BaseCalFun::CalTurnAngle(const Point2d& p1, const Point2d& p2, const Point2d& p3)
 {
     Vector2d vecAO = p2 - p1;
     Vector2d vecOB = p3 - p2;
@@ -74,7 +55,7 @@ double BaseCalFun::CalTurnAngle(Point2d p1, Point2d p2, Point2d p3)
     return CalAngleBy2Vec(vecAO, vecOB);
 }
 
-double BaseCalFun::CalTurnAngle(Point2d p1, Point2d p2, Point2d p3, Point2d p4)
+double BaseCalFun::CalTurnAngle(const Point2d& p1, const Point2d& p2, const Point2d& p3, const Point2d& p4)
 {
     Vector2d vecAO = p2 - p1;
     Vector2d vecOB = p4 - p3;
@@ -82,18 +63,16 @@ double BaseCalFun::CalTurnAngle(Point2d p1, Point2d p2, Point2d p3, Point2d p4)
     return CalAngleBy2Vec(vecAO, vecOB);
 }
 
-Point2d BaseCalFun::TransferPos(Point2d posBase, Point2d posTransfer, bool bTurnDir, double dAngle)
+Point2d BaseCalFun::TransferPos(const Point2d& posBase, const Point2d& posTransfer, bool bTurnDir, double dAngle)
 {
-    if (!bTurnDir)
-        posTransfer.y *= -1.0;
-    
-    Point2d vecOffset(cos(dAngle) * posTransfer.x + sin(dAngle) * posTransfer.y,
-                  -sin(dAngle) * posTransfer.x + cos(dAngle) * posTransfer.y);
+    double dTransferY = (bTurnDir ? posTransfer.y : -posTransfer.y);
+    Point2d vecOffset(cos(dAngle) * posTransfer.x + sin(dAngle) * dTransferY,
+                  -sin(dAngle) * posTransfer.x + cos(dAngle) * dTransferY);
     
     return posBase + vecOffset;
 }
 
-Point2d BaseCalFun::TransferPosReversal(Point2d posBase, Point2d posTransfer, bool bTurnDir, double dAngle)
+Point2d BaseCalFun::TransferPosReversal(const Point2d& posBase, const Point2d& posTransfer, bool bTurnDir, double dAngle)
 {
     Point2d posTemp = posTransfer - posBase;
     Point2d posRet(cos(dAngle) * posTemp.x + sin(dAngle) * posTemp.y,
@@ -105,15 +84,25 @@ Point2d BaseCalFun::TransferPosReversal(Point2d posBase, Point2d posTransfer, bo
     return posRet;
 }
 
-Point2d BaseCalFun::TransferBasePos(Point2d posTarget, Point2d posRelative, bool bTurnDir, double dAngle)
+Point2d BaseCalFun::TransferBasePos(const Point2d& posTarget, const Point2d& posRelative, bool bTurnDir, double dAngle)
 {
-    if (!bTurnDir)
-        posRelative.y *= -1.0;
-    
-    Point2d vecOffset(cos(dAngle) * posRelative.x + sin(dAngle) * posRelative.y,
-                  -sin(dAngle) * posRelative.x + cos(dAngle) * posRelative.y);
+    double dRelativeY = (bTurnDir ? posRelative.y : -posRelative.y);
+    Point2d vecOffset(cos(dAngle) * posRelative.x + sin(dAngle) * dRelativeY,
+                  -sin(dAngle) * posRelative.x + cos(dAngle) * dRelativeY);
     
     return posTarget - vecOffset;
+}
+
+bool BaseCalFun::Intersect2Line(const Point2d& pnt1, const Vector2d& vec1, const Point2d& pnt2, const Vector2d& vec2, Point2d& pntCross)
+{
+    if (abs(vec1.cross(vec2)) < s_dCalPrecision)
+        return false;
+    
+    Vector2d vecTmp = pnt2 - pnt1;
+    double t = vecTmp.cross(vec2) / vec1.cross(vec2);
+    pntCross.Set(pnt1.x + vec1.x * t, pnt1.y + vec1.y * t);
+    
+    return true;
 }
 
 //角度转换

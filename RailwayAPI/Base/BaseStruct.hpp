@@ -46,26 +46,25 @@ struct tagJDInfo
     
     ///初始化值
     tagJDInfo()
+        :nJDType(JDType::Invalid),
+        dX(0.0),
+        dY(0.0),
+        dL1(-1.0),
+        dL2(-1.0),
+        dL3(-1.0),
+        dA1(-1.0),
+        dA2(-1.0),
+        dA3(-1.0),
+        dX_End(0.0),
+        dY_End(0.0),
+        dArcR1(0.0),
+        dArcR2(0.0),
+        dID(0.0),
+        dEnterR(__DBL_MAX__),
+        dExitR(__DBL_MAX__),
+        nIndexCount(0),
+        arrUnitsIndex{0, 0, 0, 0, 0}
     {
-        nJDType = JDType::Invalid;
-        dX = 0.0;
-        dY = 0.0;
-        dL1 = -1.0;
-        dA1 = -1.0;
-        dL2 = -1.0;
-        dA2 = -1.0;
-        dL3 = -1.0;
-        dA3 = -1.0;
-        dX_End = 0.0;
-        dY_End = 0.0;
-        dArcR1 = 0.0;
-        dArcR2 = 0.0;
-        dID = 0.0;
-        dEnterR = __DBL_MAX__;
-        dExitR = __DBL_MAX__;
-        
-        memset(arrUnitsIndex, 0, sizeof(int) * 5);
-        nIndexCount = 0;
     }
 };
 
@@ -130,10 +129,8 @@ struct tagExportLineElement
     int nPosCount;
     
     tagExportLineElement()
+        : eLineType((ElementType)-1), pArrPos(nullptr), nPosCount(0)
     {
-        eLineType = (ElementType)-1;
-        pArrPos = nullptr;
-        nPosCount = 0;
     }
     
     tagExportLineElement(const tagExportLineElement& src)
@@ -148,7 +145,7 @@ struct tagExportLineElement
         }
     }
     
-    virtual ~tagExportLineElement()
+    ~tagExportLineElement()
     {
         if (pArrPos)
         {
@@ -158,7 +155,7 @@ struct tagExportLineElement
         }
     }
     
-    virtual tagExportLineElement& operator = (const tagExportLineElement& src)
+    tagExportLineElement& operator = (const tagExportLineElement& src)
     {
         if (this != &src)
         {
@@ -185,13 +182,11 @@ struct tagCmlDistAngle
 {
     double dCml;
     double dDist;
-    double dFwj;
+    double dAngle;
     
     tagCmlDistAngle()
+        : dCml(0.0), dDist(0.0), dAngle(0.0)
     {
-        dCml = 0.0;
-        dDist = 0.0;
-        dFwj = 0.0;
     }
 };
 

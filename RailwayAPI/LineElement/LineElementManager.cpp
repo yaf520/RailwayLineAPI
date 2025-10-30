@@ -8,14 +8,8 @@
 #include "BaseCalFun.hpp"
 
 LineElementManager::LineElementManager(CurveType eCurveType)
+    : m_arrLineElement(nullptr), m_nElementCount(0), m_arrJD(nullptr), m_nJDCount(0), m_arrCurveElement(nullptr), m_nCurveElementCount(0), m_eCurveType(eCurveType)
 {
-    m_arrLineElement = nullptr;
-    m_nElementCount = 0;
-    m_eCurveType = eCurveType;
-    m_arrJD = nullptr;
-    m_nJDCount = 0;
-    m_arrCurveElement = nullptr;
-    m_nCurveElementCount = 0;
 }
 
 LineElementManager::~LineElementManager()
@@ -51,7 +45,7 @@ void LineElementManager::ResetData()
     }
 }
 
-Point2d LineElementManager::CalUnitStartPos(uint32_t nIndex, const Vector2d& vecWhole)
+Point2d LineElementManager::CalUnitStartPos(uint32_t nIndex, const Vector2d& vecWhole) const
 {
     //交点坐标
     Point2d posJD1(((m_arrJD + nIndex)->nJDType != JDType::ThreeUnitBack ? Point2d((m_arrJD + nIndex)->dX, (m_arrJD + nIndex)->dY) : Point2d((m_arrJD + nIndex)->dX_End, (m_arrJD + nIndex)->dY_End)));
@@ -78,6 +72,10 @@ void LineElementManager::CalculateLineElement(uint32_t nCurIndex, BaseLineElemen
     Point2d posJD2((m_arrJD + nCurIndex + 1)->dX, (m_arrJD + nCurIndex + 1)->dY);
     Point2d posJD3((m_arrJD + nCurIndex + 2)->dX, (m_arrJD + nCurIndex + 2)->dY);
     Point2d posJDRef((m_arrJD + nCurIndex + 1)->dX_End, (m_arrJD + nCurIndex + 1)->dY_End);
+    
+    if (posJD1 == posJD2 || posJD1 == posJD3 || posJD2 == posJD3)
+        return;
+    
     //交点类型
     JDType nJDType = (m_arrJD + nCurIndex + 1)->nJDType;
     //起始半径
@@ -406,7 +404,7 @@ void LineElementManager::CalculateLineElement(uint32_t nCurIndex, BaseLineElemen
             arrLineElement[i]->AdjustData(posCurveStart);
 }
 
-void LineElementManager::JointLineElement(uint32_t nCurIndex, BaseLineElement** arrLineElement, uint8_t& nCurveElementCount, double& dCurrentCml)
+void LineElementManager::JointLineElement(uint32_t nCurIndex, BaseLineElement** arrLineElement, uint8_t nCurveElementCount, double& dCurrentCml)
 {
     //交点坐标
     Point2d posJD1 = ((m_arrJD + nCurIndex)->nJDType != JDType::ThreeUnitBack ? Point2d((m_arrJD + nCurIndex)->dX, (m_arrJD + nCurIndex)->dY) : Point2d((m_arrJD + nCurIndex)->dX_End, (m_arrJD + nCurIndex)->dY_End));
@@ -447,15 +445,24 @@ void LineElementManager::JointLineElement(uint32_t nCurIndex, BaseLineElement** 
     }
     
     //记录索引
-    (m_arrJD + nCurIndex + 1)->nIndexCount = nCurveElementCount;
-    for (uint8_t j = 0; j < nCurveElementCount; j++)
+    if (nCurveElementCount == 0)
     {
-        arrLineElement[j]->dStartCml = dCurrentCml;
-        arrLineElement[j]->nIndex = (m_arrJD + nCurIndex + 1)->arrUnitsIndex[j] = m_nElementCount;
-        
-        m_arrLineElement[m_nElementCount++] = arrLineElement[j];
-        
-        dCurrentCml += arrLineElement[j]->dTotalLen;
+        (m_arrJD + nCurIndex + 1)->nIndexCount = 2;
+        (m_arrJD + nCurIndex + 1)->arrUnitsIndex[0] = m_nElementCount - 1;
+        (m_arrJD + nCurIndex + 1)->arrUnitsIndex[1] = m_nElementCount;
+    }
+    else
+    {
+        (m_arrJD + nCurIndex + 1)->nIndexCount = nCurveElementCount;
+        for (uint8_t j = 0; j < nCurveElementCount; j++)
+        {
+            arrLineElement[j]->dStartCml = dCurrentCml;
+            arrLineElement[j]->nIndex = (m_arrJD + nCurIndex + 1)->arrUnitsIndex[j] = m_nElementCount;
+            
+            m_arrLineElement[m_nElementCount++] = arrLineElement[j];
+            
+            dCurrentCml += arrLineElement[j]->dTotalLen;
+        }
     }
     
     if ((m_arrJD + nCurIndex + 1)->dExitR == __DBL_MAX__ || (m_arrJD + nCurIndex + 2)->nJDType == JDType::End)
@@ -625,7 +632,7 @@ void LineElementManager::SetJDData(const tagJDInfo* pJDInfo, uint32_t nCount)
     }
 }
 
-void LineElementManager::UpdateJD(int nIndex, const Vector2d& vecOffset)
+void LineElementManager::UpdateJDCoordinates(int nIndex, const Vector2d& vecOffset)
 {
     if (nIndex < 0 || nIndex >= m_nJDCount || vecOffset.isZeroVec())
         return;
@@ -647,9 +654,38 @@ void LineElementManager::UpdateJD(int nIndex, const Vector2d& vecOffset)
     
 #else
     
+    this->UpdateJDCoordinates(nIndex, m_arrJD[nIndex].dX + vecOffset.x, m_arrJD[nIndex].dY + vecOffset.y);
+    
+#endif
+    
+}
+
+void LineElementManager::UpdateJDCoordinates(int nIndex, double dX, double dY)
+{
+    if (nIndex < 0 || nIndex >= m_nJDCount)
+        return;
+    
+    if (abs(m_arrJD[nIndex].dX - dX) < s_dLenPrecision && abs(m_arrJD[nIndex].dY - dY) < s_dLenPrecision)
+        return;
+    
     //修改数据
-    m_arrJD[nIndex].dX += vecOffset.x;
-    m_arrJD[nIndex].dY += vecOffset.y;
+    m_arrJD[nIndex].dX = dX;
+    m_arrJD[nIndex].dY = dY;
+    
+    //首尾交点
+    if (nIndex == 0)
+        m_arrLineElement[0]->pntStart.Set(m_arrJD[nIndex].dX, m_arrJD[nIndex].dY);
+    else if (nIndex == m_nJDCount - 1)
+        m_arrLineElement[m_nElementCount - 1]->pntEnd.Set(m_arrJD[nIndex].dX, m_arrJD[nIndex].dY);
+    
+    if (m_nJDCount == 2)
+    {
+        m_arrLineElement[0]->dTotalLen = m_arrLineElement[0]->pntStart.distanceTo(m_arrLineElement[0]->pntEnd);
+        m_arrLineElement[0]->dStartTanAngle = m_arrLineElement[0]->dEndTanAngle = BaseCalFun::CalAngleX(m_arrLineElement[0]->pntStart, m_arrLineElement[0]->pntEnd);
+        
+        return;
+    }
+    
     //影响交点的索引范围
     int nStartJDIndex = __max(0, nIndex - 2);
     int nEndJDIndex = __min(m_nJDCount - 1, nIndex + 2);
@@ -658,7 +694,7 @@ void LineElementManager::UpdateJD(int nIndex, const Vector2d& vecOffset)
     uint8_t nUnitElementCount = 0;
     
     //影响线元索引范围
-    int nUpdateBeginIndex = 0;
+    int nUpdateBeginIndex = __max((m_arrJD + nStartJDIndex + 1)->arrUnitsIndex[0] - 1, 0);
     int nUpdateEndIndex = 0;
     for (int nJDIndex = nStartJDIndex; nJDIndex + 2 <= nEndJDIndex; nJDIndex++)
     {
@@ -670,16 +706,24 @@ void LineElementManager::UpdateJD(int nIndex, const Vector2d& vecOffset)
         const int* arrIndex = (m_arrJD + nJDIndex + 1)->arrUnitsIndex;
         uint8_t nIndexCount = (m_arrJD + nJDIndex + 1)->nIndexCount;
         
-        if (nJDIndex == nStartJDIndex)
-            nUpdateBeginIndex = __max(arrIndex[0] - 1, 0);
         nUpdateEndIndex = __min(arrIndex[nIndexCount - 1] + 1, m_nElementCount - 1);
         
-        //找出修改的线元
-        for (uint8_t nIndex = 0; nIndex < nIndexCount; nIndex++)
-            arrLineElement[nIndex] = m_arrLineElement[arrIndex[nIndex]];
-        
-        //重新计算数据
-        CalculateLineElement(nJDIndex, arrLineElement, nUnitElementCount);
+        if (nIndexCount == 2
+            && m_arrLineElement[arrIndex[0]]->eElementType == ElementType::Line
+            && m_arrLineElement[arrIndex[1]]->eElementType == ElementType::Line)
+        {
+            m_arrLineElement[arrIndex[0]]->pntEnd.Set((m_arrJD + nJDIndex + 1)->dX, (m_arrJD + nJDIndex + 1)->dY);
+            m_arrLineElement[arrIndex[1]]->pntStart.Set((m_arrJD + nJDIndex + 1)->dX, (m_arrJD + nJDIndex + 1)->dY);
+        }
+        else
+        {
+            //找出修改的线元
+            for (uint8_t nIndex = 0; nIndex < nIndexCount; nIndex++)
+                arrLineElement[nIndex] = m_arrLineElement[arrIndex[nIndex]];
+            
+            //重新计算数据
+            CalculateLineElement(nJDIndex, arrLineElement, nUnitElementCount);
+        }
     }
     
     //更新其他线元
@@ -692,19 +736,24 @@ void LineElementManager::UpdateJD(int nIndex, const Vector2d& vecOffset)
             int nPreIndex = __max(0, i - 1);
             int nNextIndex = __min(m_nElementCount - 1, i + 1);
             
-            m_arrLineElement[i]->pntStart = (nPreIndex == 0 ? Point2d(m_arrJD->dX, m_arrJD->dY) : m_arrLineElement[nPreIndex]->pntEnd);
-            m_arrLineElement[i]->pntEnd = (nNextIndex == m_nElementCount - 1 ? Point2d((m_arrJD + nEndJDIndex)->dX, (m_arrJD + nEndJDIndex)->dY) : m_arrLineElement[nNextIndex]->pntStart);
+            if (i == nUpdateBeginIndex)
+                m_arrLineElement[i]->pntEnd = m_arrLineElement[nNextIndex]->pntStart;
+            else if (i == nUpdateEndIndex)
+                m_arrLineElement[i]->pntStart = m_arrLineElement[nPreIndex]->pntEnd;
+            else
+            {
+                m_arrLineElement[i]->pntStart = m_arrLineElement[nPreIndex]->pntEnd;
+                m_arrLineElement[i]->pntEnd = m_arrLineElement[nNextIndex]->pntStart;
+            }
+            
             m_arrLineElement[i]->dTotalLen = m_arrLineElement[i]->pntStart.distanceTo(m_arrLineElement[i]->pntEnd);
             m_arrLineElement[i]->dStartTanAngle = m_arrLineElement[i]->dEndTanAngle = BaseCalFun::CalAngleX(m_arrLineElement[i]->pntStart, m_arrLineElement[i]->pntEnd);
         }
         dCurCml += m_arrLineElement[i]->dTotalLen;
     }
-    
-#endif
-    
 }
 
-tagExportLineElement* LineElementManager::ExportHorCurve(int& nArrCount, double dStartCml, double dEndCml, double dDist, double dCurveStep)
+tagExportLineElement* LineElementManager::ExportHorCurve(int& nArrCount, double dStartCml, double dEndCml, double dDist, double dCurveStep) const
 {
     nArrCount = 0;
     if (dEndCml - dStartCml < 0.0)
@@ -749,13 +798,13 @@ tagExportLineElement* LineElementManager::ExportHorCurve(int& nArrCount, double 
     return pRet;
 }
 
-const tagJDInfo* LineElementManager::ExportJDInfo(int& nCount)
+const tagJDInfo* LineElementManager::ExportJDInfo(int& nCount) const
 {
     nCount = m_nJDCount;
     return m_arrJD;
 }
 
-double LineElementManager::GetLength()
+double LineElementManager::GetLength() const
 {
     if (m_nElementCount == 0 || !m_arrLineElement || m_nJDCount < 2 || !m_arrJD)
         return 0.0;
