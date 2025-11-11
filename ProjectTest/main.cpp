@@ -192,7 +192,7 @@ int main(int argc, const char * argv[]) {
     //步长
     const double dStep = 1.0615;
     
-    RouteAPI* pAPI = new RouteAPI;
+    RouteAPI* pAPI = new RouteAPI();
     pAPI->SetData(vecJD.data(), vecJD.size(), vecDL.size() > 0 ? vecDL.data() : nullptr, vecDL.size(), vecSlope.size() > 0 ? vecSlope.data() : nullptr, vecSlope.size());
     
     double dLen1 = pAPI->GetLength();
@@ -201,7 +201,7 @@ int main(int argc, const char * argv[]) {
     Point2d p5(11451.2969, 6189.4564);
     Vector2d vecOfffset = p5 - p4;
     
-    pAPI->UpdateJD(2, vecOfffset);
+    pAPI->UpdateJDCoordinates(2, p5.y, p5.x);
     
     double dLen2 = pAPI->GetLength();
     

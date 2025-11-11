@@ -89,13 +89,7 @@ public:
     ///   - pJDInfo: 交点数组
     ///   - iCount: 数组大小
     void SetJDData(const tagJDInfo* pJDInfo, uint32_t nCount);
-    
-    /// 修改交点坐标
-    /// - Parameters:
-    ///   - nIndex: 交点索引
-    ///   - vecOffset: 偏移向量
-    void UpdateJDCoordinates(int nIndex, const Vector2d& vecOffset);
-    
+
     /// 更新交点坐标
     /// - Parameters:
     ///   - nIndex: 交点索引

@@ -37,9 +37,9 @@ void RouteAPI::SetData(const tagJDInfo* pJDInfo, uint32_t jdCount, const tagDLIn
     m_pVerCurve->SetSlopeData(pSlopeInfo, slopeCount);
 }
 
-void RouteAPI::UpdateJD(int nIndex, const Vector2d& vecOffset)
+void RouteAPI::UpdateJDCoordinates(int nIndex, double N_Y, double E_X)
 {
-    m_pHorCurve->UpdateJDCoordinates(nIndex, vecOffset);
+    m_pHorCurve->UpdateJDCoordinates(nIndex, E_X, N_Y);
 }
 
 bool RouteAPI::TrsCmlDistToNE(double dCml, double dDist, double& N_Y, double& E_X, double& dFwj) const

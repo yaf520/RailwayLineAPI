@@ -12,6 +12,26 @@
 #define __max(a, b) (((a) > (b)) ? (a) : (b))
 #define __min(a, b) (((a) < (b)) ? (a) : (b))
 
+template<typename T>
+void safe_delete(T*& ptr)
+{
+    if (ptr)
+    {
+        delete ptr;
+        ptr = nullptr;
+    }
+}
+
+template<typename T>
+void safe_delete_array(T*& ptr)
+{
+    if (ptr)
+    {
+        delete [] ptr;
+        ptr = nullptr;
+    }
+}
+
 class BaseCalFun
 {
 public:

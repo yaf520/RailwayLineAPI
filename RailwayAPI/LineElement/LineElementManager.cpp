@@ -632,34 +632,6 @@ void LineElementManager::SetJDData(const tagJDInfo* pJDInfo, uint32_t nCount)
     }
 }
 
-void LineElementManager::UpdateJDCoordinates(int nIndex, const Vector2d& vecOffset)
-{
-    if (nIndex < 0 || nIndex >= m_nJDCount || vecOffset.isZeroVec())
-        return;
-    
-    //#define RESET_ALL
-    
-#ifdef RESET_ALL
-    
-    //复制数据
-    tagJDInfo* pJDCopy = new tagJDInfo[m_nJDCount];
-    memcpy(pJDCopy, m_arrJD, sizeof(tagJDInfo) * m_nJDCount);
-    //修改相应数据
-    pJDCopy[nIndex].dX += vecOffset.x;
-    pJDCopy[nIndex].dY += vecOffset.y;
-    //重置数据
-    SetJDData(pJDCopy, m_nJDCount);
-    
-    delete [] pJDCopy;
-    
-#else
-    
-    this->UpdateJDCoordinates(nIndex, m_arrJD[nIndex].dX + vecOffset.x, m_arrJD[nIndex].dY + vecOffset.y);
-    
-#endif
-    
-}
-
 void LineElementManager::UpdateJDCoordinates(int nIndex, double dX, double dY)
 {
     if (nIndex < 0 || nIndex >= m_nJDCount)
@@ -718,8 +690,8 @@ void LineElementManager::UpdateJDCoordinates(int nIndex, double dX, double dY)
         else
         {
             //找出修改的线元
-            for (uint8_t nIndex = 0; nIndex < nIndexCount; nIndex++)
-                arrLineElement[nIndex] = m_arrLineElement[arrIndex[nIndex]];
+            for (uint8_t i = 0; i < nIndexCount; i++)
+                arrLineElement[i] = m_arrLineElement[arrIndex[i]];
             
             //重新计算数据
             CalculateLineElement(nJDIndex, arrLineElement, nUnitElementCount);

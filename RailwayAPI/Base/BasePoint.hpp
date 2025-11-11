@@ -76,34 +76,14 @@ typedef struct BasePoint2d
         return *this;
     }
     
-    BasePoint2d operator * (const int& i) const
-    {
-        return BasePoint2d(this->x * i, this->y * i);
-    }
-    
     BasePoint2d operator * (const double& d) const
     {
         return BasePoint2d(this->x * d, this->y * d);
     }
     
-    BasePoint2d operator * (const float& f) const
-    {
-        return BasePoint2d(this->x * f, this->y * f);
-    }
-    
-    BasePoint2d operator / (const int& i) const
-    {
-        return BasePoint2d(this->x / i, this->y / i);
-    }
-    
     BasePoint2d operator / (const double& d) const
     {
         return BasePoint2d(this->x / d, this->y / d);
-    }
-    
-    BasePoint2d operator / (const float& f) const
-    {
-        return BasePoint2d(this->x / f, this->y / f);
     }
     
     bool operator == (const BasePoint2d& pos) const
@@ -147,20 +127,10 @@ typedef struct BasePoint2d
             return (y >= 0.0 ? MATH_PI_2 : MATH_PI * 1.5);
         
         double dAngle = atan(y / x);
-        if (y >= 0.0)
-        {
-            if (x < -s_dCalPrecision)
-                dAngle += MATH_PI;
-        }
-        else
-        {
-            if (x < -s_dCalPrecision)
-                dAngle += MATH_PI;
-            else
-                dAngle += MATH_PI * 2.0;
-        }
+        if (x < -s_dCalPrecision)
+            return dAngle + MATH_PI;
         
-        return dAngle;
+        return (y >= 0.0 ? dAngle : dAngle + MATH_PI * 2.0);
     }
 }Point2d, Vector2d;
 
