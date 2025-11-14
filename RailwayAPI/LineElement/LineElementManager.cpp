@@ -608,8 +608,7 @@ void LineElementManager::SetJDData(const tagJDInfo* pJDInfo, uint32_t nCount)
     for (uint32_t nCurIndex = 0; nCurIndex + 2 < nCount; nCurIndex++)
     {
         //变量定义
-        BaseLineElement* arrLineElement[5];
-        memset(arrLineElement, 0, sizeof(BaseLineElement*) * 5);
+        BaseLineElement* arrLineElement[5] = {};
         uint8_t nCurveElementCount = 0;
         
         //计算线元
@@ -661,19 +660,12 @@ void LineElementManager::UpdateJDCoordinates(int nIndex, double dX, double dY)
     //影响交点的索引范围
     int nStartJDIndex = __max(0, nIndex - 2);
     int nEndJDIndex = __min(m_nJDCount - 1, nIndex + 2);
-    //单元线元
-    BaseLineElement* arrLineElement[5];
-    uint8_t nUnitElementCount = 0;
-    
+
     //影响线元索引范围
     int nUpdateBeginIndex = __max((m_arrJD + nStartJDIndex + 1)->arrUnitsIndex[0] - 1, 0);
     int nUpdateEndIndex = 0;
     for (int nJDIndex = nStartJDIndex; nJDIndex + 2 <= nEndJDIndex; nJDIndex++)
     {
-        //重置数据
-        memset(arrLineElement, 0, sizeof(BaseLineElement*) * 5);
-        nUnitElementCount = 0;
-        
         //包含索引
         const int* arrIndex = (m_arrJD + nJDIndex + 1)->arrUnitsIndex;
         uint8_t nIndexCount = (m_arrJD + nJDIndex + 1)->nIndexCount;
@@ -689,12 +681,9 @@ void LineElementManager::UpdateJDCoordinates(int nIndex, double dX, double dY)
         }
         else
         {
-            //找出修改的线元
-            for (uint8_t i = 0; i < nIndexCount; i++)
-                arrLineElement[i] = m_arrLineElement[arrIndex[i]];
-            
+            uint8_t nUnitElementCount = 0;
             //重新计算数据
-            CalculateLineElement(nJDIndex, arrLineElement, nUnitElementCount);
+            CalculateLineElement(nJDIndex, m_arrLineElement + *arrIndex, nUnitElementCount);
         }
     }
     

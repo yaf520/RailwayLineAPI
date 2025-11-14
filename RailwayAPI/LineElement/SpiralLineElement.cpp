@@ -242,11 +242,10 @@ void SpiralLineElement::InitData()
     }
 }
 
-void SpiralLineElement::AdjustData(const Point2d& pos)
+void SpiralLineElement::AdjustData(const Vector2d& vec)
 {
-    pntStart += pos;
-    pntEnd += pos;
-    m_pntBase += pos;
+    BaseLineElement::AdjustData(vec);
+    m_pntBase += vec;
 }
 
 double SpiralLineElement::f_original_proj(double dL0, double dParamX, double dParamY) const

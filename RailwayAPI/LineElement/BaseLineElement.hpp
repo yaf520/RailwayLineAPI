@@ -57,7 +57,11 @@ public:
     virtual void InitData() = 0;
     
     ///调整数据
-    virtual void AdjustData(const Point2d& pos) = 0;
+    virtual void AdjustData(const Vector2d& vec)
+    {
+        pntStart += vec;
+        pntEnd += vec;
+    }
 };
 
 #endif /* BaseLineElement_hpp */

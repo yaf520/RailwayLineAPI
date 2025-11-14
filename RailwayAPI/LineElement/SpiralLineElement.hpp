@@ -51,7 +51,7 @@ protected:
 public:
     void InitData() override;
     
-    void AdjustData(const Point2d& pos) override;
+    void AdjustData(const Vector2d& vec) override;
    
     ///求相对坐标
 private:

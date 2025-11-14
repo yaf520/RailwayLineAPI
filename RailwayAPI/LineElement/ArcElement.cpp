@@ -219,10 +219,3 @@ void ArcElement::InitData()
     double dArcAngle = TrsCmlToAngle_Relative(dTotalLen);
     dEndTanAngle = dStartTanAngle + (bTurnLeft ? dArcAngle : -dArcAngle);
 }
-
-void ArcElement::AdjustData(const Point2d& pos)
-{
-    pntStart += pos;
-    pntEnd += pos;
-}
-

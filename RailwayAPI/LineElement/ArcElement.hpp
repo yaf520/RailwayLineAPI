@@ -39,8 +39,6 @@ protected:
     
 public:
     void InitData() override;
-    
-    void AdjustData(const Point2d& pos) override;
 };
 
 #endif /* ArcElement_hpp */
