@@ -65,7 +65,7 @@ Point2d LineElementManager::CalUnitStartPos(uint32_t nIndex, const Vector2d& vec
     return Point2d((e * c - b * f) / (a * e - b * d), (d * c - a * f) / (b * d - a * e));
 }
 
-void LineElementManager::CalculateLineElement(uint32_t nCurIndex, BaseLineElement** arrLineElement, uint8_t& nCurveElementCount)
+int LineElementManager::CalculateLineElement(uint32_t nCurIndex, BaseLineElement** arrLineElement) const
 {
     //交点坐标
     Point2d posJD1 = ((m_arrJD + nCurIndex)->nJDType != JDType::ThreeUnitBack ? Point2d((m_arrJD + nCurIndex)->dX, (m_arrJD + nCurIndex)->dY) : Point2d((m_arrJD + nCurIndex)->dX_End, (m_arrJD + nCurIndex)->dY_End));
@@ -74,7 +74,7 @@ void LineElementManager::CalculateLineElement(uint32_t nCurIndex, BaseLineElemen
     Point2d posJDRef((m_arrJD + nCurIndex + 1)->dX_End, (m_arrJD + nCurIndex + 1)->dY_End);
     
     if (posJD1 == posJD2 || posJD1 == posJD3 || posJD2 == posJD3)
-        return;
+        return -1;
     
     //交点类型
     JDType nJDType = (m_arrJD + nCurIndex + 1)->nJDType;
@@ -84,7 +84,7 @@ void LineElementManager::CalculateLineElement(uint32_t nCurIndex, BaseLineElemen
     //单元起点(相对)
     Point2d posCurveStart;
     //置零
-    nCurveElementCount = 0;
+    int nCurveElementCount = 0;
     
     switch (nJDType) {
         case JDType::ThreeUnit:
@@ -402,6 +402,8 @@ void LineElementManager::CalculateLineElement(uint32_t nCurIndex, BaseLineElemen
     if (nJDType == JDType::ThreeUnit || nJDType == JDType::FiveUnit)
         for (uint8_t i = 0; i < nCurveElementCount; i++)
             arrLineElement[i]->AdjustData(posCurveStart);
+    
+    return nCurveElementCount;
 }
 
 void LineElementManager::JointLineElement(uint32_t nCurIndex, BaseLineElement** arrLineElement, uint8_t nCurveElementCount, double& dCurrentCml)
@@ -609,10 +611,13 @@ void LineElementManager::SetJDData(const tagJDInfo* pJDInfo, uint32_t nCount)
     {
         //变量定义
         BaseLineElement* arrLineElement[5] = {};
-        uint8_t nCurveElementCount = 0;
+        int nCurveElementCount = CalculateLineElement(nCurIndex, arrLineElement);
         
-        //计算线元
-        CalculateLineElement(nCurIndex, arrLineElement, nCurveElementCount);
+        if (nCurveElementCount < 0)
+        {
+            this->ResetData();
+            return;
+        }
         
         //拼接线元
         JointLineElement(nCurIndex, arrLineElement, nCurveElementCount, dCurrentCml);
@@ -681,9 +686,9 @@ void LineElementManager::UpdateJDCoordinates(int nIndex, double dX, double dY)
         }
         else
         {
-            uint8_t nUnitElementCount = 0;
             //重新计算数据
-            CalculateLineElement(nJDIndex, m_arrLineElement + *arrIndex, nUnitElementCount);
+            if (CalculateLineElement(nJDIndex, m_arrLineElement + *arrIndex) < 0)
+                return;
         }
     }
     
@@ -745,15 +750,14 @@ tagExportLineElement* LineElementManager::ExportHorCurve(int& nArrCount, double 
         
         double dCurStartCml = (nCurInex == nStartIndex ? dStartCml : pCurLineElement->dStartCml);
         double dCurEndCml = (nCurInex == nEndIndex ? dEndCml : pCurLineElement->dStartCml + pCurLineElement->dTotalLen);
-        tagExportLineElement* pExportInfo = pCurLineElement->ExportHorCurve(dCurStartCml, dCurEndCml, dDist, dCurveStep);
-        if (!pExportInfo)
+        *(pRet + nExportIndex) = pCurLineElement->ExportHorCurve(dCurStartCml, dCurEndCml, dDist, dCurveStep);
+        if ((pRet + nExportIndex)->nPosCount == 0)
         {
             nArrCount = 0;
-            delete[] pRet;
+            delete [] pRet;
             return nullptr;
         }
-        *(pRet + nExportIndex++) = *pExportInfo;
-        delete pExportInfo;
+        nExportIndex++;
     }
     
     return pRet;

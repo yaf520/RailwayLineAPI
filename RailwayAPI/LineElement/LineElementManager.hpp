@@ -54,12 +54,12 @@ private:
     ///   - vecWhole: 曲线起始向量
     Point2d CalUnitStartPos(uint32_t nIndex, const Vector2d& vecWhole) const;
     
-    /// 计算线元单元
+    /// 计算线元
     /// - Parameters:
     ///   - nCurIndex: 当前交点索引
-    ///   - arrLineElement: 线元单元数组
-    ///   - nCurveElementCount： 线元数组大小
-    void CalculateLineElement(uint32_t nCurIndex, BaseLineElement** arrLineElement, uint8_t& nCurveElementCount);
+    ///   - arrLineElement: 输出线元数组
+    ///   - return: 线元数目
+    int CalculateLineElement(uint32_t nCurIndex, BaseLineElement** arrLineElement) const;
     
     /// 拼接线元单元
     /// - Parameters:

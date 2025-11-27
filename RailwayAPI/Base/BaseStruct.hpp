@@ -145,6 +145,14 @@ struct tagExportLineElement
         }
     }
     
+    tagExportLineElement(tagExportLineElement&& src) noexcept
+        : eLineType(src.eLineType), pArrPos(src.pArrPos), nPosCount(src.nPosCount)
+    {
+        src.eLineType = ElementType::Invalid;
+        src.nPosCount = 0;
+        src.pArrPos = nullptr;
+    }
+    
     ~tagExportLineElement()
     {
         if (pArrPos)
@@ -171,6 +179,29 @@ struct tagExportLineElement
             this->pArrPos = new PointExport[this->nPosCount];
             for (int i = 0; i < nPosCount; i++)
                 *(pArrPos + i) = src.pArrPos[i];
+        }
+        
+        return *this;
+    }
+    
+    tagExportLineElement& operator = (tagExportLineElement&& src) noexcept
+    {
+        if (this != &src)
+        {
+            if (pArrPos)
+            {
+                delete[] pArrPos;
+                pArrPos = nullptr;
+                nPosCount = 0;
+            }
+            
+            this->eLineType = src.eLineType;
+            this->nPosCount = src.nPosCount;
+            this->pArrPos = src.pArrPos;
+            
+            src.eLineType = ElementType::Invalid;
+            src.nPosCount = 0;
+            src.pArrPos = nullptr;
         }
         
         return *this;

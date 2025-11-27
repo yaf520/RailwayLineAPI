@@ -79,21 +79,24 @@ uint32_t StraightLineElement::IntersectWithLine(double dAngle, double dX, double
     return 1;
 }
 
-tagExportLineElement* StraightLineElement::ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep) const
+tagExportLineElement StraightLineElement::ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep) const
 {
-    assert(dStartCml >= dStartCml - s_dCalPrecision && dEndCml <= dStartCml + dTotalLen + s_dCalPrecision);
-    if (dStartCml < dStartCml - s_dCalPrecision || dEndCml > dStartCml + dTotalLen + s_dCalPrecision)
-        return nullptr;
+    tagExportLineElement retData;
     
-    double dAngle = 0.0;
-    tagExportLineElement* pRet = new tagExportLineElement;
-    pRet->nPosCount = 2;
-    pRet->eLineType = eElementType;
-    pRet->pArrPos = new PointExport[2];
-    TrsCmlDistToNE(dStartCml, dDist, pRet->pArrPos[0].dX, pRet->pArrPos[0].dY, dAngle);
-    TrsCmlDistToNE(dEndCml, dDist, pRet->pArrPos[1].dX, pRet->pArrPos[1].dY, dAngle);
-    
-    return pRet;
+    do {
+        assert(dStartCml >= dStartCml - s_dCalPrecision && dEndCml <= dStartCml + dTotalLen + s_dCalPrecision);
+        if (dStartCml < dStartCml - s_dCalPrecision || dEndCml > dStartCml + dTotalLen + s_dCalPrecision)
+            break;
+        
+        double dAngle = 0.0;
+        retData.nPosCount = 2;
+        retData.eLineType = eElementType;
+        retData.pArrPos = new PointExport[2];
+        TrsCmlDistToNE(dStartCml, dDist, retData.pArrPos[0].dX, retData.pArrPos[0].dY, dAngle);
+        TrsCmlDistToNE(dEndCml, dDist, retData.pArrPos[1].dX, retData.pArrPos[1].dY, dAngle);
+    } while (0);
+
+    return retData;
 }
 
 bool StraightLineElement::TrsCmlToHeight(double dCml, double& dHeight, double& dFyj) const

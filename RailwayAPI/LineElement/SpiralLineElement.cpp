@@ -140,28 +140,31 @@ uint32_t SpiralLineElement::IntersectWithLine(double dAngle, double dX, double d
     return nRootCount;
 }
 
-tagExportLineElement* SpiralLineElement::ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep) const
+tagExportLineElement SpiralLineElement::ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep) const
 {
-    assert(dStartCml >= dStartCml - s_dCalPrecision && dEndCml <= dStartCml + dTotalLen + s_dCalPrecision);
-    if (dStartCml < dStartCml - s_dCalPrecision || dEndCml > dStartCml + dTotalLen + s_dCalPrecision)
-        return nullptr;
+    tagExportLineElement retData;
     
-    int nPosCount = ceil((dEndCml - dStartCml) / dCurveStep) + 1;
-    double dAngle = 0.0;
-    tagExportLineElement* pRet = new tagExportLineElement;
-    pRet->eLineType = eElementType;
-    pRet->nPosCount = nPosCount;
-    pRet->pArrPos = new PointExport[nPosCount];
+    do {
+        assert(dStartCml >= dStartCml - s_dCalPrecision && dEndCml <= dStartCml + dTotalLen + s_dCalPrecision);
+        if (dStartCml < dStartCml - s_dCalPrecision || dEndCml > dStartCml + dTotalLen + s_dCalPrecision)
+            break;
+        
+        int nPosCount = ceil((dEndCml - dStartCml) / dCurveStep) + 1;
+        double dAngle = 0.0;
+        retData.eLineType = eElementType;
+        retData.nPosCount = nPosCount;
+        retData.pArrPos = new PointExport[nPosCount];
+        
+        double dCurCml = dStartCml;
+        for (int i = 0; i < nPosCount; i++)
+        {
+            dCurCml = __min(dCurCml, dEndCml);
+            TrsCmlDistToNE(dCurCml, dDist, retData.pArrPos[i].dX, retData.pArrPos[i].dY, dAngle);
+            dCurCml += dCurveStep;
+        }
+    } while (0);
     
-    double dCurCml = dStartCml;
-    for (int i = 0; i < nPosCount; i++)
-    {
-        dCurCml = __min(dCurCml, dEndCml);
-        TrsCmlDistToNE(dCurCml, dDist, pRet->pArrPos[i].dX, pRet->pArrPos[i].dY, dAngle);
-        dCurCml += dCurveStep;
-    }
-    
-    return pRet;
+    return retData;
 }
 
 Point2d SpiralLineElement::TrsCmlToNE_Relative(double dCml) const

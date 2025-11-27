@@ -29,7 +29,7 @@ public:
     
     uint32_t IntersectWithLine(double dAngle, double dX, double dY, Point2d arrCrossPos[s_nMaxArrCount]) const override;
     
-    tagExportLineElement* ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep) const override;
+    tagExportLineElement ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep) const override;
     
 protected:
     //相对里程->相对坐标

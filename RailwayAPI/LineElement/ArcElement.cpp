@@ -186,23 +186,26 @@ uint32_t ArcElement::IntersectWithLine(double dAngle, double dX, double dY, Poin
     return nCurCount;
 }
 
-tagExportLineElement* ArcElement::ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep) const
+tagExportLineElement ArcElement::ExportHorCurve(double dStartCml, double dEndCml, double dDist, double dCurveStep) const
 {
-    assert(dStartCml >= dStartCml - s_dCalPrecision && dEndCml <= dStartCml + dTotalLen + s_dCalPrecision);
-    if (dStartCml < dStartCml - s_dCalPrecision || dEndCml > dStartCml + dTotalLen + s_dCalPrecision)
-        return nullptr;
+    tagExportLineElement retData;
     
-    double dAngle = 0.0;
-    tagExportLineElement* pRet = new tagExportLineElement;
-    pRet->nPosCount = 3;
-    pRet->eLineType = eElementType;
-    pRet->pArrPos = new PointExport[3];
-    
-    TrsCmlDistToNE(dStartCml, dDist, pRet->pArrPos[0].dX, pRet->pArrPos[0].dY, dAngle);
-    TrsCmlDistToNE((dStartCml + dEndCml) / 2.0, dDist, pRet->pArrPos[2].dX, pRet->pArrPos[2].dY, dAngle);
-    TrsCmlDistToNE(dEndCml, dDist, pRet->pArrPos[1].dX, pRet->pArrPos[1].dY, dAngle);
-    
-    return pRet;
+    do {
+        assert(dStartCml >= dStartCml - s_dCalPrecision && dEndCml <= dStartCml + dTotalLen + s_dCalPrecision);
+        if (dStartCml < dStartCml - s_dCalPrecision || dEndCml > dStartCml + dTotalLen + s_dCalPrecision)
+            break;
+        
+        double dAngle = 0.0;
+        retData.nPosCount = 3;
+        retData.eLineType = eElementType;
+        retData.pArrPos = new PointExport[3];
+        
+        TrsCmlDistToNE(dStartCml, dDist, retData.pArrPos[0].dX, retData.pArrPos[0].dY, dAngle);
+        TrsCmlDistToNE((dStartCml + dEndCml) / 2.0, dDist, retData.pArrPos[2].dX, retData.pArrPos[2].dY, dAngle);
+        TrsCmlDistToNE(dEndCml, dDist, retData.pArrPos[1].dX, retData.pArrPos[1].dY, dAngle);
+    } while (0);
+
+    return retData;
 }
 
 Point2d ArcElement::TrsCmlToNE_Relative(double dCml) const
