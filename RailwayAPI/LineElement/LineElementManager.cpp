@@ -449,18 +449,17 @@ void LineElementManager::JointLineElement(uint32_t nCurIndex, BaseLineElement** 
     //记录索引
     if (nCurveElementCount == 0)
     {
-        (m_arrJD + nCurIndex + 1)->nIndexCount = 2;
-        (m_arrJD + nCurIndex + 1)->arrUnitsIndex[0] = m_nElementCount - 1;
-        (m_arrJD + nCurIndex + 1)->arrUnitsIndex[1] = m_nElementCount;
+        (m_arrJD + nCurIndex + 1)->nElementCount = 2;
+        (m_arrJD + nCurIndex + 1)->nStartElementIndex = m_nElementCount - 1;
     }
     else
     {
-        (m_arrJD + nCurIndex + 1)->nIndexCount = nCurveElementCount;
+        (m_arrJD + nCurIndex + 1)->nElementCount = nCurveElementCount;
+        (m_arrJD + nCurIndex + 1)->nStartElementIndex = m_nElementCount;
         for (uint8_t j = 0; j < nCurveElementCount; j++)
         {
             arrLineElement[j]->dStartCml = dCurrentCml;
-            arrLineElement[j]->nIndex = (m_arrJD + nCurIndex + 1)->arrUnitsIndex[j] = m_nElementCount;
-            
+            arrLineElement[j]->nIndex = m_nElementCount;
             m_arrLineElement[m_nElementCount++] = arrLineElement[j];
             
             dCurrentCml += arrLineElement[j]->dTotalLen;
@@ -667,27 +666,29 @@ void LineElementManager::UpdateJDCoordinates(int nIndex, double dX, double dY)
     int nEndJDIndex = __min(m_nJDCount - 1, nIndex + 2);
 
     //影响线元索引范围
-    int nUpdateBeginIndex = __max((m_arrJD + nStartJDIndex + 1)->arrUnitsIndex[0] - 1, 0);
+    int nUpdateBeginIndex = __max((m_arrJD + nStartJDIndex + 1)->nStartElementIndex - 1, 0);
     int nUpdateEndIndex = 0;
     for (int nJDIndex = nStartJDIndex; nJDIndex + 2 <= nEndJDIndex; nJDIndex++)
     {
         //包含索引
-        const int* arrIndex = (m_arrJD + nJDIndex + 1)->arrUnitsIndex;
-        uint8_t nIndexCount = (m_arrJD + nJDIndex + 1)->nIndexCount;
+        int nStartElementIndex = (m_arrJD + nJDIndex + 1)->nStartElementIndex;
+        int nElementCount = (m_arrJD + nJDIndex + 1)->nElementCount;
+        if (nElementCount == 0)
+            return;
         
-        nUpdateEndIndex = __min(arrIndex[nIndexCount - 1] + 1, m_nElementCount - 1);
+        nUpdateEndIndex = __min(nStartElementIndex + nElementCount, m_nElementCount - 1);
         
-        if (nIndexCount == 2
-            && m_arrLineElement[arrIndex[0]]->eElementType == ElementType::Line
-            && m_arrLineElement[arrIndex[1]]->eElementType == ElementType::Line)
+        if (nElementCount == 2
+            && m_arrLineElement[nStartElementIndex]->eElementType == ElementType::Line
+            && m_arrLineElement[nStartElementIndex + 1]->eElementType == ElementType::Line)
         {
-            m_arrLineElement[arrIndex[0]]->pntEnd.Set((m_arrJD + nJDIndex + 1)->dX, (m_arrJD + nJDIndex + 1)->dY);
-            m_arrLineElement[arrIndex[1]]->pntStart.Set((m_arrJD + nJDIndex + 1)->dX, (m_arrJD + nJDIndex + 1)->dY);
+            m_arrLineElement[nStartElementIndex]->pntEnd.Set((m_arrJD + nJDIndex + 1)->dX, (m_arrJD + nJDIndex + 1)->dY);
+            m_arrLineElement[nStartElementIndex + 1]->pntStart.Set((m_arrJD + nJDIndex + 1)->dX, (m_arrJD + nJDIndex + 1)->dY);
         }
         else
         {
             //重新计算数据
-            if (CalculateLineElement(nJDIndex, m_arrLineElement + *arrIndex) < 0)
+            if (CalculateLineElement(nJDIndex, m_arrLineElement + nStartElementIndex) < 0)
                 return;
         }
     }
